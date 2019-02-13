@@ -14,20 +14,36 @@ import java.util.List;
  * @author Mahmoud Shereif
  */
 public class User_StatusDAO implements DAO {
+    DatabaseDataRetreival databaseDataRetreival = null;
+    
+    public User_StatusDAO() throws SQLException{
+        databaseDataRetreival = new DatabaseDataRetreival();
+    }
 
     @Override
-    public void persist(Entity E) throws SQLException {
+    public void persist(Entity entity) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void update(Entity E) throws SQLException {
+    public void update(Entity entity) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Entity> getAll(Entity E) throws SQLException {
+    public void delete(List primaryKey) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Entity getByPrimaryKey(List primaryKeys) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getAll() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
 }

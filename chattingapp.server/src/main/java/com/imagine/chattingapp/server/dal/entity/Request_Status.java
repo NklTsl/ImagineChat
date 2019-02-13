@@ -9,7 +9,7 @@ package com.imagine.chattingapp.server.dal.entity;
  *
  * @author Mahmoud Shereif
  */
-public class Request_Status {
+public class Request_Status implements Entity {
     private byte id;
     private String description;
 

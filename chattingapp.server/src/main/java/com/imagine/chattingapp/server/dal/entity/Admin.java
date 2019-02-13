@@ -11,10 +11,11 @@ import java.sql.Date;
  *
  * @author Mahmoud Shereif
  */
-public class Admin {
+public class Admin implements Entity{
     private String phoneNumber;
     private String name;
     private String email;
+    private byte[] picture;
     private String password;
     private boolean gender;
     private Date dateOfBirth;
@@ -44,7 +45,14 @@ public class Admin {
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    public byte[] getPicture() {
+        return picture;
+    }
 
+    public void setPicture(byte[] picture) {
+        this.picture = picture;
+    }
     public String getPassword() {
         return password;
     }
@@ -53,7 +61,7 @@ public class Admin {
         this.password = password;
     }
 
-    public boolean isGender() {
+    public boolean getGender() {
         return gender;
     }
 

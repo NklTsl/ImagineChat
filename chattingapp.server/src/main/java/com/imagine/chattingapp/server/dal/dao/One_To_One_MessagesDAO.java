@@ -5,7 +5,7 @@
  */
 package com.imagine.chattingapp.server.dal.dao;
 
-import com.imagine.chattingapp.server.dal.entity.Request_Status;
+import com.imagine.chattingapp.server.dal.entity.On_To_One_Messages;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -13,15 +13,15 @@ import java.util.List;
  *
  * @author Mahmoud Shereif
  */
-public class Request_StatusDAO implements DAO<Request_Status> {
+public class One_To_One_MessagesDAO implements DAO<On_To_One_Messages> {
 
     @Override
-    public void persist(Request_Status entity) throws SQLException {
+    public void persist(On_To_One_Messages entity) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void update(Request_Status entity) throws SQLException {
+    public void update(On_To_One_Messages entity) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -31,12 +31,12 @@ public class Request_StatusDAO implements DAO<Request_Status> {
     }
 
     @Override
-    public Request_Status getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
+    public On_To_One_Messages getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Request_Status> getAll() throws SQLException {
+    public List<On_To_One_Messages> getAll() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -9,7 +9,7 @@ package com.imagine.chattingapp.server.dal.entity;
  *
  * @author Mahmoud Shereif
  */
-public class Country {
+public class Country implements Entity {
     private byte id;
     private String name;
     

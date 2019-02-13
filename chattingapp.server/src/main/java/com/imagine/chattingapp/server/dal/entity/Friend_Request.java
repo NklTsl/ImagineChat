@@ -9,7 +9,7 @@ package com.imagine.chattingapp.server.dal.entity;
  *
  * @author Mahmoud Shereif
  */
-public class Friend_Request {
+public class Friend_Request implements Entity {
     private String senderPhoneNumber;
     private String receiverPhoneNumber;
     private byte statusID;

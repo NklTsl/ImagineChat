@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  *
  * @author Mahmoud Shereif
  */
-public class Chat_Group {
+public class Chat_Group implements Entity{
     private int id;
     private String ownerPhoneNumber;
     private String name;

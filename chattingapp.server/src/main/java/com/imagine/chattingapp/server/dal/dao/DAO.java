@@ -13,8 +13,10 @@ import com.imagine.chattingapp.server.dal.entity.Entity;
  *
  * @author Mahmoud Shereif
  */
-public interface DAO {
-    public void persist(Entity E) throws SQLException;
-    public void update(Entity E) throws SQLException;
-    public List<Entity> getAll(Entity E) throws SQLException;
+public interface DAO<T extends Entity> {
+    public void persist(T entity) throws SQLException;
+    public void update(T entity) throws SQLException;
+    public void delete(List<Object> primaryKey) throws SQLException;
+    public T getByPrimaryKey(List<Object> primaryKeys) throws SQLException;
+    public List<T> getAll() throws SQLException;
 }

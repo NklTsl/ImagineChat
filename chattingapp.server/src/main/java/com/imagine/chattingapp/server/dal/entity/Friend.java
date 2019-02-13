@@ -11,12 +11,12 @@ import java.sql.Timestamp;
  *
  * @author Mahmoud Shereif
  */
-public class Friend {
+public class Friend implements Entity {
     private String phoneNumber1;
     private String phoneNumber2;
     private String realtiveGroup;
     private boolean blockFlag;
-    private Timestamp latsMessageSentTime;
+    private Timestamp lastMessageSentTime;
     private String fontFamliy;
     private short fontSize;
     private int fontColor;
@@ -48,7 +48,7 @@ public class Friend {
         this.realtiveGroup = realtiveGroup;
     }
 
-    public boolean isBlockFlag() {
+    public boolean getBlockFlag() {
         return blockFlag;
     }
 
@@ -56,12 +56,12 @@ public class Friend {
         this.blockFlag = blockFlag;
     }
 
-    public Timestamp getLatsMessageSentTime() {
-        return latsMessageSentTime;
+    public Timestamp getLastMessageSentTime() {
+        return lastMessageSentTime;
     }
 
-    public void setLatsMessageSentTime(Timestamp latsMessageSentTime) {
-        this.latsMessageSentTime = latsMessageSentTime;
+    public void setLastMessageSentTime(Timestamp latsMessageSentTime) {
+        this.lastMessageSentTime = latsMessageSentTime;
     }
 
     public String getFontFamliy() {
@@ -88,7 +88,7 @@ public class Friend {
         this.fontColor = fontColor;
     }
 
-    public boolean isBoldFlag() {
+    public boolean getBoldFlag() {
         return boldFlag;
     }
 
@@ -96,7 +96,7 @@ public class Friend {
         this.boldFlag = boldFlag;
     }
 
-    public boolean isUnderlineFlag() {
+    public boolean getUnderlineFlag() {
         return underlineFlag;
     }
 
@@ -104,7 +104,7 @@ public class Friend {
         this.underlineFlag = underlineFlag;
     }
 
-    public boolean isItalicFlag() {
+    public boolean getItalicFlag() {
         return italicFlag;
     }
 

@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imagine.chattingapp.server.dal.dao;
+package com.imagine.chattingapp.client.dal;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  *
  * @author Mahmoud Shereif
  */
-public class On_To_One_MessagesDAO {
-    
+public interface ClientService extends Remote {
+    void receive(String message) throws RemoteException;
 }

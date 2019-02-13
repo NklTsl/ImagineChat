@@ -9,7 +9,7 @@ package com.imagine.chattingapp.server.dal.entity;
  *
  * @author Mahmoud Shereif
  */
-public class Chat_Group_Users {
+public class Chat_Group_Users implements Entity {
     private int groupID;
     private String userPhoneNumber;
     private String fontFamliy;

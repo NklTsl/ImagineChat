@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  *
  * @author Mahmoud Shereif
  */
-public class Chat_Group_Messages {
+public class Chat_Group_Messages implements Entity {
     private int groupID;
     private String senderPhoneNumber;
     private Timestamp timestamp;

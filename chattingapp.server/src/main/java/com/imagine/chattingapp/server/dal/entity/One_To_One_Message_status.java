@@ -9,7 +9,7 @@ package com.imagine.chattingapp.server.dal.entity;
  *
  * @author Mahmoud Shereif
  */
-public class One_To_One_Message_status {
+public class One_To_One_Message_status implements Entity {
     private byte id;
     private String description;
 

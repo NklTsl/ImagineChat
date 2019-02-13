@@ -11,6 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import com.imagine.chattingapp.server.dal.config.DatabaseConnection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -18,24 +22,42 @@ import com.imagine.chattingapp.server.dal.config.DatabaseConnection;
  */
 public class DatabaseDataRetreival {
     Connection databaseConnection;
-    Statement sqlStatment;
-    ResultSet queryResult;
     public DatabaseDataRetreival() throws SQLException{
         this.databaseConnection = new DatabaseConnection().Connect();
     }
     
-    public ResultSet executeSelectQuery(String sqlQuery) throws SQLException{
-        CallableStatement statment = databaseConnection.prepareCall("call persistUserStatus(?)");
-        statment.setInt(1, 5);
-        queryResult = statment.executeQuery();
-        while(queryResult.next()){
-            System.out.println(queryResult.getInt(1) + " " + queryResult.getString(2));
-        }
-        return queryResult;
+    public ResultSet executeSelectQuery(String preparedQuery, List<Object> parameterList) throws SQLException{
+        PreparedStatement sqlPreparedStatment = databaseConnection.prepareStatement(preparedQuery);
+        setStatmentParameters(sqlPreparedStatment, parameterList);
+        return sqlPreparedStatment.executeQuery();
     }
-    public int executeUpdateQuery(String sqlQuery) throws SQLException{
-        Integer updatedRowsNumber = null ;
-        updatedRowsNumber = sqlStatment.executeUpdate(sqlQuery);
-        return updatedRowsNumber;
+    public int executeUpdateQuery(String preparedQuery, List<Object> parameterList) throws SQLException{
+        PreparedStatement sqlPreparedStatment = databaseConnection.prepareStatement(preparedQuery);
+        setStatmentParameters(sqlPreparedStatment, parameterList);
+        sqlPreparedStatment.execute();
+        return sqlPreparedStatment.getUpdateCount();
+    }
+    public void setStatmentParameters(PreparedStatement preparedStatment, List<Object> parameterList) throws SQLException
+    {
+        for(int i = 0 ; i < parameterList.size() ; i++){
+            if(parameterList.get(i) instanceof Integer)
+                preparedStatment.setInt(i + 1, (Integer)parameterList.get(i));
+            else if(parameterList.get(i) instanceof String)
+                preparedStatment.setString(i + 1, (String)parameterList.get(i));
+            else if(parameterList.get(i) instanceof Short)
+                preparedStatment.setShort(i + 1, (Short)parameterList.get(i));
+            else if(parameterList.get(i) instanceof Byte)
+                preparedStatment.setByte(i + 1, (Byte)parameterList.get(i));
+            else if(parameterList.get(i) instanceof Boolean)
+                preparedStatment.setByte(i + 1, (parameterList.get(i)).equals(false)? (byte)0:(byte)1);
+            else if(parameterList.get(i) instanceof Byte[])
+                preparedStatment.setBytes(i + 1, (byte[])parameterList.get(i));
+            else if(parameterList.get(i) instanceof Date)
+                preparedStatment.setDate(i + 1, (Date)parameterList.get(i));
+            else if(parameterList.get(i) instanceof Timestamp)
+                preparedStatment.setTimestamp(i + 1, (Timestamp)parameterList.get(i));
+            else
+                preparedStatment.setDate(i + 1, null);
+        }
     }
 }
