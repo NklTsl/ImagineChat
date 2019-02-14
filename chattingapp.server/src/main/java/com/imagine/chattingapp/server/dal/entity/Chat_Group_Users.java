@@ -10,7 +10,7 @@ package com.imagine.chattingapp.server.dal.entity;
  * @author Mahmoud Shereif
  */
 public class Chat_Group_Users implements Entity {
-    private int groupID;
+    private int groupId;
     private String userPhoneNumber;
     private String fontFamliy;
     private short fontSize;
@@ -20,12 +20,12 @@ public class Chat_Group_Users implements Entity {
     private boolean italicFlag;
     private byte[] textBackground;
 
-    public int getGroupID() {
-        return groupID;
+    public int getGroupId() {
+        return groupId;
     }
 
-    public void setGroupID(int groupID) {
-        this.groupID = groupID;
+    public void setGroupId(int groupID) {
+        this.groupId = groupID;
     }
 
     public String getUserPhoneNumber() {
@@ -60,7 +60,7 @@ public class Chat_Group_Users implements Entity {
         this.fontColor = fontColor;
     }
 
-    public boolean isBoldFlag() {
+    public boolean getBoldFlag() {
         return boldFlag;
     }
 
@@ -68,7 +68,7 @@ public class Chat_Group_Users implements Entity {
         this.boldFlag = boldFlag;
     }
 
-    public boolean isUnderlineFlag() {
+    public boolean getUnderlineFlag() {
         return underlineFlag;
     }
 
@@ -76,7 +76,7 @@ public class Chat_Group_Users implements Entity {
         this.underlineFlag = underlineFlag;
     }
 
-    public boolean isItalicFlag() {
+    public boolean getItalicFlag() {
         return italicFlag;
     }
 

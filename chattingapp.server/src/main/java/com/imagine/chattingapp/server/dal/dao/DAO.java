@@ -19,4 +19,5 @@ public interface DAO<T extends Entity> {
     public void delete(List<Object> primaryKey) throws SQLException;
     public T getByPrimaryKey(List<Object> primaryKeys) throws SQLException;
     public List<T> getAll() throws SQLException;
+    public List<T> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException;
 }

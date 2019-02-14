@@ -136,5 +136,42 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
         
         return userList;
     }
+
+    @Override
+    public List<User> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
+                String getByColumnNamesQuery = "SELECT `user`.`Phone_Number`,`user`.`Name`,`user`.`Email`,"
+                + "`user`.`Picture`,`user`.`Password`,`user`.`Gender`,`user`.`Gender`,"
+                + "`user`.`Biography`,`user`.`Country_ID`,`user`.`Status_ID` FROM `chattingapp`.`user`  "
+                + "WHERE ";
+        
+        for(int i = 0 ; i < columnNames.size() ; i++){
+            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        }
+        
+        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
+        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
+        
+        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
+        queryResult.beforeFirst();
+         List<User> userList = new ArrayList<>();
+        
+        while(queryResult.next())
+        {
+            User user = new User();
+            user.setPhoneNumber(queryResult.getString(1));
+            user.setName(queryResult.getString(2));
+            user.setEmail(queryResult.getString(3));
+            user.setPicture(queryResult.getBytes(4));
+            user.setPassword(queryResult.getString(5));
+            user.setDateOfBirth(queryResult.getDate(7));
+            user.setBiography(queryResult.getString(8));
+            user.setCountryID(queryResult.getByte(9));
+            user.setStatusID(queryResult.getByte(10));
+            userList.add(user);
+        }
+        
+        
+        return userList;
+    }
     
 }

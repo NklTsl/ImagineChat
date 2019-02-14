@@ -13,14 +13,14 @@ public class Country implements Entity {
     private byte id;
     private String name;
     
-    public void setID(byte id){
+    public void setId(byte id){
         this.id = id;
     }
     public void setName(String name){
         this.name = name;
     }
     
-    public byte getID(){
+    public byte getId(){
         return this.id;
     }
     public String getName(){

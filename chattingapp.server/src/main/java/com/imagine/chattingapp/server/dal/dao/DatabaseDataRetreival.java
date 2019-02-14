@@ -57,7 +57,7 @@ public class DatabaseDataRetreival {
             else if(parameterList.get(i) instanceof Timestamp)
                 preparedStatment.setTimestamp(i + 1, (Timestamp)parameterList.get(i));
             else
-                preparedStatment.setDate(i + 1, null);
+                preparedStatment.setNull(i + 1, java.sql.Types.NULL);
         }
     }
 }

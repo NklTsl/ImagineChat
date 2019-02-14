@@ -6,6 +6,7 @@
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.server.dal.entity.Admin;
+import com.imagine.chattingapp.server.dal.entity.Chat_Group;
 import com.imagine.chattingapp.server.dal.entity.Entity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -133,7 +134,41 @@ public class AdminDAO implements DAO<Admin> {
         
         return adminList;
     }
-    
+
+    @Override
+    public List<Admin> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
+                String getByColumnNamesQuery = "SELECT `admin`.`Phone_Number`,`admin`.`Name`,`admin`.`Email`,"
+                + "`admin`.`Picture`,`admin`.`Password`,`admin`.`Gender`,`admin`.`Gender`,"
+                + "`admin`.`Biography`,`admin`.`Country_ID` FROM `chattingapp`.`admin`  "
+                + "WHERE ";
+        
+        for(int i = 0 ; i < columnNames.size() ; i++){
+            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        }
+        
+        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
+        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
+        
+        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
+        queryResult.beforeFirst();
+        List<Admin> adminList = new ArrayList<Admin>();
+        if(queryResult.next())
+        {
+            Admin admin = new Admin();
+            admin.setPhoneNumber(queryResult.getString(1));
+            admin.setName(queryResult.getString(2));
+            admin.setEmail(queryResult.getString(3));
+            admin.setPicture(queryResult.getBytes(4));
+            admin.setPassword(queryResult.getString(5));
+            admin.setGender(queryResult.getInt(6) == 0 ? false : true);
+            admin.setDateOfBirth(queryResult.getDate(7));
+            admin.setBiography(queryResult.getString(8));
+            admin.setCountryID(queryResult.getByte(9));
+            adminList.add(admin);
+        }
+        
+        return adminList;
+    }
     
     
 }

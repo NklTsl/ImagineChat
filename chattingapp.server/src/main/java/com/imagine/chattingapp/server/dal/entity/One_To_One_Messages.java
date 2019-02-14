@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  *
  * @author Mahmoud Shereif
  */
-public class On_To_One_Messages implements Entity {
+public class One_To_One_Messages implements Entity {
     private String senderPhoneNumber;
     private String receiverPhoneNumber;
     private Timestamp timestamp;
