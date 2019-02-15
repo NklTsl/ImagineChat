@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imagine.chattingapp.common.clientservices;
+package com.imagine.chattingapp.common.serverservices;
 
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.Remote;
@@ -13,7 +13,6 @@ import java.rmi.RemoteException;
  *
  * @author Mahmoud Shereif
  */
-public interface ClientService extends Remote{
-    public void receive(String Message) throws RemoteException;
-    public void receiveUserDetails(User user) throws RemoteException;
+public interface ChatService extends Remote {
+    public void sendMessage(User user) throws RemoteException;
 }

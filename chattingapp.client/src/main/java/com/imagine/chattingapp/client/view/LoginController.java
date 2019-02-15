@@ -78,7 +78,7 @@ public class LoginController implements Initializable {
         else if(Validation.validatePhone(phone) && Validation.validatePassword(password))
         {
             try {
-                clientService = new ClientServiceImpl();
+                clientService = new ClientServiceImpl(mainController);
                 loginUser = new LoginUser();
                 loginUser.setPhoneNumber(phone);
                 loginUser.setPassword(password);
@@ -89,8 +89,6 @@ public class LoginController implements Initializable {
                         } catch (RemoteException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NotBoundException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (AccessException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

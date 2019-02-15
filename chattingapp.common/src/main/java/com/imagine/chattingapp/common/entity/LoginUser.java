@@ -5,11 +5,13 @@
  */
 package com.imagine.chattingapp.common.entity;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Mahmoud Shereif
  */
-public class LoginUser {
+public class LoginUser implements Serializable{
 
     private String phoneNumber;
     private String password;
