@@ -5,9 +5,9 @@
  */
 package com.imagine.chattingapp.server.dal.dao;
 
+import com.imagine.chattingapp.common.entity.Entity;
 import java.sql.SQLException;
 import java.util.List;
-import com.imagine.chattingapp.server.dal.entity.Entity;
 
 /**
  *

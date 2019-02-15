@@ -5,9 +5,7 @@
 */
 package com.imagine.chattingapp.server.dal.dao;
 
-import com.imagine.chattingapp.server.dal.entity.Admin;
-import com.imagine.chattingapp.server.dal.entity.Friend;
-import com.imagine.chattingapp.server.dal.entity.User;
+import com.imagine.chattingapp.common.entity.Friend;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -20,9 +18,9 @@ import java.util.logging.Logger;
  *
  * @author Mahmoud Shereif
  */
-public class NewClass {
+public class TestDaos {
 
-    public NewClass() throws SQLException {
+    public TestDaos() throws SQLException {
     }
     
     public static void main(String[] args){
@@ -147,7 +145,7 @@ public class NewClass {
             listFriend.contains(list);
             
         } catch (SQLException ex) {
-            Logger.getLogger(NewClass.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestDaos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

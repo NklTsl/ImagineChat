@@ -5,9 +5,8 @@
 */
 package com.imagine.chattingapp.server.dal.dao;
 
-import com.imagine.chattingapp.server.dal.entity.Admin;
-import com.imagine.chattingapp.server.dal.entity.Chat_Group;
-import com.imagine.chattingapp.server.dal.entity.Entity;
+import com.imagine.chattingapp.common.entity.Admin;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class AdminDAO implements DAO<Admin> {
             admin.setPicture(queryResult.getBytes(4));
             admin.setPassword(queryResult.getString(5));
             admin.setGender(queryResult.getInt(6) == 0 ? false : true);
-            admin.setDateOfBirth(queryResult.getDate(7));
+            admin.setDateOfBirth(queryResult.getDate(7).getTime());
             admin.setBiography(queryResult.getString(8));
             admin.setCountryID(queryResult.getByte(9));
         }
@@ -125,7 +124,7 @@ public class AdminDAO implements DAO<Admin> {
             admin.setPicture(queryResult.getBytes(4));
             admin.setPassword(queryResult.getString(5));
             admin.setGender(queryResult.getInt(6) == 0 ? false : true);
-            admin.setDateOfBirth(queryResult.getDate(7));
+            admin.setDateOfBirth(queryResult.getDate(7).getTime());
             admin.setBiography(queryResult.getString(8));
             admin.setCountryID(queryResult.getByte(9));
             adminList.add(admin);
@@ -161,7 +160,7 @@ public class AdminDAO implements DAO<Admin> {
             admin.setPicture(queryResult.getBytes(4));
             admin.setPassword(queryResult.getString(5));
             admin.setGender(queryResult.getInt(6) == 0 ? false : true);
-            admin.setDateOfBirth(queryResult.getDate(7));
+            admin.setDateOfBirth(queryResult.getDate(7).getTime());
             admin.setBiography(queryResult.getString(8));
             admin.setCountryID(queryResult.getByte(9));
             adminList.add(admin);

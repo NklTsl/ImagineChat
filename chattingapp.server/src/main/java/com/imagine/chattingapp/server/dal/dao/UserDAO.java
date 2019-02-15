@@ -5,9 +5,8 @@
  */
 package com.imagine.chattingapp.server.dal.dao;
 
-import com.imagine.chattingapp.server.dal.entity.Admin;
-import com.imagine.chattingapp.server.dal.entity.Entity;
-import com.imagine.chattingapp.server.dal.entity.User;
+
+import com.imagine.chattingapp.common.entity.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
             user.setPicture(queryResult.getBytes(4));
             user.setPassword(queryResult.getString(5));
             user.setGender(queryResult.getInt(6) == 0 ? false : true);
-            user.setDateOfBirth(queryResult.getDate(7));
+            user.setDateOfBirth(queryResult.getDate(7).getTime());
             user.setBiography(queryResult.getString(8));
             user.setCountryID(queryResult.getByte(9));
             user.setStatusID(queryResult.getByte(10));
@@ -126,7 +125,7 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
             user.setEmail(queryResult.getString(3));
             user.setPicture(queryResult.getBytes(4));
             user.setPassword(queryResult.getString(5));
-            user.setDateOfBirth(queryResult.getDate(7));
+            user.setDateOfBirth(queryResult.getDate(7).getTime());
             user.setBiography(queryResult.getString(8));
             user.setCountryID(queryResult.getByte(9));
             user.setStatusID(queryResult.getByte(10));
@@ -163,7 +162,7 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
             user.setEmail(queryResult.getString(3));
             user.setPicture(queryResult.getBytes(4));
             user.setPassword(queryResult.getString(5));
-            user.setDateOfBirth(queryResult.getDate(7));
+            user.setDateOfBirth(queryResult.getDate(7).getTime());
             user.setBiography(queryResult.getString(8));
             user.setCountryID(queryResult.getByte(9));
             user.setStatusID(queryResult.getByte(10));
