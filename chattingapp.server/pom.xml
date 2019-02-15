@@ -20,6 +20,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.imagine</groupId>
+            <artifactId>chattingapp.common</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

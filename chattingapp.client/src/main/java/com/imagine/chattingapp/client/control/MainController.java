@@ -1,26 +1,24 @@
 package com.imagine.chattingapp.client.control;
 
-import com.imagine.chattingapp.client.dal.ClientService;
-import com.imagine.chattingapp.client.dal.ServerService;
-import com.imagine.chattingapp.client.dal.entity.User;
-import com.imagine.chattingapp.client.view.LoginWindow;
-import com.imagine.chattingapp.client.view.ChatWindow;
+
+import com.imagine.chattingapp.client.view.LoginController;
+import com.imagine.chattingapp.client.view.RegisterController;
 import com.imagine.chattingapp.client.view.RegisterWindow;
 import com.imagine.chattingapp.client.view.UpdateProfileWindow;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainController extends Application {
-
-    ServerService serverService;
-    ClientService clientService;
     
     LoginController loginController = null;
-    ChatController chatController = null;
+    //ChatController chatController = null;
     RegisterController registerController = null;
     UpdateProfileController updateProfileController = null;
     
@@ -33,34 +31,35 @@ public class MainController extends Application {
     Stage primaryStage = null;
     
     public MainController() {
-//        serverService = new ServerService();
-//        clientService = new ClientService();
         
-        loginController = new LoginController(this, serverService);
-        loginScene = loginController.getLoginScene();
-        
-        chatController = new ChatController(this, serverService);
-        chatScene = chatController.getChatScene();      
-        
-        registerController = new RegisterController(this, serverService);
-        registerScene = registerController.getRegisterScene();
-        
-        updateProfileController = new UpdateProfileController(this, serverService);
-        updateProfileScene = updateProfileController.getUpdateProfileScene();
+//        loginController = new LoginController(this);
+//        loginScene = loginController.getLoginScene();
+//        
+//        chatController = new ChatController(this);
+//        chatScene = chatController.getChatScene();
+//        
+//        registerController = new RegisterController(this);
+//        registerScene = registerController.getRegisterScene();
+//        
+//        updateProfileController = new UpdateProfileController(this);
+//        updateProfileScene = updateProfileController.getUpdateProfileScene();
         
     }
-
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
         
-
+        this.primaryStage = primaryStage;
+        switchToLoginScene();
+        primaryStage.show();
+        
+        
     }
-
+    
     public static void main(String[] args) {
         launch(args);
     }
-
+    
     void login() {
 //        try {
 //            serverService.login(clientService);
@@ -76,18 +75,66 @@ public class MainController extends Application {
 //            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }
-
+    
     void switchToLoginScene() {
-        primaryStage.setScene(loginScene);
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loginController = new LoginController(this, );
+            loader.setController(loginController);
+            Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
+            
+            Scene scene = new Scene(root);
+            
+            primaryStage.setTitle("Login");
+            primaryStage.setScene(scene);
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     void switchToChatScene() {
-        primaryStage.setScene(chatScene);
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loginController = new LoginController(this);
+            loader.setController(loginController);
+            Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
+            
+            Scene scene = new Scene(root);
+            
+            primaryStage.setTitle("Login");
+            primaryStage.setScene(scene);
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     void switchToRegisterScene() {
-        primaryStage.setScene(registerScene);
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loginController = new LoginController(this);
+            loader.setController(loginController);
+            Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
+            
+            Scene scene = new Scene(root);
+            
+            primaryStage.setTitle("Login");
+            primaryStage.setScene(scene);
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     void switchToUpdateProfileScene() {
-        primaryStage.setScene(updateProfileScene);
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loginController = new LoginController(this);
+            loader.setController(loginController);
+            Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
+            
+            Scene scene = new Scene(root);
+            
+            primaryStage.setTitle("Login");
+            primaryStage.setScene(scene);
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

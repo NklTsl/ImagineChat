@@ -5,8 +5,7 @@
  */
 package com.imagine.chattingapp.server.dal.dao;
 
-import com.imagine.chattingapp.server.dal.entity.Friend_Request;
-import com.imagine.chattingapp.server.dal.entity.Message_Status;
+import com.imagine.chattingapp.common.entity.Friend_Request;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

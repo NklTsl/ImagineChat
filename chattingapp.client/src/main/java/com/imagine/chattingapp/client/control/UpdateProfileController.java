@@ -5,7 +5,6 @@
  */
 package com.imagine.chattingapp.client.control;
 
-import com.imagine.chattingapp.client.dal.ServerService;
 import javafx.scene.Scene;
 
 /**
@@ -14,7 +13,7 @@ import javafx.scene.Scene;
  */
 public class UpdateProfileController {
 
-    UpdateProfileController(MainController aThis, ServerService serverService) {
+    UpdateProfileController(MainController aThis) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

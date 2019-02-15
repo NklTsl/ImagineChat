@@ -54,6 +54,8 @@ public class DatabaseDataRetreival {
                 preparedStatment.setBytes(i + 1, (byte[])parameterList.get(i));
             else if(parameterList.get(i) instanceof Date)
                 preparedStatment.setDate(i + 1, (Date)parameterList.get(i));
+            else if(parameterList.get(i) instanceof Long)
+                preparedStatment.setDate(i + 1, new Date((long)parameterList.get(i)));
             else if(parameterList.get(i) instanceof Timestamp)
                 preparedStatment.setTimestamp(i + 1, (Timestamp)parameterList.get(i));
             else

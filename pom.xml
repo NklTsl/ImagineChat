@@ -8,6 +8,7 @@
     <modules>
         <module>chattingapp.server</module>
         <module>chattingapp.client</module>
+        <module>chattingapp.common</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

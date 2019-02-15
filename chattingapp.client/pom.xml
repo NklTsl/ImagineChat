@@ -8,6 +8,20 @@
     </parent>
     <artifactId>chattingapp.client</artifactId>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.imagine</groupId>
+            <artifactId>chattingapp.common</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>javaFX</artifactId>
+            <version>2.2</version>
+            <scope>system</scope>
+            <systemPath>C:\Program Files\Java\jre1.8.0_191\lib\ext\jfxrt.jar</systemPath>
+        </dependency>
+    </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
