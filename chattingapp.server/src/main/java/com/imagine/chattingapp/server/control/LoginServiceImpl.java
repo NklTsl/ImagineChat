@@ -27,6 +27,11 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
     
     public LoginServiceImpl()throws RemoteException{}
 
+    public LoginServiceImpl() throws RemoteException{
+        
+    }
+
+    
     @Override
     public void login(LoginUser loginUser, ClientService clientService) throws RemoteException {
         try {
@@ -36,8 +41,8 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
             columnNames.add("Password");
             
             List<Object> columnValues = new ArrayList<Object>();
-            columnNames.add(loginUser.getPhoneNumber());
-            columnNames.add(loginUser.getPassword());
+            columnValues.add(loginUser.getPhoneNumber());
+            columnValues.add(loginUser.getPassword());
             
             List<User> userList = userDAO.getByColumnNames(columnNames, columnValues);
             if(userList.isEmpty())
@@ -46,7 +51,7 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
             }
             else
             {
-                
+                clientService.receiveUserDetails(userList.get(0));
             }
         
     }   catch (SQLException ex) {

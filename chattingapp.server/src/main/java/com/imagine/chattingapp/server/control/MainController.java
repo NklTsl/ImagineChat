@@ -20,9 +20,9 @@ public class MainController {
     public static void main(String[] args)
     {
         try {
-            RegisterServiceImpl registerServiceImpl = new RegisterServiceImpl();
+            LoginServiceImpl loginServiceImpl = new LoginServiceImpl();
             Registry registery = LocateRegistry.createRegistry(2000);
-            registery.rebind("Register", registerServiceImpl);
+            registery.rebind("LoginService", loginServiceImpl);
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

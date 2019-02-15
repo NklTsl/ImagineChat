@@ -78,7 +78,7 @@ public class LoginController implements Initializable {
         else if(Validation.validatePhone(phone) && Validation.validatePassword(password))
         {
             try {
-                clientService = new ClientServiceImpl();
+                clientService = new ClientServiceImpl(mainController);
                 loginUser = new LoginUser();
                 loginUser.setPhoneNumber(phone);
                 loginUser.setPassword(password);

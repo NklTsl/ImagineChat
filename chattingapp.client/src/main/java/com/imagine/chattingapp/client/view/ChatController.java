@@ -1,41 +1,39 @@
+package com.imagine.chattingapp.client.view;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imagine.chattingapp.client.view;
 
+import com.imagine.chattingapp.client.control.MainController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 
 /**
  * FXML Controller class
  *
  * @author Mahmoud Shereif
  */
-public class LoginController implements Initializable {
+public class ChatController implements Initializable {
 
     @FXML
-    private Label welcomeMessage;
+    private ListView<?> lstContacts;
     @FXML
-    private Label lblPhone;
+    private Button btnBack;
     @FXML
-    private Label lblPassword;
-    @FXML
-    private TextField txtPhone;
-    @FXML
-    private PasswordField txtPassword;
-    @FXML
-    private Button btnLogin;
-    @FXML
-    private Button btnCancel;
+    private TextField txtMessage;
+
+    public ChatController(MainController aThis) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     /**
      * Initializes the controller class.
@@ -46,11 +44,11 @@ public class LoginController implements Initializable {
     }    
 
     @FXML
-    private void btnLoginAction(ActionEvent event) {
+    private void btnBackAction(ActionEvent event) {
     }
 
     @FXML
-    private void btnCancelAction(ActionEvent event) {
+    private void txtMessageKeyPressed(KeyEvent event) {
     }
     
 }
