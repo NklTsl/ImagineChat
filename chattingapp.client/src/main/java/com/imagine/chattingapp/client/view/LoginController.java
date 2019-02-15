@@ -90,8 +90,6 @@ public class LoginController implements Initializable {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NotBoundException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (AccessException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

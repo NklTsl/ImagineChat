@@ -24,6 +24,8 @@ import java.util.logging.Logger;
  * @author Mahmoud Shereif
  */
 public class LoginServiceImpl extends UnicastRemoteObject implements LoginService{
+    
+    public LoginServiceImpl()throws RemoteException{}
 
     @Override
     public void login(LoginUser loginUser, ClientService clientService) throws RemoteException {
@@ -46,9 +48,10 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
             {
                 
             }
-        } catch (SQLException ex) {
+        
+    }   catch (SQLException ex) {
             Logger.getLogger(LoginServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
     
+    }
 }

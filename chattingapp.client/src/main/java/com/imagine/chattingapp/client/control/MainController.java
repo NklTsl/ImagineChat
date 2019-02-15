@@ -79,7 +79,7 @@ public class MainController extends Application {
     void switchToLoginScene() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loginController = new LoginController(this, );
+            loginController = new LoginController(this);
             loader.setController(loginController);
             Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
             
