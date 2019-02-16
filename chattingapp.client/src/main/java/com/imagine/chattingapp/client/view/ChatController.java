@@ -7,6 +7,7 @@ package com.imagine.chattingapp.client.view;
 */
 
 import com.imagine.chattingapp.client.control.MainController;
+import com.imagine.chattingapp.common.customobj.ChatSession;
 import com.imagine.chattingapp.common.customobj.Contact;
 import com.imagine.chattingapp.common.customobj.FriendContact;
 import com.imagine.chattingapp.common.customobj.GroupContact;
@@ -23,8 +24,11 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -56,7 +60,10 @@ public class ChatController implements Initializable {
     private TextArea txtChatArea;
     
     
-    String currentSelectedContact;
+    FriendContact currentSelectedFriendContact;
+    GroupContact  currentSelectedGroupContact;
+    Boolean friendOrGroupContact;
+    ChatSession currentChatSession;
     
     private MainController mainController;
     private LightUser lightUser;
@@ -65,9 +72,12 @@ public class ChatController implements Initializable {
     private OneToOneMessage oneToOneMessage;
     private GroupMessage groupMessage;
     
+    Map<String, ChatSession> chatSessionsMap;
+    
     public ChatController(MainController mainController, LightUser lightUser) {
         this.mainController = mainController;
         this.lightUser = lightUser;
+        chatSessionsMap = new TreeMap<>();
     }
     
     /**
@@ -108,26 +118,26 @@ public class ChatController implements Initializable {
             
             lstContacts.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, currentContact) -> {
                 
-                if(currentContact instanceof FriendContact)
-                {
-                    currentSelectedContact = ((FriendContact)currentContact).getPhoneNumber();
-                    if(currentContact instanceof FriendContact){
-                        if(((FriendContact)currentContact).getStatus() == null)
-                        {
-                            txtMessage.setDisable(true);
-                        }
-                        else
-                        {
-                            txtMessage.setDisable(false);
-                        }
+                if(currentContact instanceof FriendContact){
+                    currentSelectedFriendContact = (FriendContact)currentContact;
+                    friendOrGroupContact = true;
+                    fillChatArea(currentSelectedFriendContact.getPhoneNumber());
+                    if((currentSelectedFriendContact).getStatus() == null)
+                    {
+                        //txtMessage.setDisable(true);
+                    }
+                    else
+                    {
+                        //txtMessage.setDisable(false);
                     }
                 }
                 else
                 {
-                    int groupId = ((GroupContact)currentContact).getGroupId();
-                    currentSelectedContact = String.valueOf(groupId);
+                    currentSelectedGroupContact = (GroupContact)currentContact;
+                    friendOrGroupContact = false;
+                    fillChatArea(String.valueOf(currentSelectedGroupContact.getGroupId()));
+                    txtMessage.setDisable(false);
                 }
-                txtChatArea.clear();
                 
             });
             
@@ -147,53 +157,166 @@ public class ChatController implements Initializable {
     private void txtMessageKeyPressed(KeyEvent event) {
         if(event.getCode().equals(KeyCode.ENTER))
         {
-            if(currentSelectedContact!=null){
-                if(lstContacts.getSelectionModel().getSelectedItem() instanceof FriendContact)
-                {
-                    oneToOneMessage = new OneToOneMessage();
-                    oneToOneMessage.setMessage(txtMessage.getText().toString().trim());
-                    oneToOneMessage.setSenderPhone(lightUser.getPhoneNumber());
-                    oneToOneMessage.setReceiverPhone(currentSelectedContact);
-                    
-                    try {
-                        chatService.sendMessage(oneToOneMessage);
-                        txtMessage.clear();
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                else
-                {
-                    groupMessage = new GroupMessage();
-                    groupMessage.setMessage(txtMessage.getText().toString().trim());
-                    groupMessage.setReceiverGroup(Integer.parseInt(currentSelectedContact));
-                    groupMessage.setSenderUser(lightUser);
-                    
-                    try {
-                        chatService.sendMessage(groupMessage);
-                        txtMessage.clear();
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            sendMessage();
+        }
+        
+    }
+    
+    private void sendMessage()
+    {
+        if(friendOrGroupContact == null){
+            //should Select a contact to send
+        }
+        else if(friendOrGroupContact && !txtMessage.getText().isEmpty()){
+            oneToOneMessage = new OneToOneMessage();
+            oneToOneMessage.setMessage(txtMessage.getText().toString().trim());
+            oneToOneMessage.setSenderPhone(lightUser.getPhoneNumber());
+            oneToOneMessage.setReceiverPhone(currentSelectedFriendContact.getPhoneNumber());
+            
+            try {
+                chatService.sendMessage(oneToOneMessage);
+                txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+                txtMessage.clear();
+                
+                List<Message> previousMessagesList = createOrAppendChatSession(currentSelectedFriendContact.getPhoneNumber());
+                previousMessagesList.add(oneToOneMessage);
+            } catch (RemoteException ex) {
+                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else
+        {
+            groupMessage = new GroupMessage();
+            groupMessage.setMessage(txtMessage.getText().toString().trim());
+            groupMessage.setReceiverGroup(currentSelectedGroupContact.getGroupId());
+            groupMessage.setSenderUser(lightUser);
+            
+            try {
+                chatService.sendMessage(groupMessage);
+                txtMessage.clear();
+                List<Message> previousMessagesList = createOrAppendChatSession(String.valueOf(currentSelectedGroupContact.getGroupId()));
+                previousMessagesList.add(groupMessage);
+            } catch (RemoteException ex) {
+                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
     public void receive(Message message)
     {
+        Contact tempContact = null;
+        List<Message> previousMessagesList;
         if(message instanceof OneToOneMessage)
         {
             oneToOneMessage = (OneToOneMessage)message;
-            txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+            previousMessagesList = createOrAppendChatSession(oneToOneMessage.getSenderPhone());
+            previousMessagesList.add(oneToOneMessage);
+            if(currentSelectedFriendContact != null)
+            {
+                if(currentSelectedFriendContact.getPhoneNumber().equals(oneToOneMessage.getSenderPhone()))
+                {
+                    txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+                }
+                else
+                {
+                    //TODO Notification for receiving message
+                }
+            }
+            
             
         }
         else
         {
             groupMessage = (GroupMessage)message;
-            txtChatArea.appendText(groupMessage.getSenderUser().getName()+ ":" + groupMessage.getMessage() + "\n");
+            previousMessagesList = createOrAppendChatSession(String.valueOf(groupMessage.getReceiverGroup()));
+            previousMessagesList.add(groupMessage);
+            if(currentSelectedGroupContact != null)
+            {
+                if(currentSelectedGroupContact.getGroupId() == groupMessage.getReceiverGroup())
+                {
+                    txtChatArea.appendText(groupMessage.getSenderUser().getName()+ ":" + groupMessage.getMessage() + "\n");
+                }
+                else
+                {
+                    //TODO Notification for receiving message
+                }
+            }
+            
         }
-        
     }
     
+    
+    private List<Message> createOrAppendChatSession(String sessionId)
+    {
+        currentChatSession = chatSessionsMap.get(sessionId);
+        if(currentChatSession != null)
+        {
+            return currentChatSession.getMessagesList();
+        }
+        else
+        {
+            currentChatSession = new ChatSession();
+            currentChatSession.setSessionId(sessionId);
+            Contact tempContact = getContactById(sessionId);
+            if(tempContact instanceof FriendContact)
+            {
+                currentChatSession.setOneOrGroupFlag(true);
+                currentChatSession.setName(((FriendContact)tempContact).getName());
+                currentChatSession.setPicture(((FriendContact)tempContact).getImage());
+            }
+            else
+            {
+                currentChatSession.setOneOrGroupFlag(false);
+                currentChatSession.setName(((GroupContact)tempContact).getName());
+                currentChatSession.setPicture(((GroupContact)tempContact).getImage());
+            }
+            currentChatSession.setMessagesList(new ArrayList<>());
+            chatSessionsMap.put(sessionId, currentChatSession);
+            return currentChatSession.getMessagesList();
+        }
+    }
+    
+    private void fillChatArea(String sessionId)
+    {
+        ChatSession chatSession = chatSessionsMap.get(sessionId);
+        txtChatArea.clear();
+        if(chatSession != null)
+        {
+            List<Message> previousMessagesList = chatSession.getMessagesList();
+            previousMessagesList.forEach((message) -> {
+                if(friendOrGroupContact)
+                {
+                    oneToOneMessage = (OneToOneMessage) message;
+                    txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+                }
+                else
+                {
+                    groupMessage = (GroupMessage) message;
+                    txtChatArea.appendText(groupMessage.getSenderUser().getPhoneNumber()+ ":" + groupMessage.getMessage() + "\n");
+                }
+            });
+        }
+    }
+    
+    private Contact getContactById(String id)
+    {
+        Contact tempContact = null;
+        for(Contact item:lstContacts.getItems()){
+            if(item instanceof FriendContact)
+            {
+                if(((FriendContact)item).getPhoneNumber().equals(id))
+                {
+                    tempContact = item;
+                }
+            }
+            else
+            {
+                if(((GroupContact)item).getGroupId() == Integer.parseInt(id))
+                {
+                    tempContact = item;
+                }
+            }
+        }
+        return tempContact;
+    }
 }

@@ -54,6 +54,9 @@ public class MainController extends Application {
         this.primaryStage = primaryStage;
         switchToLoginScene();
         primaryStage.show();
+        primaryStage.setOnCloseRequest((event) -> {
+            System.exit(0);
+        });
         
         
     }
