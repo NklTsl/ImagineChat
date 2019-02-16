@@ -27,10 +27,6 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
     
     public LoginServiceImpl()throws RemoteException{}
 
-    public LoginServiceImpl() throws RemoteException{
-        
-    }
-
     
     @Override
     public void login(LoginUser loginUser, ClientService clientService) throws RemoteException {

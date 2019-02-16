@@ -23,7 +23,7 @@ public class DatabaseConnection {
     }
     public Connection Connect() throws SQLException{
             loadDatabaseDriver();
-            Connection databaseConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ChattingApp","root", "1234567890");
+            Connection databaseConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ChattingApp","root", "Mennaahmed411");
             return databaseConnection;
     }
     
