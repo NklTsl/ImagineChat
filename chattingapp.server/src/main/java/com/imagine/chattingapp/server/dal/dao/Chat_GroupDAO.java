@@ -25,13 +25,14 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
     @Override
     public void persist(Chat_Group chatGroup) throws SQLException {
         String persistQuery = "INSERT INTO `chattingapp`.`chat_group` "
-                + "(`ID`, `Owner_Phone_Number`, `Name`, `Last_Message_Sent_Time`) "
-                + "VALUES (?, ?, ?, ?);";
+                + "(`ID`, `Owner_Phone_Number`, `Name`, `Picture`, `Last_Message_Sent_Time`) "
+                + "VALUES (?, ?, ?, ?, ?);";
         
         List<Object> parameterList = new ArrayList<>();
         parameterList.add(chatGroup.getId());
         parameterList.add(chatGroup.getOwnerPhoneNumber());
         parameterList.add(chatGroup.getName());
+        parameterList.add(chatGroup.getPicture());
         parameterList.add(chatGroup.getLastMessageSentTime());
         
         databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
@@ -40,12 +41,13 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
     @Override
     public void update(Chat_Group chatGroup) throws SQLException {
         String updateQuery = "UPDATE `chattingapp`.`chat_group` SET `Owner_Phone_Number` = ?,"
-                + " `Name` = ?, `Last_Message_Sent_Time` = ? "
+                + " `Name` = ?, `Picture` = ?,`Last_Message_Sent_Time` = ? "
                 + "WHERE (`ID` = ?);";
         
         List<Object> parameterList = new ArrayList<>();
         parameterList.add(chatGroup.getOwnerPhoneNumber());
         parameterList.add(chatGroup.getName());
+        parameterList.add(chatGroup.getPicture());
         parameterList.add(chatGroup.getLastMessageSentTime());
         parameterList.add(chatGroup.getId());
         
@@ -67,7 +69,7 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
     @Override
     public Chat_Group getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
         String deleteQuery = "SELECT `chat_group`.`ID`, `chat_group`.`Owner_Phone_Number`, "
-                + "`chat_group`.`Name`, `chat_group`.`Last_Message_Sent_Time` "
+                + "`chat_group`.`Name`, `chat_group`.`Picture`, `chat_group`.`Last_Message_Sent_Time` "
                 + "FROM `chattingapp`.`chat_group` "
                 + "WHERE (`ID` = ?);";
         
@@ -84,7 +86,8 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
             chatGroup.setId(queryResult.getInt(1));
             chatGroup.setOwnerPhoneNumber(queryResult.getString(2));
             chatGroup.setName(queryResult.getString(3));
-            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(4));
+            chatGroup.setPicture(queryResult.getBytes(4));
+            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(5));
         }
         return chatGroup;
     }
@@ -92,7 +95,7 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
     @Override
     public List<Chat_Group> getAll() throws SQLException {
         String getAllQuery = "SELECT `chat_group`.`ID`, `chat_group`.`Owner_Phone_Number`, "
-                + "`chat_group`.`Name`, `chat_group`.`Last_Message_Sent_Time` "
+                + "`chat_group`.`Name`, `chat_group`.`Picture`,`chat_group`.`Last_Message_Sent_Time` "
                 + "FROM `chattingapp`.`chat_group` ";
         
         ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
@@ -106,7 +109,8 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
             chatGroup.setId(queryResult.getInt(1));
             chatGroup.setName(queryResult.getString(2));
             chatGroup.setName(queryResult.getString(3));
-            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(4));
+            chatGroup.setPicture(queryResult.getBytes(4));
+            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(5));
             
             chatGroupList.add(chatGroup);
         }
@@ -118,7 +122,7 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
     @Override
     public List<Chat_Group> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
         String getByColumnNamesQuery = "SELECT `chat_group`.`ID`, `chat_group`.`Owner_Phone_Number`, "
-                + "`chat_group`.`Name`, `chat_group`.`Last_Message_Sent_Time` "
+                + "`chat_group`.`Name`,`chat_group`.`Picture`, `chat_group`.`Last_Message_Sent_Time` "
                 + "FROM `chattingapp`.`chat_group` "
                 + "WHERE ";
         
@@ -138,7 +142,8 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
             chatGroup.setId(queryResult.getInt(1));
             chatGroup.setOwnerPhoneNumber(queryResult.getString(2));
             chatGroup.setName(queryResult.getString(3));
-            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(4));
+            chatGroup.setPicture(queryResult.getBytes(4));
+            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(5));
             chatGroupList.add(chatGroup);
         }
         

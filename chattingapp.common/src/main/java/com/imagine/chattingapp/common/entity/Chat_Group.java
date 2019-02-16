@@ -15,6 +15,8 @@ public class Chat_Group implements Entity{
     private int id;
     private String ownerPhoneNumber;
     private String name;
+    private byte[] picture;
+    
     private Timestamp lastMessageSentTime;
     
     public int getId() {
@@ -47,6 +49,14 @@ public class Chat_Group implements Entity{
 
     public void setLastMessageSentTime(Timestamp lastMessageSentTime) {
         this.lastMessageSentTime = lastMessageSentTime;
+    }
+    
+    public byte[] getPicture() {
+        return picture;
+    }
+
+    public void setPicture(byte[] image) {
+        this.picture = image;
     }
     
 

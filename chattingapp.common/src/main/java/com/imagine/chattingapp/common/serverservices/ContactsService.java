@@ -5,18 +5,15 @@
  */
 package com.imagine.chattingapp.common.serverservices;
 
-import com.imagine.chattingapp.common.clientservices.ClientService;
-import com.imagine.chattingapp.common.customobj.LightUser;
-import com.imagine.chattingapp.common.entity.LoginUser;
+import com.imagine.chattingapp.common.customobj.Contact;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  *
  * @author Mahmoud Shereif
  */
-public interface LoginService extends Remote {
-    
-    public LightUser login(LoginUser loginUser, ClientService clientService) throws RemoteException;
-    
+public interface ContactsService extends Remote {
+    public List<Contact> getContacts(String phoneNumber) throws RemoteException;
 }

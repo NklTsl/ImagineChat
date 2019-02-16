@@ -19,7 +19,7 @@
             <Button fx:id="btnBack" mnemonicParsing="false" onAction="#btnBackAction" prefHeight="20.0" prefWidth="405.0" text="Back" BorderPane.alignment="CENTER" />
          </top>
          <center>
-            <TextArea prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="txtChatArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </center>

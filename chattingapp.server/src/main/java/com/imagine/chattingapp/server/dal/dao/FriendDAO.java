@@ -5,6 +5,7 @@
 */
 package com.imagine.chattingapp.server.dal.dao;
 
+import com.imagine.chattingapp.common.customobj.Contact;
 import com.imagine.chattingapp.common.entity.Friend;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -202,4 +203,5 @@ public class FriendDAO implements DAO<Friend> {
         
         return friendList;
     }
+    
 }

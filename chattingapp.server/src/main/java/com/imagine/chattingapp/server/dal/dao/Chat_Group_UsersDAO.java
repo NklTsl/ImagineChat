@@ -182,4 +182,25 @@ public class Chat_Group_UsersDAO implements DAO<Chat_Group_Users> {
         return chatGroupUsersList;
     }
     
+    public List<String> getPhonesByGroupId(String groupId) throws SQLException {
+        String getPhonesByGroupIdQuery = "SELECT User_Phone_Number "
+                + "FROM chattingapp.chat_group_users "
+                + "where Group_ID = ?";
+       
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(groupId);
+        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getPhonesByGroupIdQuery, parameters);
+        queryResult.beforeFirst();
+        List<String> chatGroupUsersPhones = new ArrayList<>();
+        
+        while(queryResult.next())
+        {
+            String chatGroupUserPhone = queryResult.getString(1);
+            chatGroupUsersPhones.add(chatGroupUserPhone);
+        }
+        
+        
+        return chatGroupUsersPhones;
+    }
+    
 }

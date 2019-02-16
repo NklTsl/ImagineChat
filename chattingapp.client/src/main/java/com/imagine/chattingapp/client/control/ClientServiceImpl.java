@@ -6,6 +6,9 @@
 package com.imagine.chattingapp.client.control;
 
 import com.imagine.chattingapp.common.clientservices.ClientService;
+import com.imagine.chattingapp.common.customobj.FriendContact;
+import com.imagine.chattingapp.common.customobj.Message;
+import com.imagine.chattingapp.common.entity.One_To_One_Messages;
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -23,14 +26,7 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
 
     
     @Override
-    public void receive(String Message) throws RemoteException {
-        System.out.println("received");
+    public void receive(Message message) throws RemoteException {
+       mainController.getChatController().receive(message);
     }
-
-    @Override
-    public void receiveUserDetails(User user) throws RemoteException {
-        mainController.switchToChatScene(user);
-    }
-    
-    
 }

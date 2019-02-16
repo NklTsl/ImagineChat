@@ -5,6 +5,7 @@
  */
 package com.imagine.chattingapp.common.serverservices;
 
+import com.imagine.chattingapp.common.customobj.Message;
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -14,5 +15,5 @@ import java.rmi.RemoteException;
  * @author Mahmoud Shereif
  */
 public interface ChatService extends Remote {
-    public void sendMessage(User user) throws RemoteException;
+    public void sendMessage(Message message) throws RemoteException;
 }

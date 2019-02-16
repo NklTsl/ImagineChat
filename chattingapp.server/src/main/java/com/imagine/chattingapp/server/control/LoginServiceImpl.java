@@ -6,6 +6,8 @@
 package com.imagine.chattingapp.server.control;
 
 import com.imagine.chattingapp.common.clientservices.ClientService;
+import com.imagine.chattingapp.common.customobj.FriendContact;
+import com.imagine.chattingapp.common.customobj.LightUser;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.entity.User;
 import com.imagine.chattingapp.common.serverservices.LoginService;
@@ -24,14 +26,14 @@ import java.util.logging.Logger;
  * @author Mahmoud Shereif
  */
 public class LoginServiceImpl extends UnicastRemoteObject implements LoginService{
-
     public LoginServiceImpl() throws RemoteException{
         
     }
 
     
     @Override
-    public void login(LoginUser loginUser, ClientService clientService) throws RemoteException {
+    public LightUser login(LoginUser loginUser, ClientService clientService) throws RemoteException {
+        LightUser lightUser = null;
         try {
             UserDAO userDAO = new UserDAO();
             List<String> columnNames = new ArrayList<String>();
@@ -43,17 +45,21 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
             columnValues.add(loginUser.getPassword());
             
             List<User> userList = userDAO.getByColumnNames(columnNames, columnValues);
-            if(userList.isEmpty())
+            
+            
+            if(!userList.isEmpty())
             {
-                throw new RemoteException();
-            }
-            else
-            {
-                clientService.receiveUserDetails(userList.get(0));
+                User user = userList.get(0);
+                lightUser = new LightUser();
+                lightUser.setPhoneNumber(user.getPhoneNumber());
+                lightUser.setName(user.getName());
+                lightUser.setImage(user.getPicture());
+                MainController.registerClient(lightUser.getPhoneNumber(), clientService);
             }
         } catch (SQLException ex) {
             Logger.getLogger(LoginServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return lightUser;
     }
     
 }

@@ -9,6 +9,7 @@ import com.imagine.chattingapp.client.control.ClientServiceImpl;
 import com.imagine.chattingapp.common.validation.Validation;
 import com.imagine.chattingapp.client.control.MainController;
 import com.imagine.chattingapp.common.clientservices.ClientService;
+import com.imagine.chattingapp.common.customobj.LightUser;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.serverservices.LoginService;
 import java.net.URL;
@@ -51,7 +52,6 @@ public class LoginController implements Initializable {
     private Button btnCancel;
     
     private MainController mainController;
-    private ClientService clientService;
     private LoginUser loginUser;
 
     public LoginController(MainController mainController) {
@@ -78,15 +78,24 @@ public class LoginController implements Initializable {
         else if(Validation.validatePhone(phone) && Validation.validatePassword(password))
         {
             try {
-                clientService = new ClientServiceImpl(mainController);
                 loginUser = new LoginUser();
                 loginUser.setPhoneNumber(phone);
                 loginUser.setPassword(password);
                 
                 Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
                 LoginService loginService = (LoginService) registry.lookup("LoginService");
-                loginService.login(loginUser, clientService);
-                        } catch (RemoteException ex) {
+                LightUser lightUser = loginService.login(loginUser, mainController.getClientService());
+                
+                if(lightUser != null)
+                {
+                    mainController.switchToChatScene(lightUser);
+                }
+                else
+                {
+                    //ToDo Display wrong user name or password
+                }
+                
+            } catch (RemoteException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NotBoundException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);

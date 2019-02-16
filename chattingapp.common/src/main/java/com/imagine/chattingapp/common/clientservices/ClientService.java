@@ -5,6 +5,8 @@
  */
 package com.imagine.chattingapp.common.clientservices;
 
+import com.imagine.chattingapp.common.customobj.FriendContact;
+import com.imagine.chattingapp.common.customobj.Message;
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -14,6 +16,5 @@ import java.rmi.RemoteException;
  * @author Mahmoud Shereif
  */
 public interface ClientService extends Remote{
-    public void receive(String Message) throws RemoteException;
-    public void receiveUserDetails(User user) throws RemoteException;
+    public void receive(Message message) throws RemoteException;
 }
