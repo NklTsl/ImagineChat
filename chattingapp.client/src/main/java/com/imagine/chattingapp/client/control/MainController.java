@@ -53,8 +53,10 @@ public class MainController extends Application {
     public void start(Stage primaryStage) throws Exception {
         
         this.primaryStage = primaryStage;
+        
         switchToLoginScene();
         primaryStage.show();
+        
         
         
     }
@@ -91,9 +93,11 @@ public class MainController extends Application {
             Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
             
             Scene scene = new Scene(root);
+            this.primaryStage.setMaximized(false);
             
             primaryStage.setTitle("Login");
             primaryStage.setScene(scene);
+            
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

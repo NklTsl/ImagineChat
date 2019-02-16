@@ -7,6 +7,7 @@ package com.imagine.chattingapp.server.control;
 
 import com.imagine.chattingapp.common.entity.User;
 import com.imagine.chattingapp.common.serverservices.ChatService;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
