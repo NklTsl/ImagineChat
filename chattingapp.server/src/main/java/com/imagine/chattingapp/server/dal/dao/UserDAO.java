@@ -26,13 +26,14 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
     @Override
     public void persist(User user) throws SQLException {
         String persistQuery = "INSERT INTO `chattingapp`.`user` "
-                + "(`Phone_Number`, `Name`, `Email`, `Password`, `Gender`, `Date_Of_Birth`, `Biography`, `Country_ID`, `Status_ID`) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "(`Phone_Number`, `Name`, `Email`, `Picture`,`Password`, `Gender`, `Date_Of_Birth`, `Biography`, `Country_ID`, `Status_ID`) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         List<Object> parameterList = new ArrayList<>();
         parameterList.add(user.getPhoneNumber());
         parameterList.add(user.getName());
         parameterList.add(user.getEmail());
+        parameterList.add(user.getPicture());
         parameterList.add(user.getPassword());
         parameterList.add(user.getGender());
         parameterList.add(user.getDateOfBirth());
@@ -46,13 +47,14 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
     @Override
     public void update(User user) throws SQLException {
         String updateQuery = "UPDATE `chattingapp`.`user` "
-                + "SET `Name` = ?, `Email` = ?, `Password` = ?, "
+                + "SET `Name` = ?, `Email` = ?, `Picture` = ?,`Password` = ?, "
                 + "`Gender` = ?, `Date_Of_Birth` = ?, `Biography` = ?, "
                 + "`Country_ID` = ?, `Status_ID` = ? WHERE (`Phone_Number` = ?)";
         
         List<Object> parameterList = new ArrayList<>();
         parameterList.add(user.getName());
         parameterList.add(user.getEmail());
+        parameterList.add(user.getPicture());
         parameterList.add(user.getPassword());
         parameterList.add(user.getGender());
         parameterList.add(user.getDateOfBirth());

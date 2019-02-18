@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imagine.chattingapp.client.control;
+package com.imagine.chattingapp.client.view;
 
+import com.imagine.chattingapp.client.control.MainController;
 import javafx.scene.Scene;
 
 /**

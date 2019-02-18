@@ -7,17 +7,20 @@ package com.imagine.chattingapp.client.view;
 */
 
 import com.imagine.chattingapp.client.control.MainController;
-import com.imagine.chattingapp.common.customobj.ChatSession;
-import com.imagine.chattingapp.common.customobj.Contact;
-import com.imagine.chattingapp.common.customobj.FriendContact;
-import com.imagine.chattingapp.common.customobj.GroupContact;
-import com.imagine.chattingapp.common.customobj.GroupMessage;
-import com.imagine.chattingapp.common.customobj.LightUser;
-import com.imagine.chattingapp.common.customobj.Message;
-import com.imagine.chattingapp.common.customobj.OneToOneMessage;
+import com.imagine.chattingapp.common.dto.ChatSession;
+import com.imagine.chattingapp.common.dto.Contact;
+import com.imagine.chattingapp.common.dto.ContactNotification;
+import com.imagine.chattingapp.common.dto.FriendContact;
+import com.imagine.chattingapp.common.dto.GroupContact;
+import com.imagine.chattingapp.common.dto.GroupMessage;
+import com.imagine.chattingapp.common.dto.LightUser;
+import com.imagine.chattingapp.common.dto.Message;
+import com.imagine.chattingapp.common.dto.Notification;
+import com.imagine.chattingapp.common.dto.OneToOneMessage;
+import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.serverservices.ChatService;
 import com.imagine.chattingapp.common.serverservices.ContactsService;
-import com.imagine.chattingapp.common.serverservices.LoginService;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -35,13 +38,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
+import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
+import java.io.File;
+import javafx.application.Platform;
+import javafx.scene.media.AudioClip;
+import org.controlsfx.control.Notifications;
 
 /**
  * FXML Controller class
@@ -58,6 +71,10 @@ public class ChatController implements Initializable {
     private TextField txtMessage;
     @FXML
     private TextArea txtChatArea;
+    @FXML
+    private Label lblUserName;
+    @FXML
+    private ImageView viewProfileImage;
     
     
     FriendContact currentSelectedFriendContact;
@@ -67,17 +84,25 @@ public class ChatController implements Initializable {
     
     private MainController mainController;
     private LightUser lightUser;
+    private LoginUser loginUser;
     private ChatService chatService;
+    private AudioClip onlineSound;
+    private AudioClip offlineSound;
     
     private OneToOneMessage oneToOneMessage;
     private GroupMessage groupMessage;
     
     Map<String, ChatSession> chatSessionsMap;
     
-    public ChatController(MainController mainController, LightUser lightUser) {
+    public ChatController(MainController mainController, LightUser lightUser, LoginUser loginUser) {
         this.mainController = mainController;
         this.lightUser = lightUser;
+        this.loginUser = loginUser;
         chatSessionsMap = new TreeMap<>();
+        onlineSound = new AudioClip(new File("target/classes/Online.mp3").toURI().toString());
+        offlineSound = new AudioClip(new File("target/classes/Offline.mp3").toURI().toString());
+        
+        
     }
     
     /**
@@ -96,6 +121,10 @@ public class ChatController implements Initializable {
                 lstContacts.getItems().add(contact);
             });
             
+            if(lightUser.getImage() != null)
+                viewProfileImage.setImage(new Image(new ByteArrayInputStream(lightUser.getImage())));
+            lblUserName.setText(lightUser.getName());
+            
             lstContacts.setCellFactory(new Callback<ListView<Contact>, ListCell<Contact>>() {
                 @Override
                 public ListCell<Contact> call(ListView<Contact> param) {
@@ -105,10 +134,38 @@ public class ChatController implements Initializable {
                             super.updateItem(contact, empty);
                             if(!empty)
                             {
-                                if(contact instanceof FriendContact)
+                                if(contact instanceof FriendContact){
                                     this.setText(((FriendContact)contact).getName());
+                                    if(((FriendContact)contact).getStatus() != null)
+                                    {
+                                        if(((FriendContact)contact).getNotified())
+                                        {
+                                            this.setTextFill(Color.GREEN);
+                                        }
+                                        else
+                                        {
+                                            this.setTextFill(Color.BLACK);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        this.setTextFill(Color.RED);
+                                    }
+                                }
                                 else
+                                {
                                     this.setText(((GroupContact)contact).getName());
+                                    
+                                    if(((GroupContact)contact).getNotified())
+                                    {
+                                        this.setTextFill(Color.GREEN);
+                                        
+                                    }
+                                    else
+                                    {
+                                        this.setTextFill(Color.BLACK);
+                                    }
+                                }
                             }
                         }
                         
@@ -122,19 +179,29 @@ public class ChatController implements Initializable {
                     currentSelectedFriendContact = (FriendContact)currentContact;
                     friendOrGroupContact = true;
                     fillChatArea(currentSelectedFriendContact.getPhoneNumber());
+                    if(currentSelectedFriendContact.getNotified())
+                    {
+                        currentSelectedFriendContact.setNotified(false);
+                        lstContacts.refresh();
+                    }
                     if((currentSelectedFriendContact).getStatus() == null)
                     {
-                        //txtMessage.setDisable(true);
+                        txtMessage.setDisable(true);
                     }
                     else
                     {
-                        //txtMessage.setDisable(false);
+                        txtMessage.setDisable(false);
                     }
                 }
                 else
                 {
                     currentSelectedGroupContact = (GroupContact)currentContact;
                     friendOrGroupContact = false;
+                    if(currentSelectedGroupContact.getNotified())
+                    {
+                        currentSelectedGroupContact.setNotified(false);
+                        lstContacts.refresh();
+                    }
                     fillChatArea(String.valueOf(currentSelectedGroupContact.getGroupId()));
                     txtMessage.setDisable(false);
                 }
@@ -150,7 +217,18 @@ public class ChatController implements Initializable {
     
     @FXML
     private void btnBackAction(ActionEvent event) {
-        
+        try {
+            mainController.chatController = null;
+            mainController.switchToLoginScene();
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
+            LoginLogoutService loginLogoutService = (LoginLogoutService) registry.lookup("LoginLogoutService");
+            loginLogoutService.logout(loginUser);
+            
+        } catch (RemoteException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotBoundException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @FXML
@@ -211,7 +289,7 @@ public class ChatController implements Initializable {
             oneToOneMessage = (OneToOneMessage)message;
             previousMessagesList = createOrAppendChatSession(oneToOneMessage.getSenderPhone());
             previousMessagesList.add(oneToOneMessage);
-            if(currentSelectedFriendContact != null)
+            if(friendOrGroupContact != null && friendOrGroupContact)
             {
                 if(currentSelectedFriendContact.getPhoneNumber().equals(oneToOneMessage.getSenderPhone()))
                 {
@@ -219,8 +297,16 @@ public class ChatController implements Initializable {
                 }
                 else
                 {
-                    //TODO Notification for receiving message
+                    FriendContact friendContact = (FriendContact)getContactById(oneToOneMessage.getSenderPhone());
+                    friendContact.setNotified(true);
+                    lstContacts.refresh();
                 }
+            }
+            else
+            {
+                FriendContact friendContact = (FriendContact)getContactById(oneToOneMessage.getSenderPhone());
+                friendContact.setNotified(true);
+                lstContacts.refresh();
             }
             
             
@@ -230,7 +316,7 @@ public class ChatController implements Initializable {
             groupMessage = (GroupMessage)message;
             previousMessagesList = createOrAppendChatSession(String.valueOf(groupMessage.getReceiverGroup()));
             previousMessagesList.add(groupMessage);
-            if(currentSelectedGroupContact != null)
+            if(friendOrGroupContact != null && !friendOrGroupContact)
             {
                 if(currentSelectedGroupContact.getGroupId() == groupMessage.getReceiverGroup())
                 {
@@ -238,8 +324,16 @@ public class ChatController implements Initializable {
                 }
                 else
                 {
-                    //TODO Notification for receiving message
+                    GroupContact groupContact = (GroupContact)getContactById(String.valueOf(groupMessage.getReceiverGroup()));
+                    groupContact.setNotified(true);
+                    lstContacts.refresh();
                 }
+            }
+            else
+            {
+                GroupContact groupContact = (GroupContact)getContactById(String.valueOf(groupMessage.getReceiverGroup()));
+                groupContact.setNotified(true);
+                lstContacts.refresh();
             }
             
         }
@@ -307,6 +401,7 @@ public class ChatController implements Initializable {
                 if(((FriendContact)item).getPhoneNumber().equals(id))
                 {
                     tempContact = item;
+                    break;
                 }
             }
             else
@@ -314,9 +409,50 @@ public class ChatController implements Initializable {
                 if(((GroupContact)item).getGroupId() == Integer.parseInt(id))
                 {
                     tempContact = item;
+                    break;
                 }
             }
         }
         return tempContact;
+    }
+
+    public void handleNotification(Notification notification) {
+        if(notification instanceof ContactNotification)
+        {
+            ContactNotification contactNotification = (ContactNotification) notification;
+            Contact contact = getContactById(contactNotification.getContactPhoneNumber());
+            if(contact != null)
+            {
+                FriendContact friendContact = (FriendContact)contact;
+                
+                friendContact.setStatusDescription(contactNotification.getNewStatus());
+                Platform.runLater(() -> {
+                    Notifications.create()
+                        .title("Chat App")
+                        .text("Your Friend " + contactNotification.getContactName() 
+                                + " is " + contactNotification.getNewStatus() + "!")
+                        .showInformation();
+                });
+                
+                if(contactNotification.getStatusId() == 0)
+                {
+                    onlineSound.play();
+                    friendContact.setStatus((byte)0);
+                    lstContacts.refresh();
+                }
+                else
+                {
+                    offlineSound.play();
+                    friendContact.setStatus(null);
+                    lstContacts.refresh();
+                }
+                
+                
+            }
+        }
+    }
+
+    public void logout() {
+        
     }
 }

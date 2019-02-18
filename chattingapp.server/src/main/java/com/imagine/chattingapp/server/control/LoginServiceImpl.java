@@ -6,11 +6,10 @@
 package com.imagine.chattingapp.server.control;
 
 import com.imagine.chattingapp.common.clientservices.ClientService;
-import com.imagine.chattingapp.common.customobj.FriendContact;
-import com.imagine.chattingapp.common.customobj.LightUser;
+import com.imagine.chattingapp.common.dto.FriendContact;
+import com.imagine.chattingapp.common.dto.LightUser;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.entity.User;
-import com.imagine.chattingapp.common.serverservices.LoginService;
 import com.imagine.chattingapp.common.serverservices.RegisterService;
 import com.imagine.chattingapp.server.dal.dao.UserDAO;
 import java.rmi.RemoteException;
@@ -20,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 
 /**
  *
  * @author Mahmoud Shereif
  */
-public class LoginServiceImpl extends UnicastRemoteObject implements LoginService{
+public class LoginServiceImpl extends UnicastRemoteObject implements LoginLogoutService{
     public LoginServiceImpl() throws RemoteException{
         
     }
@@ -60,6 +60,11 @@ public class LoginServiceImpl extends UnicastRemoteObject implements LoginServic
             Logger.getLogger(LoginServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return lightUser;
+    }
+
+    @Override
+    public void logout(LoginUser loginUser) {
+        MainController.unregisterClient(loginUser.getPhoneNumber());
     }
     
 }

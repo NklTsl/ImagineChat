@@ -1,0 +1,28 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 16, 2019, 10:44:07 AM
+    Author     : azza
+*/
+
+.root
+{
+    -fx-background-color:#E8DAEF;
+
+}
+ 
+.label{
+    -fx-text-fill: #154360;
+    
+
+    font-size: 30px;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: bold;
+}
+.imageview
+{
+    -fx-background-color:#E8DAEF;
+}

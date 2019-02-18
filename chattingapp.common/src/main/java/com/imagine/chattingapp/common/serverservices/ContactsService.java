@@ -5,7 +5,7 @@
  */
 package com.imagine.chattingapp.common.serverservices;
 
-import com.imagine.chattingapp.common.customobj.Contact;
+import com.imagine.chattingapp.common.dto.Contact;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;

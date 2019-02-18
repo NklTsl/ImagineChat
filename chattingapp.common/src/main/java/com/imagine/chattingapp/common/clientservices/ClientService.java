@@ -5,8 +5,9 @@
  */
 package com.imagine.chattingapp.common.clientservices;
 
-import com.imagine.chattingapp.common.customobj.FriendContact;
-import com.imagine.chattingapp.common.customobj.Message;
+import com.imagine.chattingapp.common.dto.FriendContact;
+import com.imagine.chattingapp.common.dto.Message;
+import com.imagine.chattingapp.common.dto.Notification;
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -17,4 +18,5 @@ import java.rmi.RemoteException;
  */
 public interface ClientService extends Remote{
     public void receive(Message message) throws RemoteException;
+    public void notify(Notification notification) throws RemoteException;
 }

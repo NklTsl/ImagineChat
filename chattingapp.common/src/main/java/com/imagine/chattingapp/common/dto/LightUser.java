@@ -3,27 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imagine.chattingapp.common.customobj;
+package com.imagine.chattingapp.common.dto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  *
  * @author Mahmoud Shereif
  */
-public class GroupContact implements Serializable, Contact {
-    private int groupId;
+public class LightUser implements Serializable {
+    private String phoneNumber;
     private String name;
     private byte[] image;
-    private Long lastSentMessageTime;
 
-    public int getGroupId() {
-        return groupId;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setGroupId(int groupNumber) {
-        this.groupId = groupNumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getName() {
@@ -40,14 +38,6 @@ public class GroupContact implements Serializable, Contact {
 
     public void setImage(byte[] image) {
         this.image = image;
-    }
-    
-    public Long getLastSentMessageTime() {
-        return lastSentMessageTime;
-    }
-
-    public void setLastSentMessageTime(Long lastSentMessageTime) {
-        this.lastSentMessageTime = lastSentMessageTime;
     }
     
 }

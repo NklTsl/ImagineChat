@@ -1,17 +1,24 @@
 package com.imagine.chattingapp.client.control;
 
 
+import com.imagine.chattingapp.client.view.UpdateProfileController;
 import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.client.view.LoginController;
 import com.imagine.chattingapp.client.view.RegisterController;
 import com.imagine.chattingapp.client.view.RegisterWindow;
 import com.imagine.chattingapp.client.view.UpdateProfileWindow;
-import com.imagine.chattingapp.common.customobj.Contact;
-import com.imagine.chattingapp.common.customobj.FriendContact;
-import com.imagine.chattingapp.common.customobj.LightUser;
+import com.imagine.chattingapp.common.dto.Contact;
+import com.imagine.chattingapp.common.dto.FriendContact;
+import com.imagine.chattingapp.common.dto.LightUser;
+import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.entity.User;
+import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import java.io.IOException;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -27,9 +34,10 @@ public class MainController extends Application {
     ClientServiceImpl clientService = null;
     
     LoginController loginController = null;
-    ChatController chatController = null;
+    public ChatController chatController = null;
     RegisterController registerController = null;
     UpdateProfileController updateProfileController = null;
+    public LoginUser loginUser;
     
     
     Scene loginScene = null;
@@ -55,7 +63,20 @@ public class MainController extends Application {
         switchToLoginScene();
         primaryStage.show();
         primaryStage.setOnCloseRequest((event) -> {
-            System.exit(0);
+            try {
+                if(chatController != null)
+                {
+                    Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
+                    LoginLogoutService loginService = (LoginLogoutService) registry.lookup("LoginLogoutService");
+                    loginService.logout(loginUser);
+                }
+                
+                System.exit(0);
+            } catch (RemoteException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NotBoundException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
         
@@ -100,14 +121,13 @@ public class MainController extends Application {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void switchToChatScene(LightUser lightUser) {
+    public void switchToChatScene(LightUser lightUser, LoginUser loginUser) {
         try {
             
             FXMLLoader loader = new FXMLLoader();
-            chatController = new ChatController(this, lightUser);
+            chatController = new ChatController(this, lightUser, loginUser);
             loader.setController(chatController);
             Parent root = loader.load(getClass().getResource("/ChatDesign.fxml").openStream());
-            
             Platform.runLater(() -> {
                 chatScene = new Scene(root);
                 primaryStage.setTitle("Chat");
@@ -122,13 +142,14 @@ public class MainController extends Application {
     public void switchToRegisterScene() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loginController = new LoginController(this);
-            loader.setController(loginController);
-            Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
+            registerController = new RegisterController(this, primaryStage);
+            loader.setController(registerController);
+            Parent root = loader.load(getClass().getResource("/RegisterDesign.fxml").openStream());
             
             Scene scene = new Scene(root);
+            root.getStylesheets().add("/regCss.css");
             
-            primaryStage.setTitle("Login");
+            primaryStage.setTitle("Register");
             primaryStage.setScene(scene);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);

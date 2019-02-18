@@ -1,112 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../../../../resources/Login.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <GridPane alignment="TOP_CENTER" hgap="5.0" prefHeight="427.0" prefWidth="600.0" vgap="5.0" BorderPane.alignment="TOP_CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="146.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="434.0" minWidth="10.0" prefWidth="429.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Label fx:id="lblPhone" text="Phone Number:">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblName" text="Display Name:" GridPane.rowIndex="1">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblEmail" text="Email:" GridPane.rowIndex="2">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblPicture" text="Picture:" GridPane.rowIndex="3">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblPassword" text="Password:" GridPane.rowIndex="4">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblConfirmPassword" text="Confirm Password:" GridPane.rowIndex="5">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblGender" text="Gender:" GridPane.rowIndex="6">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label text="Country:" GridPane.rowIndex="7">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblBirthDate" text="Birth Date:" GridPane.rowIndex="8">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblBio" text="BIO:" GridPane.rowIndex="9">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtPhone" promptText="Enter your phone number" GridPane.columnIndex="1" />
-            <TextField fx:id="txtName" promptText="Enter your full name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="txtEmail" promptText="Enter a valid email" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="txtCountry" promptText="Home Town" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <DatePicker fx:id="pickerBirthDate" prefHeight="25.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <TextField fx:id="txtBio" promptText="Enter your Bio" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-            <PasswordField fx:id="txtPassword" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <PasswordField fx:id="txtConfirmPassword" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <ComboBox fx:id="comboGender" prefHeight="25.0" prefWidth="434.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <Button fx:id="btnRegister" mnemonicParsing="false" onAction="#btnRegisterOnAction" prefHeight="25.0" prefWidth="73.0" text="Register" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
-            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#btnCancelOnAction" prefHeight="25.0" prefWidth="70.0" text="Cancel" GridPane.rowIndex="10" />
-            <TextField fx:id="txtPhotoPath" promptText="Select a photo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </GridPane>
-   </center>
-   <top>
-      <Label fx:id="welcomeMessage" prefHeight="47.0" prefWidth="478.0" text="Welcome To Imagine Chat" BorderPane.alignment="CENTER">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="598.0" prefWidth="743.0" stylesheets="@regCss.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="background" fitHeight="201.0" fitWidth="273.0" layoutX="452.0" layoutY="374.0" pickOnBounds="true" />
+      <Label layoutX="65.0" layoutY="95.0" prefHeight="17.0" prefWidth="50.0" text="Phone">
          <font>
-            <Font size="18.0" />
+            <Font size="16.0" />
          </font>
       </Label>
-   </top>
-</BorderPane>
+      <Label layoutX="59.0" layoutY="148.0" text="Name">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="62.0" layoutY="205.0" text="Email">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="62.0" layoutY="259.0" prefHeight="20.0" prefWidth="69.0" text="Password">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="61.0" layoutY="314.0" text="Confirm password">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="64.0" layoutY="361.0" prefHeight="21.0" prefWidth="53.0" text="Gender">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="65.0" layoutY="417.0" text="Country">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="63.0" layoutY="464.0" text="Birth Date">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="62.0" layoutY="508.0" text="Biography">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="236.0" layoutY="14.0" prefHeight="31.0" prefWidth="254.0" text="Welcome To Registration" textFill="#0a0101">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <TextField fx:id="phone" layoutX="220.0" layoutY="95.0" prefHeight="25.0" prefWidth="203.0" />
+      <TextField fx:id="name" layoutX="220.0" layoutY="149.0" prefHeight="25.0" prefWidth="203.0" />
+      <TextField fx:id="email" layoutX="220.0" layoutY="204.0" prefHeight="25.0" prefWidth="203.0" />
+      <ImageView fx:id="imageProfile" fitHeight="93.0" fitWidth="124.0" layoutX="570.0" layoutY="14.0" pickOnBounds="true" />
+      <Button fx:id="add" layoutX="588.0" layoutY="117.0" mnemonicParsing="false" text="Add Picture" />
+      <PasswordField fx:id="password" layoutX="220.0" layoutY="257.0" prefHeight="25.0" prefWidth="203.0" />
+      <PasswordField fx:id="ConPassword" layoutX="220.0" layoutY="312.0" prefHeight="25.0" prefWidth="203.0" />
+      <ComboBox fx:id="gender" layoutX="220.0" layoutY="360.0" prefHeight="25.0" prefWidth="203.0" />
+      <ComboBox fx:id="country" layoutX="220.0" layoutY="416.0" prefHeight="25.0" prefWidth="203.0" />
+      <DatePicker fx:id="birthdate" layoutX="221.0" layoutY="463.0" prefHeight="25.0" prefWidth="203.0" />
+      <TextField fx:id="bio" layoutX="221.0" layoutY="507.0" prefHeight="25.0" prefWidth="203.0" />
+      <Button fx:id="submit" layoutX="292.0" layoutY="548.0" mnemonicParsing="false" text="submit" />
+      <ImageView fx:id="welcomeimage" fitHeight="74.0" fitWidth="143.0" layoutX="19.0" layoutY="14.0" pickOnBounds="true" />
+      <Label fx:id="validResult" layoutX="441.0" layoutY="289.0" prefHeight="58.0" prefWidth="292.0" />
+      <Button fx:id="btnBackToLogin" layoutX="22.0" layoutY="548.0" mnemonicParsing="false" onAction="#btnBackToLoginOnAction" prefHeight="31.0" prefWidth="75.0" stylesheets="@regCss.css" text="Back" />
+   </children>
+</Pane>

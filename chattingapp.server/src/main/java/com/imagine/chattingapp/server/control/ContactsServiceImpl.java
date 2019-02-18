@@ -5,11 +5,11 @@
  */
 package com.imagine.chattingapp.server.control;
 
-import com.imagine.chattingapp.common.customobj.Contact;
-import com.imagine.chattingapp.common.customobj.FriendContact;
+import com.imagine.chattingapp.common.dto.Contact;
+import com.imagine.chattingapp.common.dto.FriendContact;
 import com.imagine.chattingapp.common.entity.Friend;
 import com.imagine.chattingapp.common.serverservices.ContactsService;
-import com.imagine.chattingapp.server.dal.dao.ContactsDao;
+import com.imagine.chattingapp.server.dal.dao.ContactsDAO;
 import com.imagine.chattingapp.server.dal.dao.DatabaseDataRetreival;
 import com.imagine.chattingapp.server.dal.dao.FriendDAO;
 import java.rmi.RemoteException;
@@ -39,7 +39,7 @@ public class ContactsServiceImpl extends UnicastRemoteObject implements Contacts
         List<Contact> contactList = null;
         try {
 
-            ContactsDao contactsDao = new ContactsDao();
+            ContactsDAO contactsDao = new ContactsDAO();
             contactList = contactsDao.getFriendContacts(phoneNumber);
             contactList.addAll(contactsDao.getGroupContacts(phoneNumber));
             

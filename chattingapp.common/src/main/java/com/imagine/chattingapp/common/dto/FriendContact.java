@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imagine.chattingapp.common.customobj;
+package com.imagine.chattingapp.common.dto;
 
 import java.io.Serializable;
 
@@ -19,6 +19,7 @@ public class FriendContact implements Serializable, Contact{
     private Byte status;
     private String statusDescription;
     private Long lastSentMessageTime;
+    boolean notified = false;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -76,9 +77,11 @@ public class FriendContact implements Serializable, Contact{
         this.lastSentMessageTime = lastSentMessageTime;
     }
     
-    
-    
-    
-    
-    
+    public boolean getNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
+    }
 }

@@ -1,4 +1,4 @@
-package com.imagine.chattingapp.common.customobj;
+package com.imagine.chattingapp.common.dto;
 
 import java.io.Serializable;
 

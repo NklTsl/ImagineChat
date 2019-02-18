@@ -50,7 +50,7 @@ public class DatabaseDataRetreival {
                 preparedStatment.setByte(i + 1, (Byte)parameterList.get(i));
             else if(parameterList.get(i) instanceof Boolean)
                 preparedStatment.setByte(i + 1, (parameterList.get(i)).equals(false)? (byte)0:(byte)1);
-            else if(parameterList.get(i) instanceof Byte[])
+            else if(parameterList.get(i) instanceof byte[])
                 preparedStatment.setBytes(i + 1, (byte[])parameterList.get(i));
             else if(parameterList.get(i) instanceof Date)
                 preparedStatment.setDate(i + 1, (Date)parameterList.get(i));

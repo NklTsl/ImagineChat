@@ -6,7 +6,7 @@
 package com.imagine.chattingapp.common.serverservices;
 
 import com.imagine.chattingapp.common.clientservices.ClientService;
-import com.imagine.chattingapp.common.customobj.LightUser;
+import com.imagine.chattingapp.common.dto.LightUser;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -15,8 +15,8 @@ import java.rmi.RemoteException;
  *
  * @author Mahmoud Shereif
  */
-public interface LoginService extends Remote {
+public interface LoginLogoutService extends Remote {
     
     public LightUser login(LoginUser loginUser, ClientService clientService) throws RemoteException;
-    
+    public void logout(LoginUser loginUser) throws RemoteException;
 }

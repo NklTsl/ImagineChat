@@ -6,9 +6,9 @@
 package com.imagine.chattingapp.server.control;
 
 import com.imagine.chattingapp.common.clientservices.ClientService;
-import com.imagine.chattingapp.common.customobj.GroupMessage;
-import com.imagine.chattingapp.common.customobj.Message;
-import com.imagine.chattingapp.common.customobj.OneToOneMessage;
+import com.imagine.chattingapp.common.dto.GroupMessage;
+import com.imagine.chattingapp.common.dto.Message;
+import com.imagine.chattingapp.common.dto.OneToOneMessage;
 import com.imagine.chattingapp.common.entity.User;
 import com.imagine.chattingapp.common.serverservices.ChatService;
 import com.imagine.chattingapp.server.dal.dao.Chat_Group_UsersDAO;

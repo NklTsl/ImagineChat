@@ -5,9 +5,12 @@
  */
 package com.imagine.chattingapp.client.control;
 
+import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.common.clientservices.ClientService;
-import com.imagine.chattingapp.common.customobj.FriendContact;
-import com.imagine.chattingapp.common.customobj.Message;
+import com.imagine.chattingapp.common.dto.ContactNotification;
+import com.imagine.chattingapp.common.dto.FriendContact;
+import com.imagine.chattingapp.common.dto.Message;
+import com.imagine.chattingapp.common.dto.Notification;
 import com.imagine.chattingapp.common.entity.One_To_One_Messages;
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.RemoteException;
@@ -28,5 +31,10 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     @Override
     public void receive(Message message) throws RemoteException {
        mainController.getChatController().receive(message);
+    }
+
+    @Override
+    public void notify(Notification notification) {
+        mainController.getChatController().handleNotification(notification);
     }
 }

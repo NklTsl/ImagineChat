@@ -5,12 +5,15 @@
  */
 package com.imagine.chattingapp.server.control;
 
+import com.imagine.chattingapp.common.entity.Country;
 import com.imagine.chattingapp.common.entity.User;
 import com.imagine.chattingapp.common.serverservices.RegisterService;
+import com.imagine.chattingapp.server.dal.dao.CountryDAO;
 import com.imagine.chattingapp.server.dal.dao.UserDAO;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +37,18 @@ public class RegisterServiceImpl extends UnicastRemoteObject implements Register
             throw new RemoteException();
         }
         
+    }
+
+    @Override
+    public List<Country> getCountries() throws RemoteException {
+        try {
+            CountryDAO countryDAO = new CountryDAO();
+            return countryDAO.getAll();
+        } catch (SQLException ex) {
+            RemoteException remoteException = new RemoteException();
+            remoteException.initCause(ex);
+            throw remoteException;
+        }
     }
     
 }
