@@ -128,7 +128,8 @@ public class ChatController implements Initializable {
             lstContacts.setCellFactory(new Callback<ListView<Contact>, ListCell<Contact>>() {
                 @Override
                 public ListCell<Contact> call(ListView<Contact> param) {
-                    return new ListCell<Contact>(){
+                    return new ContactCell();
+                    /*return new ListCell<Contact>(){
                         @Override
                         protected void updateItem(Contact contact, boolean empty) {
                             super.updateItem(contact, empty);
@@ -169,7 +170,7 @@ public class ChatController implements Initializable {
                             }
                         }
                         
-                    };
+                    };*/
                 }
             });
             
