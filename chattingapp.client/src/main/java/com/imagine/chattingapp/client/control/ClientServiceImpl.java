@@ -9,6 +9,7 @@ import com.imagine.chattingapp.common.clientservices.ClientService;
 import com.imagine.chattingapp.common.entity.User;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 /**
  *
@@ -31,6 +32,9 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     public void receiveUserDetails(User user) throws RemoteException {
         mainController.switchToChatScene(user);
     }
+
+    
+    
     
     
 }

@@ -65,7 +65,7 @@
                   <Insets left="790.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="addContactlbl" onMouseEntered="#viewAddHintMsg" >
+            <Label fx:id="addContactlbl" onMouseEntered="#viewAddHintMsg" onMouseClicked = "#viewAddContactWindow" >
                <GridPane.margin>
                   <Insets left="100.0" />
                </GridPane.margin>

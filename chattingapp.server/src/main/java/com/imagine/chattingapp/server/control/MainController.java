@@ -23,6 +23,8 @@ public class MainController {
             LoginServiceImpl loginServiceImpl = new LoginServiceImpl();
             Registry registery = LocateRegistry.createRegistry(2000);
             registery.rebind("LoginService", loginServiceImpl);
+            AddNewContactImpl addContact = new AddNewContactImpl();
+            registery.rebind("AddContactService", addContact);
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

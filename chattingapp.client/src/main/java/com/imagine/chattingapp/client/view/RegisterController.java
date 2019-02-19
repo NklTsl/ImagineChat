@@ -6,6 +6,7 @@
 package com.imagine.chattingapp.client.view;
 
 import com.imagine.chattingapp.client.control.MainController;
+import com.imagine.chattingapp.client.control.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.common.entity.User;
 import com.imagine.chattingapp.common.serverservices.RegisterService;
 import java.net.URL;
@@ -104,9 +105,7 @@ public class RegisterController implements Initializable {
     @FXML
     private void btnRegisterOnAction(ActionEvent event) {
         try {
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
-            
-            registerService = (RegisterService) registry.lookup("Register");
+            registerService = (RegisterService)ServiceLocator.getService("Register");
             
             user = new User();
             user.setPhoneNumber("1");
@@ -124,8 +123,6 @@ public class RegisterController implements Initializable {
             registerService.register(user);
             
         } catch (RemoteException ex) {
-            Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NotBoundException ex) {
             Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

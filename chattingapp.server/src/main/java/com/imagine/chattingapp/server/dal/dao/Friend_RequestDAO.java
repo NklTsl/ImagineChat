@@ -76,9 +76,11 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
         
         ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
         queryResult.beforeFirst();
-        Friend_Request friendRequest = new Friend_Request();
+        Friend_Request friendRequest = null;
+        
         if(queryResult.next())
         {
+            friendRequest = new Friend_Request();
             friendRequest.setSenderPhoneNumber(queryResult.getString(1));
             friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
             friendRequest.setStatusID(queryResult.getByte(3));

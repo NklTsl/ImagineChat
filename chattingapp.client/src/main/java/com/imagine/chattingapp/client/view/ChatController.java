@@ -84,6 +84,12 @@ public class ChatController implements Initializable {
         setUpdateProfileLabelImage();
         
     }
+    @FXML
+    public void viewAddContactWindow(){
+    
+        
+        mainController.switchToAddContactPopUp();
+    }
     private void setBackLabelImage(){
         
         ImageView image;

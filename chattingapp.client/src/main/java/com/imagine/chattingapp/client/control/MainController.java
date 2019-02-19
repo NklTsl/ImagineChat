@@ -1,6 +1,7 @@
 package com.imagine.chattingapp.client.control;
 
 
+import com.imagine.chattingapp.client.view.AddContactController;
 import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.client.view.LoginController;
 import com.imagine.chattingapp.client.view.RegisterController;
@@ -9,6 +10,7 @@ import com.imagine.chattingapp.client.view.UpdateProfileWindow;
 import com.imagine.chattingapp.common.entity.User;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -16,6 +18,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class MainController extends Application {
@@ -31,23 +35,9 @@ public class MainController extends Application {
     Scene registerScene = null;
     Scene updateProfileScene = null;
     
-    Stage primaryStage = null;
+    public Stage primaryStage = null;
     
-    public MainController() {
-        
-//        loginController = new LoginController(this);
-//        loginScene = loginController.getLoginScene();
-//        
-//        chatController = new ChatController(this);
-//        chatScene = chatController.getChatScene();
-//        
-//        registerController = new RegisterController(this);
-//        registerScene = registerController.getRegisterScene();
-//        
-//        updateProfileController = new UpdateProfileController(this);
-//        updateProfileScene = updateProfileController.getUpdateProfileScene();
-        
-    }
+    
     
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -69,21 +59,7 @@ public class MainController extends Application {
         launch(args);
     }
     
-    void login() {
-//        try {
-//            serverService.login(clientService);
-//        } catch (RemoteException ex) {
-//            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-    }
-    
-    void logout() {
-//        try {
-//            serverService.logout(clientService);
-//        } catch (RemoteException ex) {
-//            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-    }
+   
     
     void switchToLoginScene() {
         try {
@@ -152,4 +128,27 @@ public class MainController extends Application {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void switchToAddContactPopUp() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            AddContactController contactController = new AddContactController(this);
+            loader.setController(contactController);
+            Parent root = loader.load(getClass().getResource("/AddContactDesign.fxml").openStream());
+            
+            Platform.runLater(() -> {
+                Stage stage = new Stage();
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner(primaryStage.getScene().getWindow());
+                Scene scene =  new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
+    }
+
+    
 }

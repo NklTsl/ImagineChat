@@ -8,6 +8,7 @@ package com.imagine.chattingapp.client.view;
 import com.imagine.chattingapp.client.control.ClientServiceImpl;
 import com.imagine.chattingapp.common.validation.Validation;
 import com.imagine.chattingapp.client.control.MainController;
+import com.imagine.chattingapp.client.control.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.common.clientservices.ClientService;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.serverservices.LoginService;
@@ -49,7 +50,7 @@ public class LoginController implements Initializable {
     private Button btnLogin;
     @FXML
     private Button btnCancel;
-    
+
     private MainController mainController;
     private ClientService clientService;
     private LoginUser loginUser;
@@ -58,37 +59,30 @@ public class LoginController implements Initializable {
         this.mainController = mainController;
     }
 
-    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }
 
     @FXML
     private void btnLoginAction(ActionEvent event) {
         String phone = txtPhone.getText();
-        String password = txtPassword.getText(); 
-        if(phone.isEmpty() || password.isEmpty())
-        {
-            
-        }
-        else if(Validation.validatePhone(phone) && Validation.validatePassword(password))
-        {
+        String password = txtPassword.getText();
+        if (phone.isEmpty() || password.isEmpty()) {
+
+        } else if (Validation.validatePhone(phone) && Validation.validatePassword(password)) {
             try {
                 clientService = new ClientServiceImpl(mainController);
                 loginUser = new LoginUser();
                 loginUser.setPhoneNumber(phone);
                 loginUser.setPassword(password);
+                LoginService loginService = (LoginService) ServiceLocator.getService("LoginService");
                 
-                Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
-                LoginService loginService = (LoginService) registry.lookup("LoginService");
                 loginService.login(loginUser, clientService);
-                        } catch (RemoteException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotBoundException ex) {
+            } catch (RemoteException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -102,5 +96,5 @@ public class LoginController implements Initializable {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }
