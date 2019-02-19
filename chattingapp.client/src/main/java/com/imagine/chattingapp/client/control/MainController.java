@@ -1,6 +1,5 @@
 package com.imagine.chattingapp.client.control;
 
-
 import com.imagine.chattingapp.client.view.UpdateProfileController;
 import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.client.view.LoginController;
@@ -29,48 +28,45 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainController extends Application {
-    
-    
+
     ClientServiceImpl clientService = null;
-    
+
     LoginController loginController = null;
     public ChatController chatController = null;
     RegisterController registerController = null;
     UpdateProfileController updateProfileController = null;
     public LoginUser loginUser;
-    
-    
+
     Scene loginScene = null;
     Scene chatScene = null;
     Scene registerScene = null;
     Scene updateProfileScene = null;
-    
+
     Stage primaryStage = null;
-    
+
     public MainController() {
         try {
             clientService = new ClientServiceImpl(this);
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        
+
         this.primaryStage = primaryStage;
         switchToLoginScene();
         primaryStage.show();
         primaryStage.setOnCloseRequest((event) -> {
             try {
-                if(chatController != null)
-                {
+                if (chatController != null) {
                     Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
                     LoginLogoutService loginService = (LoginLogoutService) registry.lookup("LoginLogoutService");
                     loginService.logout(loginUser);
                 }
-                
+
                 System.exit(0);
             } catch (RemoteException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,18 +74,18 @@ public class MainController extends Application {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
-        
+
     }
+
     @Override
-    public void stop(){
+    public void stop() {
         Platform.exit();
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }
-    
+
     void login() {
 //        try {
 //            serverService.login(clientService);
@@ -97,7 +93,7 @@ public class MainController extends Application {
 //            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }
-    
+
     void logout() {
 //        try {
 //            serverService.logout(clientService);
@@ -105,25 +101,26 @@ public class MainController extends Application {
 //            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }
-    
+
     public void switchToLoginScene() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loginController = new LoginController(this);
             loader.setController(loginController);
             Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
-            
+
             Scene scene = new Scene(root);
-            
+
             primaryStage.setTitle("Login");
             primaryStage.setScene(scene);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public void switchToChatScene(LightUser lightUser, LoginUser loginUser) {
         try {
-            
+
             FXMLLoader loader = new FXMLLoader();
             chatController = new ChatController(this, lightUser, loginUser);
             loader.setController(chatController);
@@ -133,49 +130,50 @@ public class MainController extends Application {
                 primaryStage.setTitle("Chat");
                 primaryStage.setScene(chatScene);
             });
-            
 
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public void switchToRegisterScene() {
         try {
             FXMLLoader loader = new FXMLLoader();
             registerController = new RegisterController(this, primaryStage);
             loader.setController(registerController);
             Parent root = loader.load(getClass().getResource("/RegisterDesign.fxml").openStream());
-            
+
             Scene scene = new Scene(root);
             root.getStylesheets().add("/regCss.css");
-            
+
             primaryStage.setTitle("Register");
             primaryStage.setScene(scene);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void switchToUpdateProfileScene() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loginController = new LoginController(this);
             loader.setController(loginController);
             Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
-            
+
             Scene scene = new Scene(root);
-            
+
             primaryStage.setTitle("Login");
             primaryStage.setScene(scene);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public ClientServiceImpl getClientService(){
+
+    public ClientServiceImpl getClientService() {
         return clientService;
     }
-    public ChatController getChatController()
-    {
+
+    public ChatController getChatController() {
         return chatController;
     }
 }
