@@ -7,6 +7,7 @@ package com.imagine.chattingapp.client.control;
 
 import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.common.clientservices.ClientService;
+import com.imagine.chattingapp.common.clientservices.ReceiveFileService;
 import com.imagine.chattingapp.common.dto.ContactNotification;
 import com.imagine.chattingapp.common.dto.FriendContact;
 import com.imagine.chattingapp.common.dto.Message;
@@ -36,5 +37,10 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     @Override
     public void notify(Notification notification) {
         mainController.getChatController().handleNotification(notification);
+    }
+
+    @Override
+    public ReceiveFileService requestReceiveFileService(String senderName) throws RemoteException {
+        return mainController.getChatController().showReceiveFileRequest(senderName);
     }
 }

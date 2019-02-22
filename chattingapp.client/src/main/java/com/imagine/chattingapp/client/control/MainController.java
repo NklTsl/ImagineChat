@@ -5,6 +5,7 @@ import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.client.view.LoginController;
 import com.imagine.chattingapp.client.view.RegisterController;
 import com.imagine.chattingapp.client.view.RegisterWindow;
+import com.imagine.chattingapp.client.view.SendFriendRequestController;
 import com.imagine.chattingapp.client.view.UpdateProfileWindow;
 import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.FriendContact;
@@ -25,7 +26,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class MainController extends Application {
 
@@ -168,6 +171,25 @@ public class MainController extends Application {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void switchToAddContactPopUp(){
+    
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            SendFriendRequestController contactController = new SendFriendRequestController(this, loginUser);
+            loader.setController(contactController);
+            Parent root = loader.load(getClass().getResource("/SendFriendRequestDesign.fxml").openStream());
+            
+            Platform.runLater(() -> {
+                Stage stage = new Stage();
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner(primaryStage.getScene().getWindow());
+                stage.setScene(new Scene(root));
+                stage.show();
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public ClientServiceImpl getClientService() {
         return clientService;
@@ -175,5 +197,9 @@ public class MainController extends Application {
 
     public ChatController getChatController() {
         return chatController;
+    }
+
+    public Stage getPrimaryStage(){
+        return this.primaryStage;
     }
 }

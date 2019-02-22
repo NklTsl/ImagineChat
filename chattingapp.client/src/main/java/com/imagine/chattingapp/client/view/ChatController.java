@@ -6,7 +6,13 @@ package com.imagine.chattingapp.client.view;
 * and open the template in the editor.011417444
 */
 
+import com.healthmarketscience.rmiio.RemoteInputStream;
+import com.healthmarketscience.rmiio.RemoteInputStreamClient;
+import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
 import com.imagine.chattingapp.client.control.MainController;
+import com.imagine.chattingapp.client.control.ReceiveFileServiceImpl;
+import com.imagine.chattingapp.client.control.ServiceLocator.ServiceLocator;
+import com.imagine.chattingapp.common.clientservices.ReceiveFileService;
 import com.imagine.chattingapp.common.dto.ChatSession;
 import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.ContactNotification;
@@ -20,6 +26,7 @@ import com.imagine.chattingapp.common.dto.Notification;
 import com.imagine.chattingapp.common.dto.OneToOneMessage;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.serverservices.ChatService;
+import com.imagine.chattingapp.common.serverservices.ClientSendFileServiceP2P;
 import com.imagine.chattingapp.common.serverservices.ContactsService;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -55,16 +62,23 @@ import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.media.AudioClip;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
@@ -89,10 +103,15 @@ public class ChatController implements Initializable {
     private WebView webView;
     @FXML
     private Button btnAddGroup;
+    @FXML
+    private Button btnFriendRequest;
+    @FXML
+    private Button btnSendFile;
     
     boolean messageFlag = true;
     
     String htmlAll;
+    Optional<ButtonType> result;
     
     WebEngine webEngine;
     FriendContact currentSelectedFriendContact;
@@ -111,6 +130,9 @@ public class ChatController implements Initializable {
     private GroupMessage groupMessage;
     
     Map<String, ChatSession> chatSessionsMap;
+    
+    
+    File choosenFile;
     
     public ChatController(MainController mainController, LightUser lightUser, LoginUser loginUser) {
         this.mainController = mainController;
@@ -238,6 +260,48 @@ public class ChatController implements Initializable {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    @FXML
+    private void btnSendFileOnAction(ActionEvent event) {
+        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select File To Send");
+        File choosenFile = fileChooser.showOpenDialog(mainController.getPrimaryStage());
+        
+        if(choosenFile != null)
+        {
+            ClientSendFileServiceP2P clientSendFile = (ClientSendFileServiceP2P)ServiceLocator.getService("SendFileService");
+            SimpleRemoteInputStream remoteInputStream = null;
+            if(clientSendFile != null){
+                try {
+                    ReceiveFileService receiveFileService = clientSendFile.getReceiveFileService(currentSelectedFriendContact.getPhoneNumber(), lightUser.getName());
+                    if(receiveFileService != null){
+                        String fileName = choosenFile.getName();
+                        String extention  = fileName.substring(fileName.lastIndexOf("."));
+                        remoteInputStream = new SimpleRemoteInputStream(new FileInputStream(choosenFile));
+                        receiveFileService.sendFile(remoteInputStream.export(), extention, fileName);
+                    }else{
+                        Alert receiveFileAlert = new Alert(Alert.AlertType.INFORMATION, "Your friend rejected to Receive!");
+                        receiveFileAlert.showAndWait();
+                    }
+                    
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                }finally{
+                    if(remoteInputStream != null)
+                        remoteInputStream.close();
+                }
+            }
+        }else
+        {
+            //Should Handle Not Choosing any Files
+        }
+    }
+    
     
     @FXML
     private void txtMessageKeyPressed(KeyEvent event) {
@@ -532,9 +596,9 @@ public class ChatController implements Initializable {
             AddNewGroupController addNewGroupController = new AddNewGroupController(groupMembers, addNewGroupStage, loginUser.getPhoneNumber());
             loader.setController(addNewGroupController);
             Parent root = loader.load(getClass().getResource("/AddNewGroupDesign.fxml").openStream());
-
+            
             Scene scene = new Scene(root);
-
+            
             addNewGroupStage.setTitle("Login");
             addNewGroupStage.setScene(scene);
             addNewGroupStage.showAndWait();
@@ -561,5 +625,98 @@ public class ChatController implements Initializable {
         
         return membersList;
         
+    }
+    @FXML
+    public void btnFriendRequestOnAction(){
+        mainController.switchToAddContactPopUp();
+        
+    }
+    
+    public ReceiveFileService showReceiveFileRequest(String senderName) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(()->{
+            Alert receiveFileAlert = new Alert(Alert.AlertType.CONFIRMATION, "Your friend "+senderName+" Want to Send a File"
+                    + " \nDo you want to Accept?");
+            result = receiveFileAlert.showAndWait();
+            latch.countDown();
+        });
+        
+        try {
+            latch.await();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        ReceiveFileService receiveFileService = null;
+        //could be done without checking the OK
+        if (result.get() == ButtonType.OK) {
+            try {
+                receiveFileService = new ReceiveFileServiceImpl(mainController);
+            } catch (RemoteException ex) {
+                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return receiveFileService;
+    }
+    
+    public void receiveFile(RemoteInputStream remoteInputStream, String ext, String fileName) {
+        InputStream istream = null;
+        try {
+            
+            final CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(()->{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select File To Send");
+            choosenFile = fileChooser.showSaveDialog(mainController.getPrimaryStage());
+            latch.countDown();
+        });
+        
+        try {
+            latch.await();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            if(choosenFile != null)
+            {
+                istream = RemoteInputStreamClient.wrap(remoteInputStream);
+                FileOutputStream ostream = null;
+                try {
+                    
+                    ostream = new FileOutputStream(choosenFile);
+                    System.out.println("Writing file " + choosenFile);
+                    
+                    byte[] buf = new byte[1024 * 1024];
+                    
+                    int bytesRead = 0;
+                    while ((bytesRead = istream.read(buf)) >= 0) {
+                        ostream.write(buf, 0, bytesRead);
+                    }
+                    ostream.flush();
+                    
+                    System.out.println("Finished writing file " + choosenFile);
+                    
+                } finally {
+                    try {
+                        if (istream != null) {
+                            istream.close();
+                        }
+                    } finally {
+                        if (ostream != null) {
+                            ostream.close();
+                        }
+                    }
+                }
+            }
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                istream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }

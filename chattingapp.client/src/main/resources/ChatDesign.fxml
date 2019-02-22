@@ -10,7 +10,7 @@
 <?import javafx.scene.web.HTMLEditor?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="791.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="791.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <ListView fx:id="lstContacts" prefHeight="400.0" prefWidth="208.0" BorderPane.alignment="CENTER" />
    </left>
@@ -37,6 +37,8 @@
                </font>
             </Label>
             <Button fx:id="btnAddGroup" layoutX="620.0" layoutY="42.0" mnemonicParsing="false" onAction="#btnAddGroupOnAction" prefHeight="40.0" prefWidth="102.0" text="Add New Group" />
+            <Button fx:id="btnFriendRequest" layoutX="690.0" layoutY="50.0" mnemonicParsing="false" onAction="#btnFriendRequestOnAction" prefHeight="40.0" prefWidth="102.0" text="Send Friend Request" />
+            <Button fx:id="btnSendFile" layoutX="221.0" layoutY="37.0" mnemonicParsing="false" onAction="#btnSendFileOnAction" prefHeight="50.0" prefWidth="114.0" text="SendFile" />
          </children>
       </AnchorPane>
    </top>
