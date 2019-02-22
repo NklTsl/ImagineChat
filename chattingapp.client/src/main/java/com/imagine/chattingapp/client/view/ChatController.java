@@ -3,7 +3,7 @@ package com.imagine.chattingapp.client.view;
 /*
 * To change this license header, choose License Headers in Project Properties.
 * To change this template file, choose Tools | Templates
-* and open the template in the editor.
+* and open the template in the editor.011417444
 */
 
 import com.imagine.chattingapp.client.control.MainController;
@@ -12,6 +12,7 @@ import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.ContactNotification;
 import com.imagine.chattingapp.common.dto.FriendContact;
 import com.imagine.chattingapp.common.dto.GroupContact;
+import com.imagine.chattingapp.common.dto.GroupMember;
 import com.imagine.chattingapp.common.dto.GroupMessage;
 import com.imagine.chattingapp.common.dto.LightUser;
 import com.imagine.chattingapp.common.dto.Message;
@@ -52,8 +53,19 @@ import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Base64;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.media.AudioClip;
+import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -64,19 +76,25 @@ import org.controlsfx.control.Notifications;
 public class ChatController implements Initializable {
     
     @FXML
+    private ImageView viewProfileImage;
+    @FXML
+    private Label lblUserName;
+    @FXML
     private ListView<Contact> lstContacts;
     @FXML
     private Button btnBack;
     @FXML
-    private TextField txtMessage;
+    private HTMLEditor htmlEditor;
     @FXML
-    private TextArea txtChatArea;
+    private WebView webView;
     @FXML
-    private Label lblUserName;
-    @FXML
-    private ImageView viewProfileImage;
+    private Button btnAddGroup;
     
+    boolean messageFlag = true;
     
+    String htmlAll;
+    
+    WebEngine webEngine;
     FriendContact currentSelectedFriendContact;
     GroupContact  currentSelectedGroupContact;
     Boolean friendOrGroupContact;
@@ -102,7 +120,6 @@ public class ChatController implements Initializable {
         onlineSound = new AudioClip(new File("target/classes/Online.mp3").toURI().toString());
         offlineSound = new AudioClip(new File("target/classes/Offline.mp3").toURI().toString());
         
-        
     }
     
     /**
@@ -112,6 +129,36 @@ public class ChatController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             // TODO
+            webEngine = webView.getEngine();
+            //webView.setDisable(true);
+            webEngine.setUserStyleSheetLocation(getClass().getResource("/webView.css").toString());
+            
+            
+            /*File imgfile = new File("target/classes/DefaultPerson.png");
+            
+            
+            FileInputStream fin = new FileInputStream(imgfile);
+            byte[] image = new byte[(int)imgfile.length()];
+            fin.read(image);
+            
+            
+            String base64Encoded = Base64.getEncoder().encodeToString(image);
+            String beginningTag = "<div class=\"container\">\n" ;
+            String imageTag = "  <img src=\"data:image/jpeg;base64,%1$s\" ";
+            String restOfTags =
+            "  <p>Hello. How are you today?</p>\n" +
+            "  <span class=\"time-right\">11:00</span>\n" +
+            "</div>";
+            
+            String encodedBase64Tag = String.format(imageTag, base64Encoded);
+            
+            String finalHTML = beginningTag + encodedBase64Tag + restOfTags;
+            
+            //System.out.println(base64Encoded);
+            
+            webEngine.loadContent(finalHTML);*/
+            //System.err.println(html);
+            
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
             ContactsService contactsService = (ContactsService) registry.lookup("ContactsService");
             List<Contact> contacts = contactsService.getContacts(lightUser.getPhoneNumber());
@@ -129,48 +176,6 @@ public class ChatController implements Initializable {
                 @Override
                 public ListCell<Contact> call(ListView<Contact> param) {
                     return new ContactCell();
-                    /*return new ListCell<Contact>(){
-                        @Override
-                        protected void updateItem(Contact contact, boolean empty) {
-                            super.updateItem(contact, empty);
-                            if(!empty)
-                            {
-                                if(contact instanceof FriendContact){
-                                    this.setText(((FriendContact)contact).getName());
-                                    if(((FriendContact)contact).getStatus() != null)
-                                    {
-                                        if(((FriendContact)contact).getNotified())
-                                        {
-                                            this.setTextFill(Color.GREEN);
-                                        }
-                                        else
-                                        {
-                                            this.setTextFill(Color.BLACK);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        this.setTextFill(Color.RED);
-                                    }
-                                }
-                                else
-                                {
-                                    this.setText(((GroupContact)contact).getName());
-                                    
-                                    if(((GroupContact)contact).getNotified())
-                                    {
-                                        this.setTextFill(Color.GREEN);
-                                        
-                                    }
-                                    else
-                                    {
-                                        this.setTextFill(Color.BLACK);
-                                    }
-                                }
-                            }
-                        }
-                        
-                    };*/
                 }
             });
             
@@ -187,11 +192,11 @@ public class ChatController implements Initializable {
                     }
                     if((currentSelectedFriendContact).getStatus() == null)
                     {
-                        txtMessage.setDisable(true);
+                        htmlEditor.setDisable(true);
                     }
                     else
                     {
-                        txtMessage.setDisable(false);
+                        htmlEditor.setDisable(false);
                     }
                 }
                 else
@@ -204,7 +209,7 @@ public class ChatController implements Initializable {
                         lstContacts.refresh();
                     }
                     fillChatArea(String.valueOf(currentSelectedGroupContact.getGroupId()));
-                    txtMessage.setDisable(false);
+                    htmlEditor.setDisable(false);
                 }
                 
             });
@@ -212,6 +217,8 @@ public class ChatController implements Initializable {
         } catch (RemoteException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NotBoundException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }  catch (IOException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -243,39 +250,101 @@ public class ChatController implements Initializable {
     
     private void sendMessage()
     {
-        if(friendOrGroupContact == null){
-            //should Select a contact to send
-        }
-        else if(friendOrGroupContact && !txtMessage.getText().isEmpty()){
-            oneToOneMessage = new OneToOneMessage();
-            oneToOneMessage.setMessage(txtMessage.getText().toString().trim());
-            oneToOneMessage.setSenderPhone(lightUser.getPhoneNumber());
-            oneToOneMessage.setReceiverPhone(currentSelectedFriendContact.getPhoneNumber());
-            
-            try {
-                chatService.sendMessage(oneToOneMessage);
-                txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
-                txtMessage.clear();
+        FileInputStream fin = null;
+        try {
+            //webEngine.loadContent(htmlEditor.getHtmlText());
+            System.out.println(htmlEditor.getHtmlText());
+            File imgfile = new File("target/classes/DefaultPerson.png");
+            fin = new FileInputStream(imgfile);
+            byte[] image = new byte[(int)imgfile.length()];
+            fin.read(image);
+            if(messageFlag)
+            {
+                String base64Encoded = Base64.getEncoder().encodeToString(image);
+                String beginningTag = "<div class=\"container\">\n" ;
+                String imageTag = "  <img class = \"right\" src=\"data:image/jpeg;base64,%1$s\" ";
+                String restOfTags =
+                        "  <p>Hello. How are you today?</p>\n" +
+                        "  <span class=\"time-right\">11:00</span>\n" +
+                        "</div>";
                 
-                List<Message> previousMessagesList = createOrAppendChatSession(currentSelectedFriendContact.getPhoneNumber());
-                previousMessagesList.add(oneToOneMessage);
-            } catch (RemoteException ex) {
-                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                String encodedBase64Tag = String.format(imageTag, base64Encoded);
+                
+                //String finalHTML = beginningTag + encodedBase64Tag + restOfTags;
+                htmlAll += beginningTag + encodedBase64Tag + restOfTags;
+                //System.out.println(base64Encoded);
+                
+                webEngine.loadContent(htmlAll);
+                
+                messageFlag = false;
             }
-        }
-        else
-        {
-            groupMessage = new GroupMessage();
-            groupMessage.setMessage(txtMessage.getText().toString().trim());
-            groupMessage.setReceiverGroup(currentSelectedGroupContact.getGroupId());
-            groupMessage.setSenderUser(lightUser);
-            
+            else
+            {
+                String base64Encoded = Base64.getEncoder().encodeToString(image);
+                String beginningTag = "<div class=\"container darker\">\n" ;
+                String imageTag = "  <img src=\"data:image/jpeg;base64,%1$s\" ";
+                String restOfTags =
+                        "  <p>Hello. How are you today?</p>\n" +
+                        "  <span class=\"time-left\">11:00</span>\n" +
+                        "</div>";
+                
+                String encodedBase64Tag = String.format(imageTag, base64Encoded);
+                
+                //String finalHTML = beginningTag + encodedBase64Tag + restOfTags;
+                
+                htmlAll += beginningTag + encodedBase64Tag + restOfTags;
+                //System.out.println(base64Encoded);
+                
+                webEngine.loadContent(htmlAll);
+                messageFlag = true;
+            }
+            //webEngine.loadContent(htmlEditor.getHtmlText());//txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+            htmlEditor.setHtmlText("<html><head></head><body>");
+            if(friendOrGroupContact == null){
+                //should Select a contact to send
+            }
+            else if(friendOrGroupContact && !htmlEditor.getHtmlText().isEmpty()){
+                oneToOneMessage = new OneToOneMessage();
+                oneToOneMessage.setMessage(htmlEditor.getHtmlText().toString().trim());
+                oneToOneMessage.setSenderPhone(lightUser.getPhoneNumber());
+                oneToOneMessage.setReceiverPhone(currentSelectedFriendContact.getPhoneNumber());
+                
+                try {
+                    chatService.sendMessage(oneToOneMessage);
+                    
+                    
+                    List<Message> previousMessagesList = createOrAppendChatSession(currentSelectedFriendContact.getPhoneNumber());
+                    previousMessagesList.add(oneToOneMessage);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                }  catch (IOException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else
+            {
+                groupMessage = new GroupMessage();
+                groupMessage.setMessage(htmlEditor.getHtmlText().toString().trim());
+                groupMessage.setReceiverGroup(currentSelectedGroupContact.getGroupId());
+                groupMessage.setSenderUser(lightUser);
+                
+                try {
+                    chatService.sendMessage(groupMessage);
+                    htmlEditor.setHtmlText("");
+                    List<Message> previousMessagesList = createOrAppendChatSession(String.valueOf(currentSelectedGroupContact.getGroupId()));
+                    previousMessagesList.add(groupMessage);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
             try {
-                chatService.sendMessage(groupMessage);
-                txtMessage.clear();
-                List<Message> previousMessagesList = createOrAppendChatSession(String.valueOf(currentSelectedGroupContact.getGroupId()));
-                previousMessagesList.add(groupMessage);
-            } catch (RemoteException ex) {
+                fin.close();
+            } catch (IOException ex) {
                 Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -294,7 +363,7 @@ public class ChatController implements Initializable {
             {
                 if(currentSelectedFriendContact.getPhoneNumber().equals(oneToOneMessage.getSenderPhone()))
                 {
-                    txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+                    //txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
                 }
                 else
                 {
@@ -321,7 +390,7 @@ public class ChatController implements Initializable {
             {
                 if(currentSelectedGroupContact.getGroupId() == groupMessage.getReceiverGroup())
                 {
-                    txtChatArea.appendText(groupMessage.getSenderUser().getName()+ ":" + groupMessage.getMessage() + "\n");
+                    //txtChatArea.appendText(groupMessage.getSenderUser().getName()+ ":" + groupMessage.getMessage() + "\n");
                 }
                 else
                 {
@@ -374,7 +443,7 @@ public class ChatController implements Initializable {
     private void fillChatArea(String sessionId)
     {
         ChatSession chatSession = chatSessionsMap.get(sessionId);
-        txtChatArea.clear();
+        //txtChatArea.clear();
         if(chatSession != null)
         {
             List<Message> previousMessagesList = chatSession.getMessagesList();
@@ -382,12 +451,12 @@ public class ChatController implements Initializable {
                 if(friendOrGroupContact)
                 {
                     oneToOneMessage = (OneToOneMessage) message;
-                    txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
+                    //txtChatArea.appendText(oneToOneMessage.getSenderPhone() + ":" + oneToOneMessage.getMessage() + "\n");
                 }
                 else
                 {
                     groupMessage = (GroupMessage) message;
-                    txtChatArea.appendText(groupMessage.getSenderUser().getPhoneNumber()+ ":" + groupMessage.getMessage() + "\n");
+                    //txtChatArea.appendText(groupMessage.getSenderUser().getPhoneNumber()+ ":" + groupMessage.getMessage() + "\n");
                 }
             });
         }
@@ -416,7 +485,7 @@ public class ChatController implements Initializable {
         }
         return tempContact;
     }
-
+    
     public void handleNotification(Notification notification) {
         if(notification instanceof ContactNotification)
         {
@@ -429,10 +498,10 @@ public class ChatController implements Initializable {
                 friendContact.setStatusDescription(contactNotification.getNewStatus());
                 Platform.runLater(() -> {
                     Notifications.create()
-                        .title("Chat App")
-                        .text("Your Friend " + contactNotification.getContactName() 
-                                + " is " + contactNotification.getNewStatus() + "!")
-                        .showInformation();
+                            .title("Chat App")
+                            .text("Your Friend " + contactNotification.getContactName()
+                                    + " is " + contactNotification.getNewStatus() + "!")
+                            .showInformation();
                 });
                 
                 if(contactNotification.getStatusId() == 0)
@@ -452,8 +521,45 @@ public class ChatController implements Initializable {
             }
         }
     }
+    
+    @FXML
+    private void btnAddGroupOnAction(ActionEvent event) {
+        Stage addNewGroupStage = new Stage();
+        List<GroupMember> groupMembers = mapToGroupMember();
+        
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            AddNewGroupController addNewGroupController = new AddNewGroupController(groupMembers, addNewGroupStage, loginUser.getPhoneNumber());
+            loader.setController(addNewGroupController);
+            Parent root = loader.load(getClass().getResource("/AddNewGroupDesign.fxml").openStream());
 
-    public void logout() {
+            Scene scene = new Scene(root);
+
+            addNewGroupStage.setTitle("Login");
+            addNewGroupStage.setScene(scene);
+            addNewGroupStage.showAndWait();
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    private List<GroupMember> mapToGroupMember(){
+        List<GroupMember> membersList = new ArrayList<>();
+        lstContacts.getItems().forEach((contact) -> {
+            if(contact instanceof FriendContact)
+            {
+                FriendContact friendContact = (FriendContact)contact;
+                
+                GroupMember groupMember = new GroupMember();
+                groupMember.setPhoneNumber(friendContact.getPhoneNumber());
+                groupMember.setName(friendContact.getName());
+                groupMember.setImage(friendContact.getImage());
+                groupMember.setChecked(false);
+                membersList.add(groupMember);
+            }
+        });
+        
+        return membersList;
         
     }
 }

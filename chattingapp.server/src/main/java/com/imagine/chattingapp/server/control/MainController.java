@@ -39,11 +39,14 @@ public class MainController {
             ContactsServiceImpl contactsServiceImpl = new ContactsServiceImpl();
             ChatServiceImpl chatServiceImpl = new ChatServiceImpl();
             RegisterServiceImpl registerServiceImpl = new RegisterServiceImpl();
+            AddNewGroupServiceImpl addNewGroupServiceImpl = new AddNewGroupServiceImpl();
+            
             Registry registery = LocateRegistry.createRegistry(2000);
             registery.rebind("LoginLogoutService", loginServiceImpl);
             registery.rebind("ContactsService", contactsServiceImpl);
             registery.rebind("ChatService", chatServiceImpl);
             registery.rebind("RegisterService", registerServiceImpl);
+            registery.rebind("AddNewGroupService", addNewGroupServiceImpl);
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

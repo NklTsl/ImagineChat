@@ -25,11 +25,10 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
     @Override
     public void persist(Chat_Group chatGroup) throws SQLException {
         String persistQuery = "INSERT INTO `chattingapp`.`chat_group` "
-                + "(`ID`, `Owner_Phone_Number`, `Name`, `Picture`, `Last_Message_Sent_Time`) "
-                + "VALUES (?, ?, ?, ?, ?);";
+                + "(`Owner_Phone_Number`, `Name`, `Picture`, `Last_Message_Sent_Time`) "
+                + "VALUES (?, ?, ?, ?);";
         
         List<Object> parameterList = new ArrayList<>();
-        parameterList.add(chatGroup.getId());
         parameterList.add(chatGroup.getOwnerPhoneNumber());
         parameterList.add(chatGroup.getName());
         parameterList.add(chatGroup.getPicture());
@@ -148,6 +147,24 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
         }
         
         return chatGroupList;
+    }
+    
+    public int getLastInsertedGroupId() throws SQLException {
+        String getByColumnNamesQuery = "SELECT LAST_INSERT_ID()" 
+                + "FROM `chattingapp`.`chat_group` ";
+        
+        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, new ArrayList<>());
+        queryResult.beforeFirst();
+        List<Chat_Group> chatGroupList = new ArrayList<Chat_Group>();
+        
+        int lastInsertedId = -1;
+        
+        if(queryResult.next())
+        {
+            lastInsertedId = queryResult.getInt(1);
+        }
+        
+        return lastInsertedId;
     }
     
 }

@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 public class ChatServiceImpl extends UnicastRemoteObject implements ChatService{
     
     public ChatServiceImpl() throws RemoteException{
+        
     }
     
     
