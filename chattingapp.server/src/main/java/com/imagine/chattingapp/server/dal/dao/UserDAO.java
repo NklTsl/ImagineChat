@@ -91,9 +91,10 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
         
         ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
         queryResult.beforeFirst();
-        User user = new User();
+        User user = null;
         if(queryResult.next())
         {
+            user = new User();
             user.setPhoneNumber(queryResult.getString(1));
             user.setName(queryResult.getString(2));
             user.setEmail(queryResult.getString(3));

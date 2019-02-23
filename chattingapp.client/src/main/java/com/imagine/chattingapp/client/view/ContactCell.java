@@ -61,13 +61,26 @@ public class ContactCell extends ListCell<Contact> {
                     contactImagecircle.setFill(new ImagePattern(contactImage));
                     contactImagecircle.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
                 }
-                //if(friendContact.getStatus() != null)
-                //{
-                    Image statusImage = new Image("/online.png");
-                    statusCircle.setFill(new ImagePattern(statusImage));
-                    statusCircle.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
+                statusCircle.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
+                if(friendContact.getStatus() != null)
+                {
+                    Image statusImage;
+                    if(friendContact.getStatus() == 1)
+                        statusImage = new Image("/online.png");
+                    else if(friendContact.getStatus() == 2)
+                        statusImage = new Image("/busy.png");
+                    else
+                        statusImage = new Image("/away.png");
                     
-                //}
+                    statusCircle.setFill(new ImagePattern(statusImage));
+                    
+                }
+                else
+                {
+                    Image statusImage = new Image("/offline.png");
+                    statusCircle.setFill(new ImagePattern(statusImage));
+                    
+                }
                 
                 contactHBox.getChildren().addAll(contactImagecircle, new Text(friendContact.getName()), spacePane, statusCircle);
                 this.setGraphic(contactHBox);
@@ -90,6 +103,4 @@ public class ContactCell extends ListCell<Contact> {
             this.setGraphic(null);
         }
     }
-    
-    
 }

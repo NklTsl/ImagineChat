@@ -31,6 +31,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
+import javafx.scene.control.Hyperlink;
 
 /**
  * FXML Controller class
@@ -40,23 +44,17 @@ import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 public class LoginController implements Initializable {
 
     @FXML
-    private Label welcomeMessage;
+    private JFXTextField txtPhone;
     @FXML
-    private Label lblPhone;
+    private JFXPasswordField txtPassword;
     @FXML
-    private Label lblPassword;
+    private JFXButton btnLogin;
     @FXML
-    private TextField txtPhone;
+    private JFXButton btnCancel;
     @FXML
-    private PasswordField txtPassword;
+    private Label lblWrong;
     @FXML
-    private Button btnLogin;
-    @FXML
-    private Button btnCancel;
-    @FXML
-    private Text lblWrong;
-    @FXML
-    private Button btnRegister;
+    private Hyperlink lnkRegister;
     
     private MainController mainController;
     private LoginUser loginUser;
@@ -72,7 +70,7 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        lblWrong.setFill(Color.RED);
+        
     }    
 
     @FXML
@@ -125,7 +123,7 @@ public class LoginController implements Initializable {
         }
     }
     @FXML
-    private void btnRegisterAction(ActionEvent event) {
+    private void lnkRegisterAction(ActionEvent event) {
         try {
             mainController.switchToRegisterScene();
         } catch (Exception ex) {

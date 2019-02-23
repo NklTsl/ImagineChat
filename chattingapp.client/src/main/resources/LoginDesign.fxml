@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <GridPane alignment="TOP_CENTER" hgap="5.0" prefHeight="225.0" prefWidth="483.0" stylesheets="@Login.css" vgap="5.0" BorderPane.alignment="TOP_CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="146.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="434.0" minWidth="10.0" prefWidth="429.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="180.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="223.0" minHeight="10.0" prefHeight="223.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane layoutX="184.0" layoutY="100.0" prefHeight="630.0" prefWidth="840.0" AnchorPane.bottomAnchor="-80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label fx:id="lblPhone" text="Phone Number:">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="lblPassword" text="Password:" GridPane.rowIndex="1">
-               <font>
-                  <Font name="Tahoma" size="20.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtPhone" promptText="Enter your phone number" GridPane.columnIndex="1" />
-            <PasswordField fx:id="txtPassword" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#btnLoginAction" prefHeight="25.0" prefWidth="73.0" text="login" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-            <Button fx:id="btnCancel" contentDisplay="TOP" mnemonicParsing="false" onAction="#btnCancelAction" prefHeight="25.0" prefWidth="70.0" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Button fx:id="btnRegister" mnemonicParsing="false" onAction="#btnRegisterAction" prefHeight="25.0" prefWidth="73.0" text="register?" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-            <Text fx:id="lblWrong" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="426.6708984375" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+            <VBox prefHeight="646.0" prefWidth="840.0">
+               <children>
+                  <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2196f3;" />
+                  <Pane prefHeight="430.0" prefWidth="800.0" style="-fx-background-color: #EDE7F6;" />
+               </children>
+            </VBox>
+            <AnchorPane prefHeight="697.0" prefWidth="800.0" style="-fx-background-color: transparent;">
+               <children>
+                  <AnchorPane layoutX="90.0" layoutY="100.0" prefHeight="406.0" prefWidth="620.0" style="-fx-background-color: WHITE; -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.15), 6.0, 0.7, 0.0,1.5); -fx-background-radius: 4; -fx-border-radius: 4;">
+                     <children>
+                        <ImageView fitHeight="106.0" fitWidth="128.0" layoutX="276.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="286.0" AnchorPane.leftAnchor="276.0" AnchorPane.rightAnchor="238.0" AnchorPane.topAnchor="14.0">
+                           <image>
+                              <Image url="@User.png" />
+                           </image>
+                        </ImageView>
+                        <JFXTextField fx:id="txtPhone" labelFloat="true" layoutX="104.0" layoutY="136.0" maxWidth="413.0" minWidth="233.0" prefHeight="39.0" prefWidth="413.0" promptText="Enter Phone Number">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </JFXTextField>
+                        <JFXPasswordField fx:id="txtPassword" labelFloat="true" layoutX="104.0" layoutY="193.0" maxWidth="413.0" minWidth="235.0" prefHeight="39.0" prefWidth="413.0" promptText="Enter Password">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </JFXPasswordField>
+                        <JFXButton fx:id="btnLogin" layoutX="392.0" layoutY="287.0" onAction="#btnLoginAction" prefHeight="43.0" prefWidth="123.0" style="-fx-background-color: #2196f3;" text="Login" textFill="WHITE">
+                           <font>
+                              <Font name="Roboto Bold" size="14.0" />
+                           </font>
+                        </JFXButton>
+                        <Hyperlink fx:id="lnkRegister" layoutX="444.0" layoutY="237.0" onAction="#lnkRegisterAction" text="Register?" />
+                        <JFXButton fx:id="btnCancel" layoutX="127.0" layoutY="287.0" onAction="#btnCancelAction" prefHeight="43.0" prefWidth="123.0" style="-fx-background-color: grey;" text="Cancel" textFill="WHITE">
+                           <font>
+                              <Font name="Roboto Bold" size="14.0" />
+                           </font>
+                        </JFXButton>
+                        <Label fx:id="lblWrong" layoutX="141.0" layoutY="234.0" prefHeight="34.0" prefWidth="294.0" style="-fx-text-fill: red;" />
+                     </children>
+                  </AnchorPane>
+                  <VBox layoutX="188.0" layoutY="24.0" />
+               </children>
+            </AnchorPane>
          </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </GridPane>
-   </center>
-   <top>
-      <Label fx:id="welcomeMessage" prefHeight="47.0" prefWidth="478.0" text="Welcome To Imagine Chat" BorderPane.alignment="CENTER">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-   </top>
-</BorderPane>
+      </StackPane>
+   </children>
+</AnchorPane>

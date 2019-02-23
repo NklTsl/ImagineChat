@@ -40,7 +40,7 @@ public class ClientServiceImpl extends UnicastRemoteObject implements ClientServ
     }
 
     @Override
-    public ReceiveFileService requestReceiveFileService(String senderName) throws RemoteException {
-        return mainController.getChatController().showReceiveFileRequest(senderName);
+    public ReceiveFileService requestReceiveFileService(String senderName, String fileName) throws RemoteException {
+        return mainController.getChatController().showReceiveFileRequest(senderName, fileName);
     }
 }

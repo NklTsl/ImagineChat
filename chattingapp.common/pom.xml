@@ -8,6 +8,13 @@
     </parent>
     <artifactId>chattingapp.common</artifactId>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.healthmarketscience.rmiio</groupId>
+            <artifactId>rmiio</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+    </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

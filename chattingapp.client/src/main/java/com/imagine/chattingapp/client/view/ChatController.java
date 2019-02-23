@@ -274,7 +274,7 @@ public class ChatController implements Initializable {
             SimpleRemoteInputStream remoteInputStream = null;
             if(clientSendFile != null){
                 try {
-                    ReceiveFileService receiveFileService = clientSendFile.getReceiveFileService(currentSelectedFriendContact.getPhoneNumber(), lightUser.getName());
+                    ReceiveFileService receiveFileService = clientSendFile.getReceiveFileService(currentSelectedFriendContact.getPhoneNumber(), lightUser.getName(), choosenFile.getName());
                     if(receiveFileService != null){
                         String fileName = choosenFile.getName();
                         String extention  = fileName.substring(fileName.lastIndexOf("."));
@@ -568,10 +568,10 @@ public class ChatController implements Initializable {
                             .showInformation();
                 });
                 
-                if(contactNotification.getStatusId() == 0)
+                if(contactNotification.getStatusId() != null)
                 {
                     onlineSound.play();
-                    friendContact.setStatus((byte)0);
+                    friendContact.setStatus(contactNotification.getStatusId());
                     lstContacts.refresh();
                 }
                 else
@@ -632,11 +632,11 @@ public class ChatController implements Initializable {
         
     }
     
-    public ReceiveFileService showReceiveFileRequest(String senderName) {
+    public ReceiveFileService showReceiveFileRequest(String senderName, String fileName) {
         final CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(()->{
-            Alert receiveFileAlert = new Alert(Alert.AlertType.CONFIRMATION, "Your friend "+senderName+" Want to Send a File"
-                    + " \nDo you want to Accept?");
+            Alert receiveFileAlert = new Alert(Alert.AlertType.CONFIRMATION, "Your friend "+senderName+" wants to Send"
+                    + fileName+ " \nDo you want to Accept?");
             result = receiveFileAlert.showAndWait();
             latch.countDown();
         });
@@ -665,18 +665,19 @@ public class ChatController implements Initializable {
         try {
             
             final CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(()->{
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select File To Send");
-            choosenFile = fileChooser.showSaveDialog(mainController.getPrimaryStage());
-            latch.countDown();
-        });
-        
-        try {
-            latch.await();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            Platform.runLater(()->{
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select File To Send");
+                fileChooser.setInitialFileName(fileName);
+                choosenFile = fileChooser.showSaveDialog(mainController.getPrimaryStage());
+                latch.countDown();
+            });
+            
+            try {
+                latch.await();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             if(choosenFile != null)
             {
                 istream = RemoteInputStreamClient.wrap(remoteInputStream);

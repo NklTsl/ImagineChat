@@ -15,7 +15,7 @@ public class ContactNotification implements Notification, Serializable {
     String contactPhoneNumber;
     String contactName;
     String newStatus;
-    byte statusId;
+    Byte statusId;
 
     public String getContactPhoneNumber() {
         return contactPhoneNumber;
@@ -41,11 +41,11 @@ public class ContactNotification implements Notification, Serializable {
         this.newStatus = newStatus;
     }
     
-    public byte getStatusId() {
+    public Byte getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(byte statusId) {
+    public void setStatusId(Byte statusId) {
         this.statusId = statusId;
     }
 }

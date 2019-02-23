@@ -40,6 +40,8 @@ public class MainController {
             ChatServiceImpl chatServiceImpl = new ChatServiceImpl();
             RegisterServiceImpl registerServiceImpl = new RegisterServiceImpl();
             AddNewGroupServiceImpl addNewGroupServiceImpl = new AddNewGroupServiceImpl();
+            FriendRequestImpl sendFriendRequest = new FriendRequestImpl();
+            ClientSendFileServiceP2PImpl clientSendFileServiceP2PImpl = new ClientSendFileServiceP2PImpl();
             
             Registry registery = LocateRegistry.createRegistry(2000);
             registery.rebind("LoginLogoutService", loginServiceImpl);
@@ -47,6 +49,8 @@ public class MainController {
             registery.rebind("ChatService", chatServiceImpl);
             registery.rebind("RegisterService", registerServiceImpl);
             registery.rebind("AddNewGroupService", addNewGroupServiceImpl);
+            registery.rebind("AddContactService", sendFriendRequest);
+            registery.rebind("SendFileService", clientSendFileServiceP2PImpl);
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -65,7 +69,7 @@ public class MainController {
             
             contactNotification.setContactPhoneNumber(phoneNumber);
             contactNotification.setNewStatus("Online");
-            contactNotification.setStatusId((byte)0);
+            contactNotification.setStatusId(user.getStatusID());
             contactNotification.setContactName(user.getName());
             
             ContactsDAO contactsDao = new ContactsDAO();
@@ -101,7 +105,7 @@ public class MainController {
             
             contactNotification.setContactPhoneNumber(phoneNumber);
             contactNotification.setNewStatus("Offline");
-            contactNotification.setStatusId((byte)1);
+            contactNotification.setStatusId(null);
             contactNotification.setContactName(user.getName());
             
             ContactsDAO contactsDao = new ContactsDAO();

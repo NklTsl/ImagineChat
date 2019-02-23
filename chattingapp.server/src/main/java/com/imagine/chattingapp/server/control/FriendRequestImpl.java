@@ -35,7 +35,13 @@ public class FriendRequestImpl extends UnicastRemoteObject implements FriendRequ
 
     @Override
     public void sendFriendRequests(String senderPhoneNumber, List<String> usersToBeSentRequestsTo) throws RemoteException {
-
+        usersToBeSentRequestsTo.forEach((request) -> {
+            try {
+                friendRequestDao.persist(FriendRequestObjectPreparation(senderPhoneNumber, request));
+            } catch (SQLException ex) {
+                Logger.getLogger(FriendRequestImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     @Override
@@ -149,8 +155,10 @@ public class FriendRequestImpl extends UnicastRemoteObject implements FriendRequ
             if(request == null){
                 isPending = false;
             }
-            else
+            else{
                 isPending= true;
+                acceptPending(senderPhoneNumber, receiverPhoneNumber);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(FriendRequestImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -176,5 +184,49 @@ public class FriendRequestImpl extends UnicastRemoteObject implements FriendRequ
             Logger.getLogger(FriendRequestImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return receiver;
+    }
+    
+    private Friend_Request FriendRequestObjectPreparation(String sender,String receiver){
+        Friend_Request friendRequest = new Friend_Request();
+        friendRequest.setSenderPhoneNumber(sender);
+        friendRequest.setReceiverPhoneNumber(receiver);
+        int status = 1;
+        friendRequest.setStatusID((byte)status);
+        return friendRequest;
+    
+    }
+    
+    private void acceptPending(String senderPhoneNumber,String receiverPhoneNumber){
+    
+        
+            addFriendRelation(senderPhoneNumber, receiverPhoneNumber);
+            addFriendRelation(receiverPhoneNumber, senderPhoneNumber);
+            removePendingRequest(senderPhoneNumber, receiverPhoneNumber);
+         
+    }
+    
+    private void removePendingRequest(String sender,String receiver){
+    
+        try {
+            List<Object> phonesToDelete = new ArrayList<>();
+            phonesToDelete.add(receiver);
+            phonesToDelete.add(sender);
+            friendRequestDao.delete(phonesToDelete);
+        } catch (SQLException ex) {
+            Logger.getLogger(FriendRequestImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void addFriendRelation(String sender,String receiver){
+        try {
+            Friend friendCurrent = new Friend();
+            friendCurrent.setPhoneNumber1(sender);
+            friendCurrent.setPhoneNumber2(receiver);
+            friendCurrent.setBlockFlag(false);
+            friendCurrent.setRealtiveGroup("other");
+            friendDao.persist(friendCurrent);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(FriendRequestImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -19,4 +19,6 @@ import java.rmi.RemoteException;
 public interface ClientService extends Remote{
     public void receive(Message message) throws RemoteException;
     public void notify(Notification notification) throws RemoteException;
+
+    public ReceiveFileService requestReceiveFileService(String senderName, String fileName) throws RemoteException;
 }
