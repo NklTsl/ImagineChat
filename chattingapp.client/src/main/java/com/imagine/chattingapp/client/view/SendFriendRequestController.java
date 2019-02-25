@@ -45,7 +45,7 @@ public class SendFriendRequestController implements Initializable{
     @FXML
     private VBox allContactsVBox;
      
-    MainController mainController;
+    ChatController chatController;
     String senderPhoneNumber;
     String receiverPhoneNumber;
     FriendRequestEligibility friendRequestEligibility;
@@ -54,8 +54,8 @@ public class SendFriendRequestController implements Initializable{
     
     
 
-    public SendFriendRequestController(MainController main,LoginUser loginUser) {
-        this.mainController =main;
+    public SendFriendRequestController(ChatController chatController,LoginUser loginUser) {
+        this.chatController =chatController;
         receiverPhoneNumber = null;
         friendRequestEligibility = null;
         friendRequest = null;

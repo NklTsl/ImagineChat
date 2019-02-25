@@ -16,7 +16,8 @@ public class ChatSession {
     private String name;
     private byte[] picture;
     private boolean oneOrGroupFlag;
-    List<Message> messagesList;
+    
+    private List<Message> messagesList;
 
     public String getSessionId() {
         return sessionId;
@@ -42,14 +43,14 @@ public class ChatSession {
         this.picture = picture;
     }
 
-    public boolean isOneOrGroupFlag() {
+    public boolean getOneOrGroupFlag() {
         return oneOrGroupFlag;
     }
 
     public void setOneOrGroupFlag(boolean oneOrGroupFlag) {
         this.oneOrGroupFlag = oneOrGroupFlag;
     }
-
+    
     public List<Message> getMessagesList() {
         return messagesList;
     }
@@ -57,6 +58,4 @@ public class ChatSession {
     public void setMessagesList(List<Message> messagesList) {
         this.messagesList = messagesList;
     }
-    
-    
 }

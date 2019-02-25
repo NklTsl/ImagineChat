@@ -29,6 +29,11 @@
             <artifactId>jfoenix</artifactId>
             <version>8.0.8</version>
         </dependency>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>Ab</artifactId>
+            <version>0.0.4.3</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

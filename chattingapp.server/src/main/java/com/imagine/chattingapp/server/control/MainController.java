@@ -42,6 +42,8 @@ public class MainController {
             AddNewGroupServiceImpl addNewGroupServiceImpl = new AddNewGroupServiceImpl();
             FriendRequestImpl sendFriendRequest = new FriendRequestImpl();
             ClientSendFileServiceP2PImpl clientSendFileServiceP2PImpl = new ClientSendFileServiceP2PImpl();
+            GetNameByPhoneServiceImpl getNameByPhoneServiceImpl = new GetNameByPhoneServiceImpl();
+            
             
             Registry registery = LocateRegistry.createRegistry(2000);
             registery.rebind("LoginLogoutService", loginServiceImpl);
@@ -51,6 +53,8 @@ public class MainController {
             registery.rebind("AddNewGroupService", addNewGroupServiceImpl);
             registery.rebind("AddContactService", sendFriendRequest);
             registery.rebind("SendFileService", clientSendFileServiceP2PImpl);
+            registery.rebind("GetNameByPhoneService", getNameByPhoneServiceImpl);
+            
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

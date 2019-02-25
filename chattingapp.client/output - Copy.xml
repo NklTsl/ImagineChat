@@ -1,0 +1,15 @@
+<?xml version = "1.0"?>
+<?xml-stylesheet type = "text/xsl" href = "output.xsl"?> 
+
+<ChatSession from="Mahmoud" to="Ahmed" dateTaken="2019-02-25" timeTaken="18:20:47">
+    <Msg from="Mahmoud">
+        <Date>2019-02-25</Date>
+        <Time>18:20:47</Time>
+        <body>asdasd</body>
+    </Msg>
+    <Msg from="Ahmed">
+        <Date>2019-02-25</Date>
+        <Time>18:20:47</Time>
+        <body>sdasdf</body>
+    </Msg>
+</ChatSession>

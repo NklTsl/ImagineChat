@@ -26,23 +26,25 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
     
     @Override
     public void persist(Friend_Request friendRequest) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`friend_request` (`Sender_Phone_Number`, `Receiver_Phone_Number`, `Status_ID`) VALUES (?, ?, ?);";
+        String persistQuery = "INSERT INTO `chattingapp`.`friend_request` (`Sender_Phone_Number`, `Receiver_Phone_Number`, `Status_ID`, `Seen`) VALUES (?, ?, ?, ?);";
         
         List<Object> parameterList = new ArrayList<>();
         parameterList.add(friendRequest.getSenderPhoneNumber());
         parameterList.add(friendRequest.getReceiverPhoneNumber());
         parameterList.add(friendRequest.getStatusID());
+        parameterList.add(friendRequest.getSeen());
         
         databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
     }
 
     @Override
     public void update(Friend_Request friendRequest) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`friend_request` SET `Status_ID` = ? "
+        String updateQuery = "UPDATE `chattingapp`.`friend_request` SET `Status_ID` = ? , `Seen` = ?"
                 + "WHERE (`Sender_Phone_Number` = ?) and (`Receiver_Phone_Number` = ?);";
         
         List<Object> parameterList = new ArrayList<>();
         parameterList.add(friendRequest.getStatusID());
+        parameterList.add(friendRequest.getSeen());
         parameterList.add(friendRequest.getSenderPhoneNumber());
         parameterList.add(friendRequest.getReceiverPhoneNumber());
         
@@ -66,7 +68,8 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
     public Friend_Request getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
         String deleteQuery = "SELECT `friend_request`.`Sender_Phone_Number`, "
                 + "`friend_request`.`Receiver_Phone_Number`, "
-                + "`friend_request`.`Status_ID` FROM `chattingapp`.`friend_request` "
+                + "`friend_request`.`Status_ID` , `friend_request`.`Seen`"
+                + "FROM `chattingapp`.`friend_request` "
                 + "WHERE (`Sender_Phone_Number` = ?) and (`Receiver_Phone_Number` = ?);";
         
         List<Object> parameterList = new ArrayList<>();
@@ -83,6 +86,7 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
             friendRequest.setSenderPhoneNumber(queryResult.getString(1));
             friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
             friendRequest.setStatusID(queryResult.getByte(3));
+            friendRequest.setSeen(queryResult.getBoolean(4));
         }
         return friendRequest;
     }
@@ -91,7 +95,8 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
     public List<Friend_Request> getAll() throws SQLException {
         String getAllQuery = "SELECT `friend_request`.`Sender_Phone_Number`, "
                 + "`friend_request`.`Receiver_Phone_Number`, "
-                + "`friend_request`.`Status_ID` FROM `chattingapp`.`friend_request`";
+                + "`friend_request`.`Status_ID` , `friend_request`.`Seen`"
+                + "FROM `chattingapp`.`friend_request`";
         
         ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
         queryResult.beforeFirst();
@@ -104,6 +109,7 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
             friendRequest.setSenderPhoneNumber(queryResult.getString(1));
             friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
             friendRequest.setStatusID(queryResult.getByte(3));
+            friendRequest.setSeen(queryResult.getBoolean(4));
             friendRequestList.add(friendRequest);
         }
         
@@ -115,7 +121,8 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
     public List<Friend_Request> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
         String getByColumnNamesQuery = "SELECT `friend_request`.`Sender_Phone_Number`, "
                 + "`friend_request`.`Receiver_Phone_Number`, "
-                + "`friend_request`.`Status_ID` FROM `chattingapp`.`friend_request` "
+                + "`friend_request`.`Status_ID`, `friend_request`.`Seen`"
+                + " FROM `chattingapp`.`friend_request` "
                 + "WHERE ";
         
         for(int i = 0 ; i < columnNames.size() ; i++){
@@ -135,6 +142,7 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
             friendRequest.setSenderPhoneNumber(queryResult.getString(1));
             friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
             friendRequest.setStatusID(queryResult.getByte(3));
+            friendRequest.setSeen(queryResult.getBoolean(4));
             friendRequestList.add(friendRequest);
         }
         

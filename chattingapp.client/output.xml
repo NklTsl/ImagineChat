@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type = "text/xsl" href = "output.xsl"?>
+<ChatSession  from="Mahmoud" to="Ahmed" dateTaken="2019-02-25" timeTaken="20:20:31">
+    <Msg from="Mahmoud">
+        <Date>2019-02-25</Date>
+        <Time>20:20:31</Time>
+        <body>&lt;p&gt;&lt;font face="Segoe UI"&gt;hi&lt;/font&gt;&lt;/p&gt;</body>
+    </Msg>
+    <Msg from="Ahmed">
+        <Date>2019-02-25</Date>
+        <Time>20:20:31</Time>
+        <body>&lt;p&gt;&lt;font face="Segoe UI"&gt;hi&lt;/font&gt;&lt;/p&gt;</body>
+    </Msg>
+    <Msg from="Ahmed">
+        <Date>2019-02-25</Date>
+        <Time>20:20:31</Time>
+        <body>&lt;p&gt;&lt;font face="Segoe UI"&gt;hi&lt;/font&gt;&lt;/p&gt;</body>
+    </Msg>
+</ChatSession>

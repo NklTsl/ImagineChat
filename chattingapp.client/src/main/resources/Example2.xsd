@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           xmlns="http://www.MahmoudShereif.com"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace = "http://www.MahmoudShereif.com">
+       
+    <xs:attributeGroup name="titleGroup">   
+        <xs:attribute name="title" type="xs:string"></xs:attribute>
+    </xs:attributeGroup> 
+    <xs:group name = "libraryGroup" >
+        <xs:sequence>
+            <xs:element name = "book" type = "bookType" 
+            minOccurs="1"  maxOccurs="unbounded">
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:simpleType name="paragraphType" >
+        <xs:restriction base="xs:string">
+            
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="sectionType" mixed = "true">
+        <xs:sequence>
+            <xs:element name = "paragraph" type = "paragraphType" 
+             minOccurs="1"  maxOccurs="unbounded" >
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name = "content" type = "xs:string"></xs:attribute>
+    </xs:complexType>
+    
+    <xs:complexType name="chapterType">
+        <xs:sequence>
+            <xs:element name = "section" type = "sectionType" 
+            minOccurs="1"  maxOccurs="unbounded">
+            </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="titleGroup">
+        </xs:attributeGroup>
+        <xs:attribute name = "summary" type = "xs:string"></xs:attribute>
+    </xs:complexType>
+    
+    <xs:complexType name="partType">
+        <xs:sequence>
+            <xs:element name = "chapter" type = "chapterType" 
+            minOccurs="1"  maxOccurs="unbounded">
+            </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="titleGroup">
+        </xs:attributeGroup>
+    </xs:complexType>
+    
+    <xs:complexType name="bookType">
+        <xs:sequence>
+            <xs:element name = "part" type = "partType" 
+            minOccurs="1"  maxOccurs="unbounded">
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name = "ISBN" type = "xs:string"></xs:attribute>
+        <xs:attribute name = "author" type = "xs:string"></xs:attribute>
+        <xs:attribute name = "preface" type = "xs:string"></xs:attribute>
+        <xs:attributeGroup ref="titleGroup">
+        </xs:attributeGroup>
+    </xs:complexType>
+    
+    <xs:complexType name="libraryType">
+        <xs:group ref="libraryGroup"></xs:group>
+        <xs:attribute name = "location" type = "xs:string"></xs:attribute>
+        <xs:attribute name = "description" type = "xs:string"></xs:attribute>
+        <xs:attribute name = "librarian" type = "xs:string"></xs:attribute>
+    </xs:complexType>
+    
+    <xs:element name="library" type = "libraryType"></xs:element>
+    
+</xs:schema>

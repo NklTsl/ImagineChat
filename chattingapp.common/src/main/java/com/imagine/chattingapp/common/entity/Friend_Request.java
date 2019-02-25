@@ -13,6 +13,7 @@ public class Friend_Request implements Entity {
     private String senderPhoneNumber;
     private String receiverPhoneNumber;
     private byte statusID;
+    private boolean seen;
 
     public String getSenderPhoneNumber() {
         return senderPhoneNumber;
@@ -36,5 +37,13 @@ public class Friend_Request implements Entity {
 
     public void setStatusID(byte statusID) {
         this.statusID = statusID;
+    }
+    
+    public boolean getSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 }

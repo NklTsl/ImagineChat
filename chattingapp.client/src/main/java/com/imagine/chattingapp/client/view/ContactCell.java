@@ -36,17 +36,14 @@ public class ContactCell extends ListCell<Contact> {
     @Override
     protected void updateItem(Contact contact, boolean empty) {
         super.updateItem(contact, empty);
+        
         if(!empty)
         {
             String contactName = null;
             Circle contactImagecircle = new Circle(25);
-            Pane spacePane = new Pane();
-            Circle statusCircle = new Circle(10);
             
             
             HBox contactHBox = new HBox();
-
-            contactHBox.setHgrow(spacePane, Priority.ALWAYS);
             
             contactHBox.setAlignment(Pos.CENTER_LEFT);
             contactHBox.setSpacing(5);
@@ -55,6 +52,10 @@ public class ContactCell extends ListCell<Contact> {
             
             if(contact instanceof FriendContact)
             {
+                Circle statusCircle = new Circle(10);
+                Pane spacePane = new Pane();
+                contactHBox.setHgrow(spacePane, Priority.ALWAYS);
+                
                 FriendContact friendContact = (FriendContact)contact;
                 if(friendContact.getImage() != null){
                     Image contactImage = new Image(new ByteArrayInputStream(friendContact.getImage()));
@@ -88,13 +89,15 @@ public class ContactCell extends ListCell<Contact> {
             else
             {
                 GroupContact groupContact = (GroupContact)contact;
+                
                 if(groupContact.getImage() != null){
                     
                     Image contactImage = new Image(new ByteArrayInputStream(groupContact.getImage()));
                     contactImagecircle.setFill(new ImagePattern(contactImage));
                     contactImagecircle.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
                 }
-                this.setGraphic(contactImagecircle);
+                contactHBox.getChildren().addAll(contactImagecircle, new Text(groupContact.getName()));
+                this.setGraphic(contactHBox);
             }
         }
         else

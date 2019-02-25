@@ -50,9 +50,12 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService{
                 List<String> chatGroupUsersPhones = chatGroupUsersDAO.getPhonesByGroupId(String.valueOf(groupMessage.getReceiverGroup()));
                 for(String userPhone: chatGroupUsersPhones)
                 {
-                    clientService = MainController.getClientService(userPhone);
-                    if(clientService != null)
-                        clientService.receive(groupMessage);
+                    if(!userPhone.equals(groupMessage.getSenderUser().getPhoneNumber()))
+                    {
+                        clientService = MainController.getClientService(userPhone);
+                        if(clientService != null)
+                            clientService.receive(groupMessage);
+                    }
                 }
                 
             } catch (SQLException ex) {

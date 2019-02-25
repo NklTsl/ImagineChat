@@ -58,7 +58,6 @@ public class MainController extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
         this.primaryStage = primaryStage;
         switchToLoginScene();
         primaryStage.show();
@@ -127,7 +126,7 @@ public class MainController extends Application {
             FXMLLoader loader = new FXMLLoader();
             chatController = new ChatController(this, lightUser, loginUser);
             loader.setController(chatController);
-            Parent root = loader.load(getClass().getResource("/ChatDesign.fxml").openStream());
+            Parent root = loader.load(getClass().getResource("/ChatDesignFinal.fxml").openStream());
             Platform.runLater(() -> {
                 chatScene = new Scene(root);
                 primaryStage.setTitle("Chat");
@@ -167,25 +166,6 @@ public class MainController extends Application {
 
             primaryStage.setTitle("Login");
             primaryStage.setScene(scene);
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    public void switchToAddContactPopUp(){
-    
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            SendFriendRequestController contactController = new SendFriendRequestController(this, loginUser);
-            loader.setController(contactController);
-            Parent root = loader.load(getClass().getResource("/SendFriendRequestDesign.fxml").openStream());
-            
-            Platform.runLater(() -> {
-                Stage stage = new Stage();
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(primaryStage.getScene().getWindow());
-                stage.setScene(new Scene(root));
-                stage.show();
-            });
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }

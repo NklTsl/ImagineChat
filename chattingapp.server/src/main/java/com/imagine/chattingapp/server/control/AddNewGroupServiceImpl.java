@@ -1,8 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
+*/
 package com.imagine.chattingapp.server.control;
 
 import com.imagine.chattingapp.common.dto.NewGroupInfo;
@@ -22,11 +22,11 @@ import java.util.logging.Logger;
  * @author Mahmoud Shereif
  */
 public class AddNewGroupServiceImpl extends UnicastRemoteObject implements AddNewGroupService {
-
+    
     public AddNewGroupServiceImpl() throws RemoteException {
         
     }
-
+    
     
     @Override
     public void addNewGroup(NewGroupInfo groupInfo) throws RemoteException {
@@ -51,6 +51,13 @@ public class AddNewGroupServiceImpl extends UnicastRemoteObject implements AddNe
                     Logger.getLogger(AddNewGroupServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
+            
+            
+            Chat_Group_Users chat_Group_Users = new Chat_Group_Users();
+            chat_Group_Users.setGroupId(chat_GroupDAO.getLastInsertedGroupId());
+            chat_Group_Users.setUserPhoneNumber(groupInfo.getOwnerPhoneNumber());
+            chat_Group_UsersDAO.persist(chat_Group_Users);
+            
         } catch (SQLException ex) {
             Logger.getLogger(AddNewGroupServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
