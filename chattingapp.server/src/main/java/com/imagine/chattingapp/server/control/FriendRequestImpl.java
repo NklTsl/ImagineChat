@@ -49,7 +49,7 @@ public class FriendRequestImpl extends UnicastRemoteObject implements FriendRequ
         FriendRequestEligibility requestEligibility = new FriendRequestEligibility();
         requestEligibility.setPhoneNumber(null);
         requestEligibility.setName(null);
-        if (checkIsOnSystem(senderPhoneNumber)) {
+        if (checkIsOnSystem(receiverPhoneNumber)) {
 
             if (checkIsFriend(senderPhoneNumber, receiverPhoneNumber)) {
 

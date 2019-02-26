@@ -55,7 +55,6 @@ public class ChatSessionToXML {
     public static void ChatSessionToXML(ChatSession chatSession, String userName, File file) {
         try {
             GetNameByPhoneService getNameByPhoneService = (GetNameByPhoneService) ServiceLocator.getService("GetNameByPhoneService");
-
             ObjectFactory objectFactory = new ObjectFactory();
             ChatSessionType chatSessionType = objectFactory.createChatSessionType();
             chatSessionType.setFrom(userName);
@@ -88,7 +87,7 @@ public class ChatSessionToXML {
                     MsgType msgType = objectFactory.createMsgType();
                     msgType.setDate(calendarDate);
                     msgType.setTime(calendarTime);
-                    msgType.setFrom(getNameByPhoneService.getByPhone(groupMessage.getSenderUser().getName()));
+                    msgType.setFrom(getNameByPhoneService.getByPhone(groupMessage.getSenderUser().getPhoneNumber()));
                     msgType.setBody(groupMessage.getMessage());
                     chatSessionType.getMsg().add(msgType);
                 }

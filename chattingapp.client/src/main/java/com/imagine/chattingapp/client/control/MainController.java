@@ -126,7 +126,7 @@ public class MainController extends Application {
             FXMLLoader loader = new FXMLLoader();
             chatController = new ChatController(this, lightUser, loginUser);
             loader.setController(chatController);
-            Parent root = loader.load(getClass().getResource("/ChatDesignFinal.fxml").openStream());
+            Parent root = loader.load(getClass().getResource("/ChatDesign.fxml").openStream());
             Platform.runLater(() -> {
                 chatScene = new Scene(root);
                 primaryStage.setTitle("Chat");

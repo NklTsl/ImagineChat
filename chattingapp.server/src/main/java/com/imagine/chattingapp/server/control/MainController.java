@@ -10,10 +10,12 @@ import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.ContactNotification;
 import com.imagine.chattingapp.common.dto.FriendContact;
 import com.imagine.chattingapp.common.entity.User;
+import com.imagine.chattingapp.common.entity.User_Status;
 import com.imagine.chattingapp.common.serverservices.RegisterService;
 import com.imagine.chattingapp.server.dal.dao.ContactsDAO;
 import com.imagine.chattingapp.server.dal.dao.FriendDAO;
 import com.imagine.chattingapp.server.dal.dao.UserDAO;
+import com.imagine.chattingapp.server.dal.dao.User_StatusDAO;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -43,6 +45,7 @@ public class MainController {
             FriendRequestImpl sendFriendRequest = new FriendRequestImpl();
             ClientSendFileServiceP2PImpl clientSendFileServiceP2PImpl = new ClientSendFileServiceP2PImpl();
             GetNameByPhoneServiceImpl getNameByPhoneServiceImpl = new GetNameByPhoneServiceImpl();
+            UserStatusServiceImpl userStatusServiceImpl = new UserStatusServiceImpl();
             
             
             Registry registery = LocateRegistry.createRegistry(2000);
@@ -54,6 +57,7 @@ public class MainController {
             registery.rebind("AddContactService", sendFriendRequest);
             registery.rebind("SendFileService", clientSendFileServiceP2PImpl);
             registery.rebind("GetNameByPhoneService", getNameByPhoneServiceImpl);
+            registery.rebind("UserStatusService", userStatusServiceImpl);
             
         } catch (RemoteException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
@@ -139,5 +143,46 @@ public class MainController {
     public static ClientService getClientService(String phoneNumber)
     {
         return onlineClients.get(phoneNumber);
+    }
+
+    static void notifiyStatusChange(String phoneNumber, byte newStatus) {
+        try {
+            ContactNotification contactNotification = new ContactNotification();
+            UserDAO userDAO = new UserDAO();
+            List<Object> primaryKeys = new ArrayList<>();
+            primaryKeys.add(phoneNumber);
+            
+            
+            User_StatusDAO statusDAO = new User_StatusDAO();
+            List<Object> primaryKeysStatus = new ArrayList<>();
+            primaryKeysStatus.add(newStatus);
+            User_Status user_Status = statusDAO.getByPrimaryKey(primaryKeysStatus);
+            
+            
+            User user = userDAO.getByPrimaryKey(primaryKeys);
+            
+            contactNotification.setContactPhoneNumber(phoneNumber);
+            contactNotification.setNewStatus(user_Status.getDescription());
+            contactNotification.setStatusId(newStatus);
+            contactNotification.setContactName(user.getName());
+            
+            ContactsDAO contactsDao = new ContactsDAO();
+            List<Contact> contactsList = contactsDao.getFriendContacts(phoneNumber);
+            
+            
+            contactsList.forEach((contact) -> {
+                ClientService clientService = onlineClients.get(((FriendContact)contact).getPhoneNumber());
+                if(clientService != null)
+                {
+                    try {
+                        clientService.notify(contactNotification);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+        } catch (SQLException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

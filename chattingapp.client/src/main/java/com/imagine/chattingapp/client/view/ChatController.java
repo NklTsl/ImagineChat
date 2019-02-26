@@ -3,7 +3,7 @@ package com.imagine.chattingapp.client.view;
 /*
 * To change this license header, choose License Headers in Project Properties.
 * To change this template file, choose Tools | Templates
-* and open the template in the editor.011417444
+* and open the template in the editor.
  */
 import com.healthmarketscience.rmiio.RemoteInputStream;
 import com.healthmarketscience.rmiio.RemoteInputStreamClient;
@@ -26,6 +26,7 @@ import com.imagine.chattingapp.common.dto.Message;
 import com.imagine.chattingapp.common.dto.Notification;
 import com.imagine.chattingapp.common.dto.OneToOneMessage;
 import com.imagine.chattingapp.common.entity.LoginUser;
+import com.imagine.chattingapp.common.entity.User_Status;
 import com.imagine.chattingapp.common.serverservices.ChatService;
 import com.imagine.chattingapp.common.serverservices.ClientSendFileServiceP2P;
 import com.imagine.chattingapp.common.serverservices.ContactsService;
@@ -60,8 +61,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
+import com.imagine.chattingapp.common.serverservices.UserStatusService;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXToggleButton;
 import com.sun.javafx.scene.web.skin.HTMLEditorSkin;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -70,6 +76,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -79,16 +86,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.MenuButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -97,43 +108,39 @@ import org.controlsfx.control.Notifications;
  * @author Mahmoud Shereif
  */
 public class ChatController implements Initializable {
-
-    /*@FXML
-    private ImageView viewProfileImage;
+    
+    @FXML
+    private Circle profileImageView;
     @FXML
     private Label lblUserName;
     @FXML
-    private ListView<Contact> lstContacts;
+    private JFXListView<Contact> lstContacts;
     @FXML
-    private Button btnBack;
+    private JFXButton btnSaveChat;
+    @FXML
+    private JFXComboBox<User_Status> statusCombo;
+    @FXML
+    private FontAwesomeIconView sendAttachement;
+    @FXML
+    private FontAwesomeIconView notifications;
+    @FXML
+    private MenuButton viewNotification;
+    @FXML
+    private FontAwesomeIconView editProfile;
+    @FXML
+    private FontAwesomeIconView logoutIcon;
+    @FXML
+    private JFXButton btnHide;
     @FXML
     private HTMLEditor htmlEditor;
+    @FXML
+    private FontAwesomeIconView btnFriendRequest;
+    @FXML
+    private JFXToggleButton chatBotCheck;
     @FXML
     private WebView webView;
     @FXML
-    private Button btnAddGroup;
-    @FXML
-    private Button btnFriendRequest;
-    @FXML
-    private Button btnSendFile;*/
-    @FXML
-    private Button btnAddGroup;
-    @FXML
-    private Button btnFriendRequest;
-    @FXML
-    private Button btnSendFile;
-    @FXML
-    private Button btnsaveChatSession;
-
-    @FXML
-    private ListView<Contact> lstContacts;
-    @FXML
-    private WebView chatWebView;
-    @FXML
-    private HTMLEditor htmlEditor;
-
-    @FXML
-    private JFXToggleButton btnEnableChatBot;
+    private FontAwesomeIconView btnAddGroup;
 
     String htmlAll = "";
     Optional<ButtonType> result;
@@ -183,6 +190,8 @@ public class ChatController implements Initializable {
             fin = new FileInputStream(imgfile);
             defaultGroupImage = new byte[(int) imgfile.length()];
             fin.read(defaultGroupImage);
+            
+            
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
@@ -205,7 +214,7 @@ public class ChatController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             // TODO
-            webEngine = chatWebView.getEngine();
+            webEngine = webView.getEngine();
             //webView.setDisable(true);
             webEngine.setUserStyleSheetLocation(getClass().getResource("/webView.css").toString());
 
@@ -215,15 +224,39 @@ public class ChatController implements Initializable {
 
             List<Contact> contacts = contactsService.getContacts(lightUser.getPhoneNumber());
 
-            chatService = (ChatService) ServiceLocator.getService("ChatService");
+            UserStatusService userStatusService = (UserStatusService) ServiceLocator.getService("UserStatusService");
+            
+            List<User_Status> statuses = userStatusService.getUserStatus();
+            
+            statusCombo.getItems().addAll(statuses);
+            
+            statusCombo.setConverter(new StringConverter<User_Status>() {
+                @Override
+                public String toString(User_Status status) {
+                    return status.getDescription();
+                }
+
+                @Override
+                public User_Status fromString(String string) {
+                    return statusCombo.getItems().stream().filter(ap -> 
+                        ap.getDescription().equals(string)).findFirst().orElse(null);
+                }
+            });
+            
+            statusCombo.getSelectionModel().select(userStatusService.getStatusByPhone(lightUser.getPhoneNumber()).getId());
+            
 
             contacts.forEach((contact) -> {
                 lstContacts.getItems().add(contact);
             });
 
-            /*if(lightUser.getImage() != null)
-            viewProfileImage.setImage(new Image(new ByteArrayInputStream(lightUser.getImage())));
-            lblUserName.setText(lightUser.getName());*/
+            if(lightUser.getImage() != null)
+                profileImageView.setFill(new ImagePattern(new Image(new ByteArrayInputStream(lightUser.getImage()))));
+            else
+                profileImageView.setFill(new ImagePattern(new Image(new ByteArrayInputStream(defaultUserImage))));
+            lblUserName.setText(lightUser.getName());
+            
+            
             lstContacts.setCellFactory(new Callback<ListView<Contact>, ListCell<Contact>>() {
                 @Override
                 public ListCell<Contact> call(ListView<Contact> param) {
@@ -234,7 +267,7 @@ public class ChatController implements Initializable {
             lstContacts.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, currentContact) -> {
 
                 Platform.runLater(() -> {
-                    chatWebView.getEngine().loadContent("");
+                    webView.getEngine().loadContent("");
                 });
 
                 htmlAll = "";
@@ -262,22 +295,60 @@ public class ChatController implements Initializable {
                     htmlEditor.setDisable(false);
                 }
             });
+            btnSaveChat.setOnAction((event) -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select text file");
+                File choosenFile = fileChooser.showSaveDialog(mainController.getPrimaryStage());
+
+                if (choosenFile != null) {
+                    ChatSessionToXML.ChatSessionToXML(currentChatSession, lightUser.getName(), choosenFile);
+                }
+
+            });
 
         } catch (RemoteException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     @FXML
-    private void btnsaveChatSessionOnAction(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select text file");
-        File choosenFile = fileChooser.showSaveDialog(mainController.getPrimaryStage());
-
-        if (choosenFile != null) {
-            ChatSessionToXML.ChatSessionToXML(currentChatSession, lightUser.getName(), choosenFile);
+    private void statusComboOnAction(ActionEvent event) {
+        try {
+            User_Status status = statusCombo.getSelectionModel().getSelectedItem();
+            UserStatusService userStatusService = (UserStatusService) ServiceLocator.getService("UserStatusService");
+            userStatusService.changeStatus(lightUser.getPhoneNumber(), status.getId());
+        } catch (RemoteException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        
+    }
+
+    
+    @FXML
+    private void notificationsOnMouseClicked(MouseEvent event) {
+        
+        
+    }
+    @FXML
+    private void chatBotCheckOnAction(ActionEvent event) {
+        if (chatBotCheck.isSelected()) {
+            chat = new EzzatChatBot();
+        } else {
+            chat = null;
+        }
+    }
+    
+    private String getPTagOnly(String html) {
+        int indexOfPTagBegin = html.indexOf("<p>");
+        int indexOfPTagEnd = html.indexOf("</p>");
+        indexOfPTagEnd += 3;
+
+        return html.substring(indexOfPTagBegin, indexOfPTagEnd + 1);
     }
 
     private void sendMessage() {
@@ -290,11 +361,7 @@ public class ChatController implements Initializable {
             String htmlEditorText = htmlEditor.getHtmlText();
             System.out.println(htmlEditorText);
 
-            int indexOfPTagBegin = htmlEditorText.indexOf("<p>");
-            int indexOfPTagEnd = htmlEditorText.indexOf("</p>");
-            indexOfPTagEnd += 3;
-
-            String messageTxt = htmlEditorText.substring(indexOfPTagBegin, indexOfPTagEnd + 1);
+            String messageTxt = getPTagOnly(htmlEditorText);
             System.out.println(messageTxt);
 
             if (lightUser.getImage() == null) {
@@ -319,12 +386,25 @@ public class ChatController implements Initializable {
         } else {
             List<Message> previousMessagesList = createOrAppendChatSession(String.valueOf(currentSelectedGroupContact.getGroupId()));
 
+            String messageTxt = getPTagOnly(htmlEditor.getHtmlText().trim());
+            System.out.println(messageTxt);
+
+            if (lightUser.getImage() == null) {
+                appendDivToWebView(messageTxt, defaultUserImage, true);
+            } else {
+                appendDivToWebView(messageTxt, lightUser.getImage(), true);
+            }
+            
             groupMessage = new GroupMessage();
-            groupMessage.setMessage(htmlEditor.getHtmlText().trim());
+            groupMessage.setMessage(messageTxt);
             groupMessage.setReceiverGroup(currentSelectedGroupContact.getGroupId());
             groupMessage.setSenderUser(lightUser);
 
+            
+            
             previousMessagesList.add(groupMessage);
+            
+            
 
             try {
 
@@ -342,16 +422,7 @@ public class ChatController implements Initializable {
         webEngine.executeScript("window.scrollTo(0, document.body.scrollHeight);");
 
     }
-
-    @FXML
-    private void btnEnableChatBotOnAction(ActionEvent event) {
-        if (btnEnableChatBot.isSelected()) {
-            chat = new EzzatChatBot();
-        } else {
-            chat = null;
-        }
-    }
-
+    
     @FXML
     private void btnBackAction(ActionEvent event) {
         try {
@@ -366,9 +437,9 @@ public class ChatController implements Initializable {
         }
     }
 
+    
     @FXML
-    private void btnSendFileOnAction(ActionEvent event) {
-
+    private void sendAttachementOnMouseClicked(MouseEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select File To Send");
         File choosenFile = fileChooser.showOpenDialog(mainController.getPrimaryStage());
@@ -383,6 +454,9 @@ public class ChatController implements Initializable {
                         String fileName = choosenFile.getName();
                         String extention = fileName.substring(fileName.lastIndexOf("."));
                         remoteInputStream = new SimpleRemoteInputStream(new FileInputStream(choosenFile));
+                        
+                        
+                        
                         receiveFileService.sendFile(remoteInputStream.export(), extention, fileName);
                     } else {
                         Alert receiveFileAlert = new Alert(Alert.AlertType.INFORMATION, "Your friend rejected to Receive!");
@@ -406,14 +480,6 @@ public class ChatController implements Initializable {
         }
     }
 
-    /*@FXML
-    private void txtMessageKeyPressed(KeyEvent event) {
-    if(event.getCode().equals(KeyCode.ENTER))
-    {
-    sendMessage();
-    }
-    
-    }*/
     @FXML
     private void htmlEditorOnKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
@@ -463,7 +529,7 @@ public class ChatController implements Initializable {
             oneToOneMessage = (OneToOneMessage) message;
             previousMessagesList = createOrAppendChatSession(oneToOneMessage.getSenderPhone());
 
-            if (btnEnableChatBot.isSelected()) {
+            if (chatBotCheck.isSelected()) {
                 lstContacts.getSelectionModel().select(getContactById(oneToOneMessage.getSenderPhone()));
                 try {
 
@@ -682,30 +748,6 @@ public class ChatController implements Initializable {
         }
     }
 
-    @FXML
-    private void btnAddGroupOnAction(ActionEvent event) {
-        Stage addNewGroupStage = new Stage();
-        List<GroupMember> groupMembers = mapToGroupMember();
-        GroupMember groupMember = new GroupMember();
-
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            AddNewGroupController addNewGroupController = new AddNewGroupController(groupMembers, addNewGroupStage, loginUser.getPhoneNumber());
-            loader.setController(addNewGroupController);
-            Parent root = loader.load(getClass().getResource("/AddNewGroupDesign.fxml").openStream());
-
-            Platform.runLater(() -> {
-                Stage stage = new Stage();
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(mainController.getPrimaryStage().getScene().getWindow());
-                stage.setScene(new Scene(root));
-                stage.showAndWait();
-            });
-        } catch (IOException ex) {
-            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     private List<GroupMember> mapToGroupMember() {
         List<GroupMember> membersList = new ArrayList<>();
         lstContacts.getItems().forEach((contact) -> {
@@ -725,27 +767,6 @@ public class ChatController implements Initializable {
 
     }
 
-    @FXML
-    public void btnFriendRequestOnAction() {
-
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            SendFriendRequestController contactController = new SendFriendRequestController(this, loginUser);
-            loader.setController(contactController);
-            Parent root = loader.load(getClass().getResource("/SendFriendRequestDesign.fxml").openStream());
-
-            Platform.runLater(() -> {
-                Stage stage = new Stage();
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.initOwner(mainController.getPrimaryStage().getScene().getWindow());
-                stage.setScene(new Scene(root));
-                stage.showAndWait();
-            });
-        } catch (IOException ex) {
-            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
 
     public ReceiveFileService showReceiveFileRequest(String senderName, String fileName) {
         final CountDownLatch latch = new CountDownLatch(1);
@@ -833,5 +854,60 @@ public class ChatController implements Initializable {
             }
         }
     }
+    
+    @FXML
+    private void editProfileOnMouseClicked(MouseEvent event) {
+    }
 
+    @FXML
+    private void logoutIconOnMouseClicked(MouseEvent event) {
+    }
+    
+    @FXML
+    private void btnFriendRequestMouseClicked(MouseEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            SendFriendRequestController contactController = new SendFriendRequestController(this, loginUser);
+            loader.setController(contactController);
+            Parent root = loader.load(getClass().getResource("/SendFriendRequestDesign.fxml").openStream());
+
+            Platform.runLater(() -> {
+                Stage stage = new Stage();
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner(mainController.getPrimaryStage().getScene().getWindow());
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    private void btnAddGroupMouseClicked(MouseEvent event) {
+        Stage addNewGroupStage = new Stage();
+        List<GroupMember> groupMembers = mapToGroupMember();
+        GroupMember groupMember = new GroupMember();
+
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            AddNewGroupController addNewGroupController = new AddNewGroupController(groupMembers, addNewGroupStage, loginUser.getPhoneNumber());
+            loader.setController(addNewGroupController);
+            Parent root = loader.load(getClass().getResource("/AddNewGroupDesign.fxml").openStream());
+
+            Platform.runLater(() -> {
+                Stage stage = new Stage();
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner(mainController.getPrimaryStage().getScene().getWindow());
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @FXML
+    private void btnHideOnAction(ActionEvent event) {
+        
+    }
 }

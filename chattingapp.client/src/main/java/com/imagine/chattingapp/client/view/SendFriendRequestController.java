@@ -121,7 +121,7 @@ public class SendFriendRequestController implements Initializable{
         try {
             phoneTextField.clear();
             Label newContact  = new Label(friendRequestEligibility.getPhoneNumber());
-            Image cancelImage = new Image(new FileInputStream("C:\\Users\\Mahmoud Shereif\\Documents\\NetBeansProjects8.2\\chattingapp\\chattingapp.client\\src\\main\\resources\\Button-Delete-icon.png"));
+            Image cancelImage = new Image(new FileInputStream("src/main/resources/Button-Delete-icon.png"));
             ImageView cancelImageView = new ImageView(cancelImage);
             cancelImageView.setFitHeight(15);
             cancelImageView.setFitWidth(15);

@@ -34,6 +34,16 @@
             <artifactId>Ab</artifactId>
             <version>0.0.4.3</version>
         </dependency>
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx</artifactId>
+            <version>8.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pdfsam.ui</groupId>
+            <artifactId>progress-circle-indicator</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

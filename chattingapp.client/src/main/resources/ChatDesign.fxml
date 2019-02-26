@@ -1,45 +1,189 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import com.jfoenix.controls.JFXToolbar?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 <?import javafx.scene.web.HTMLEditor?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="791.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <ListView fx:id="lstContacts" prefHeight="400.0" prefWidth="208.0" BorderPane.alignment="CENTER" />
-   </left>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="820.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <BorderPane prefHeight="515.0" prefWidth="392.0" BorderPane.alignment="CENTER">
-         <top>
-            <Button fx:id="btnBack" mnemonicParsing="false" onAction="#btnBackAction" prefHeight="20.0" prefWidth="405.0" text="Logout" BorderPane.alignment="CENTER" />
-         </top>
-         <center>
-            <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-         </center>
-         <bottom>
-            <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" onKeyPressed="#txtMessageKeyPressed" prefHeight="167.0" prefWidth="583.0" BorderPane.alignment="CENTER" />
-         </bottom>
-      </BorderPane>
-   </center>
-   <top>
-      <AnchorPane prefHeight="109.0" prefWidth="791.0" style="-fx-background-color: skyblue;" BorderPane.alignment="CENTER">
+      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: linear-gradient(to bottom, #23748c -4%, #ffccff 100%);;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="viewProfileImage" fitHeight="90.0" fitWidth="159.0" layoutX="35.0" layoutY="10.0" pickOnBounds="true" />
-            <Label fx:id="lblUserName" alignment="CENTER" layoutX="261.0" layoutY="28.0" prefHeight="55.0" prefWidth="324.0" text="Label" textAlignment="CENTER">
-               <font>
-                  <Font name="Arial Black" size="37.0" />
-               </font>
-            </Label>
-            <Button fx:id="btnAddGroup" layoutX="620.0" layoutY="42.0" mnemonicParsing="false" onAction="#btnAddGroupOnAction" prefHeight="40.0" prefWidth="102.0" text="Add New Group" />
-            <Button fx:id="btnFriendRequest" layoutX="690.0" layoutY="50.0" mnemonicParsing="false" onAction="#btnFriendRequestOnAction" prefHeight="40.0" prefWidth="102.0" text="Send Friend Request" />
-            <Button fx:id="btnSendFile" layoutX="221.0" layoutY="37.0" mnemonicParsing="false" onAction="#btnSendFileOnAction" prefHeight="50.0" prefWidth="114.0" text="SendFile" />
+            <BorderPane prefHeight="500.0" prefWidth="550.0">
+               <top>
+                  <FlowPane prefHeight="76.0" prefWidth="549.0" style="-fx-background-color: #ccccff;" BorderPane.alignment="CENTER">
+                     <children>
+                        <Text fill="#23748c" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="Friendify" wrappingWidth="88.13671875">
+                           <font>
+                              <Font name="Century Schoolbook Bold Italic" size="18.0" />
+                           </font>
+                           <FlowPane.margin>
+                              <Insets left="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </Text>
+                        <JFXButton fx:id="btnSaveChat" buttonType="RAISED" style="-fx-background-color: #ccccff;" text="Save Chat" textFill="#23748c">
+                           <FlowPane.margin>
+                              <Insets left="130.0" />
+                           </FlowPane.margin>
+                           <font>
+                              <Font name="System Bold Italic" size="12.0" />
+                           </font>
+                        </JFXButton>
+                        <FontAwesomeIconView fx:id="sendAttachement" fill="#23748c" glyphName="PAPERCLIP" onMouseClicked="#sendAttachementOnMouseClicked" size="20" strokeType="INSIDE">
+                           <FlowPane.margin>
+                              <Insets left="30.0" top="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </FontAwesomeIconView>
+                        <FontAwesomeIconView fx:id="notifications" fill="#23748c" glyphName="BELL" onMouseClicked="#notificationsOnMouseClicked" size="20">
+                           <FlowPane.margin>
+                              <Insets left="30.0" top="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </FontAwesomeIconView>
+                        <MenuButton fx:id="viewNotification" mnemonicParsing="false" style="-fx-background-color: #ccccff;" textFill="#ffccff">
+                         
+                           <FlowPane.margin>
+                              <Insets top="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </MenuButton>
+                        <FontAwesomeIconView fx:id="editProfile" fill="#23748c" glyphName="PENCIL_SQUARE" onMouseClicked="#editProfileOnMouseClicked" size="20" text="">
+                           <FlowPane.margin>
+                              <Insets left="30.0" top="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </FontAwesomeIconView>
+                        <FontAwesomeIconView fx:id="logoutIcon" boundsType="LOGICAL_VERTICAL_CENTER" fill="#23748c" glyphName="SIGN_OUT" onMouseClicked="#logoutIconOnMouseClicked" size="20" text="">
+                           <FlowPane.margin>
+                              <Insets left="30.0" right="15.0" top="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </FontAwesomeIconView>
+                     </children>
+                  </FlowPane>
+               </top>
+               <center>
+                  <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </center>
+            </BorderPane>
+            <HBox prefHeight="152.0" prefWidth="549.0" style="-fx-background-color: #ffffff; -fx-border-color: #23748c;">
+               <children>
+                  <FlowPane prefHeight="138.0" prefWidth="31.0" style="-fx-background-color: #ffffff;">
+                     <children>
+                        <JFXButton fx:id="btnHide" alignment="CENTER" onAction="#btnHideOnAction" text="Hide" textFill="#23748c">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                           <effect>
+                              <Glow />
+                           </effect>
+                           <FlowPane.margin>
+                              <Insets top="50.0" />
+                           </FlowPane.margin>
+                        </JFXButton>
+                     </children>
+                  </FlowPane>
+                  <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" onKeyPressed="#htmlEditorOnKeyPressed" prefHeight="131.0" prefWidth="496.0" style="-fx-background-color: #ffccff;">
+                     <HBox.margin>
+                        <Insets bottom="5.0" top="10.0" />
+                     </HBox.margin>
+                  </HTMLEditor>
+               </children>
+            </HBox>
          </children>
-      </AnchorPane>
-   </top>
+      </VBox>
+   </center>
+   <left>
+      <VBox prefHeight="650.0" prefWidth="271.0" style="-fx-background-color: linear-gradient(to bottom, #23748c -4%, #ffccff 100%);;" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="108.0" prefWidth="165.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Circle fx:id="profileImageView" fill="WHITE" radius="30.0" stroke="BLACK" strokeType="INSIDE">
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Circle>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="lblUserName" style="-fx-text-fill: #ffccff;" text="UserName">
+                           <HBox.margin>
+                              <Insets top="15.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold Italic" size="24.0" />
+                           </font>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </Label>
+                        <JFXComboBox fx:id="statusCombo" onAction="#statusComboOnAction" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <JFXToolbar prefHeight="31.0" prefWidth="193.0">
+               <center>
+                  <FlowPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #23748c;" BorderPane.alignment="CENTER">
+                     <children>
+                        <FontAwesomeIconView fx:id="btnFriendRequest" fill="#ffccff" glyphName="USER_PLUS" onMouseClicked="#btnFriendRequestMouseClicked" size="20" wrappingWidth="25.85714340209961">
+                           <FlowPane.margin>
+                              <Insets left="10.0" />
+                           </FlowPane.margin>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </FontAwesomeIconView>
+                        <FontAwesomeIconView fx:id="btnAddGroup" fill="#ffccff" glyphName="GROUP" onMouseClicked="#btnAddGroupMouseClicked" size="20">
+                           <effect>
+                              <Glow />
+                           </effect>
+                           <FlowPane.margin>
+                              <Insets left="10.0" />
+                           </FlowPane.margin>
+                        </FontAwesomeIconView>
+                        <JFXToggleButton fx:id="chatBotCheck" onAction="#chatBotCheckOnAction" size="8.0" text="Enable ChatBot" textFill="#ffccff" toggleLineColor="#ffccff">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                           <effect>
+                              <Glow />
+                           </effect>
+                        </JFXToggleButton>
+                     </children>
+                  </FlowPane>
+               </center>
+            </JFXToolbar>
+            <JFXListView fx:id="lstContacts" prefHeight="515.0" prefWidth="271.0" style="-fx-background-color: linear-gradient(to top, #ccccff 0%, #ffffff 100%);;" />
+         </children>
+      </VBox>
+   </left>
 </BorderPane>
