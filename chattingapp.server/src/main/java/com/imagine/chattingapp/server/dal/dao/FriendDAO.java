@@ -138,10 +138,11 @@ public class FriendDAO implements DAO<Friend> {
         ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
         queryResult.beforeFirst();
         
-        List<Friend> friendList = new ArrayList<>();
+        List<Friend> friendList = null;
         
         while(queryResult.next())
         {
+            friendList = new ArrayList<>();
             Friend friend = new Friend();
             friend.setPhoneNumber1(queryResult.getString(1));
             friend.setPhoneNumber2(queryResult.getString(2));

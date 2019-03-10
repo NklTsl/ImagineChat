@@ -1,5 +1,5 @@
 
-package com.imagine.chattingapp.client.control.ServiceLocator;
+package com.imagine.chattingapp.client.Model.ServiceLocator;
 
 import java.rmi.Remote;
 import java.util.HashMap;

@@ -6,7 +6,6 @@ import com.imagine.chattingapp.client.view.LoginController;
 import com.imagine.chattingapp.client.view.RegisterController;
 import com.imagine.chattingapp.client.view.RegisterWindow;
 import com.imagine.chattingapp.client.view.SendFriendRequestController;
-import com.imagine.chattingapp.client.view.UpdateProfileWindow;
 import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.FriendContact;
 import com.imagine.chattingapp.common.dto.LightUser;
@@ -59,6 +58,7 @@ public class MainController extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        primaryStage.setResizable(false);
         switchToLoginScene();
         primaryStage.show();
         primaryStage.setOnCloseRequest((event) -> {
@@ -155,16 +155,16 @@ public class MainController extends Application {
         }
     }
 
-    public void switchToUpdateProfileScene() {
+    public void switchToUpdateProfileScene(User updateUser) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loginController = new LoginController(this);
-            loader.setController(loginController);
-            Parent root = loader.load(getClass().getResource("/LoginDesign.fxml").openStream());
+            updateProfileController = new UpdateProfileController(this, primaryStage, updateUser );
+            loader.setController(updateProfileController);
+            Parent root = loader.load(getClass().getResource("/UpdateProfile.fxml").openStream());
 
             Scene scene = new Scene(root);
 
-            primaryStage.setTitle("Login");
+            primaryStage.setTitle("Update Profile");
             primaryStage.setScene(scene);
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);

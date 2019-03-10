@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.AmbientLight?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="800" style="-fx-background-color: linear-gradient(to bottom, #23748c 0%, #ffccff 100%);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="221.0" layoutY="23.0" text="Start Or Stop The Server" textFill="#ffccff">
+         <font>
+            <Font name="System Bold Italic" size="21.0" />
+         </font>
+         <effect>
+            <Bloom />
+         </effect>
+      </Label>
+      <ImageView fx:id="imageServer" fitHeight="203.0" fitWidth="229.0" layoutX="14.0" layoutY="76.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@manager.png" />
+         </image>
+         <effect>
+            <Glow />
+         </effect>
+      </ImageView>
+      <AmbientLight color="CHARTREUSE" lightOn="true" />
+      <JFXButton fx:id="btnStart" buttonType="RAISED" layoutX="344.0" layoutY="142.0" prefHeight="53.0" prefWidth="146.0" style="-fx-background-color: #23748c;" text="Start Service " textFill="#ffccff">
+         <font>
+            <Font name="System Bold Italic" size="18.0" />
+         </font>
+         <effect>
+            <Glow />
+         </effect>
+      </JFXButton>
+      <JFXButton fx:id="btnStop" buttonType="RAISED" layoutX="344.0" layoutY="257.0" prefHeight="53.0" prefWidth="146.0" style="-fx-background-color: #23748c;" text="Stop Service " textFill="#ffccff">
+         <font>
+            <Font name="System Bold Italic" size="18.0" />
+         </font>
+         <effect>
+            <Glow />
+         </effect>
+      </JFXButton>
+   </children>
+</AnchorPane>

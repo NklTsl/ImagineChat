@@ -31,8 +31,20 @@ public class RegisterServiceImpl extends UnicastRemoteObject implements Register
     @Override
     public void register(User user) throws RemoteException {
         try {
+            System.out.println(user.getName());
+            System.out.println(user.getEmail());
+            System.out.println(user.getGender());
+            System.out.println(user.getPhoneNumber());
+            System.out.println(user.getDateOfBirth());
+            System.out.println(user.getPassword());
+            System.out.println(user.getBiography());
+            System.out.println(user.getStatusID());
+            System.out.println(user.getCountryID());
+            System.out.println(user.getPicture());
+            
+            
             UserDAO userDAO = new UserDAO();
-            userDAO.persist(user);
+            userDAO.persist(user); 
         } catch (SQLException ex) {
             throw new RemoteException();
         }

@@ -2,11 +2,12 @@
 package com.imagine.chattingapp.client.view;
 
 import com.imagine.chattingapp.client.control.MainController;
-import com.imagine.chattingapp.client.control.ServiceLocator.ServiceLocator;
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.common.dto.FriendRequestEligibility;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.serverservices.FriendRequest;
 import com.imagine.chattingapp.common.validation.Validation;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -68,6 +69,16 @@ public class SendFriendRequestController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         allContactsVBox.setSpacing(20);
+        File file = new File("main/resources/Button-Delete-icon.png");
+        System.out.println(file.getAbsolutePath());
+        File file2 = new File("./src/main");
+        System.out.println(file2.getAbsolutePath());        
+        try {
+            //System.out.println(System.getProperty("user.dir"));
+            Image cancelImage = new Image(new FileInputStream("src/main/resources/Button-Delete-icon.png"));
+        } catch (FileNotFoundException ex) {    
+            Logger.getLogger(SendFriendRequestController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @FXML
@@ -121,6 +132,8 @@ public class SendFriendRequestController implements Initializable{
         try {
             phoneTextField.clear();
             Label newContact  = new Label(friendRequestEligibility.getPhoneNumber());
+            File file = new File("src/main/resources/Button-Delete-icon.png");
+            System.out.println(file.getAbsolutePath());
             Image cancelImage = new Image(new FileInputStream("src/main/resources/Button-Delete-icon.png"));
             ImageView cancelImageView = new ImageView(cancelImage);
             cancelImageView.setFitHeight(15);

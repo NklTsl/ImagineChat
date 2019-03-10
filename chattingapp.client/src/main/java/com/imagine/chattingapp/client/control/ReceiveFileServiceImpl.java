@@ -23,7 +23,7 @@ public class ReceiveFileServiceImpl extends UnicastRemoteObject implements Recei
     }
     
     @Override
-    public void sendFile(RemoteInputStream remoteInputStream, String ext, String fileName) throws RemoteException, IOException {
-        chatController.receiveFile(remoteInputStream, ext, fileName);
+    public void sendFile(RemoteInputStream remoteInputStream, String ext, String fileName, double fileLength) throws RemoteException, IOException {
+        chatController.receiveFile(remoteInputStream, ext, fileName, fileLength);
     }
 }

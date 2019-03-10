@@ -5,7 +5,7 @@
  */
 package com.imagine.chattingapp.client.utilities;
 
-import com.imagine.chattingapp.client.control.ServiceLocator.ServiceLocator;
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.client.jaxb.ChatSessionType;
 import com.imagine.chattingapp.client.jaxb.MsgType;
 import com.imagine.chattingapp.client.jaxb.ObjectFactory;

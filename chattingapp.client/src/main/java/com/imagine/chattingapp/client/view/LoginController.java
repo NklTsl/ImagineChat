@@ -5,12 +5,14 @@
  */
 package com.imagine.chattingapp.client.view;
 
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.client.control.ClientServiceImpl;
 import com.imagine.chattingapp.common.validation.Validation;
 import com.imagine.chattingapp.client.control.MainController;
 import com.imagine.chattingapp.common.clientservices.ClientService;
 import com.imagine.chattingapp.common.dto.LightUser;
 import com.imagine.chattingapp.common.entity.LoginUser;
+import com.imagine.chattingapp.common.serverservices.ContactsService;
 import java.net.URL;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -34,6 +36,10 @@ import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.control.Hyperlink;
 
 /**
@@ -55,7 +61,7 @@ public class LoginController implements Initializable {
     private Label lblWrong;
     @FXML
     private Hyperlink lnkRegister;
-    
+
     private MainController mainController;
     private LoginUser loginUser;
 
@@ -63,53 +69,69 @@ public class LoginController implements Initializable {
         this.mainController = mainController;
     }
 
-    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        
-    }    
+        FileInputStream fileInStream = null;
+        try {
+            // TODO
+            fileInStream = new FileInputStream("remember.properties");
+            Properties currentConnectionProperties = new Properties();
+            currentConnectionProperties.load(fileInStream);
+            if (!currentConnectionProperties.isEmpty()) {
+                txtPhone.setText(currentConnectionProperties.getProperty("phoneNumber"));
+                
+                if (Integer.parseInt(currentConnectionProperties.getProperty("flag")) != 0) {
+                    txtPassword.setText(currentConnectionProperties.getProperty("password"));
+                    btnLogin.fire();
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileInStream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
     @FXML
     private void btnLoginAction(ActionEvent event) {
         String phone = txtPhone.getText();
-        String password = txtPassword.getText(); 
-        if(phone.isEmpty() || password.isEmpty())
-        {
+        String password = txtPassword.getText();
+        if (phone.isEmpty() || password.isEmpty()) {
             lblWrong.setText("Empty user name or password");
-            
-        }
-        else if(Validation.validatePhone(phone))
-        {
-            
+
+        } else if (Validation.validatePhone(phone)) {
+
             try {
                 loginUser = new LoginUser();
                 loginUser.setPhoneNumber(phone);
                 loginUser.setPassword(password);
+
+                LoginLogoutService loginLogoutService = (LoginLogoutService) ServiceLocator.getService("LoginLogoutService");
                 
-                Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
-                LoginLogoutService loginService = (LoginLogoutService) registry.lookup("LoginLogoutService");
-                LightUser lightUser = loginService.login(loginUser, mainController.getClientService());
-                
-                if(lightUser != null)
-                {
+                LightUser lightUser = loginLogoutService.login(loginUser, mainController.getClientService());
+
+                if (lightUser != null) {
                     mainController.loginUser = loginUser;
                     mainController.switchToChatScene(lightUser, loginUser);
-                }
-                else
-                {
+                    
+                } else {
                     lblWrong.setText("Wrong user name or password");
                 }
-                
+
             } catch (RemoteException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-                Alert successAlert = new Alert(Alert.AlertType.INFORMATION,"Server Not Connected");
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Server Not Connected");
                 successAlert.showAndWait();
-            } catch (NotBoundException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -122,6 +144,7 @@ public class LoginController implements Initializable {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @FXML
     private void lnkRegisterAction(ActionEvent event) {
         try {

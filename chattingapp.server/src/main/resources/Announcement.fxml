@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="364.0" prefWidth="369.0" style="-fx-background-color: linear-gradient(to bottom, #23748c 0%, #ffccff 100%);;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXTextField fx:id="txtMessage" focusColor="#ffccff" layoutX="31.0" layoutY="82.0" prefHeight="146.0" prefWidth="446.0" promptText="Enter Your Announcement Here!">
+         <effect>
+            <Glow />
+         </effect></JFXTextField>
+      <JFXButton fx:id="btnSend" layoutX="421.0" layoutY="254.0" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: #23748c;" text="Send" textFill="#ffccff" AnchorPane.rightAnchor="10.0">
+         <font>
+            <Font name="System Bold Italic" size="13.0" />
+         </font></JFXButton>
+   </children>
+</AnchorPane>

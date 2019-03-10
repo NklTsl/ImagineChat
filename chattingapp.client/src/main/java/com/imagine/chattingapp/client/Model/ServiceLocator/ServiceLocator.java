@@ -1,6 +1,7 @@
 
-package com.imagine.chattingapp.client.control.ServiceLocator;
+package com.imagine.chattingapp.client.Model.ServiceLocator;
 
+import com.imagine.chattingapp.client.Model.ServiceLocator.InitialContext;
 import java.rmi.Remote;
 
 /**

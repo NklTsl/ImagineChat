@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane fx:id="anchopPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #23748c 0%, #ffccff 100%);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXHamburger fx:id="burger" prefHeight="43.0" prefWidth="57.0">
+         <effect>
+            <Glow />
+         </effect></JFXHamburger>
+      <JFXDrawer fx:id="drawer" defaultDrawerSize="220.0" direction="RIGHT" layoutX="-246.0" layoutY="39.0" prefHeight="354.0" prefWidth="225.0" style="-fx-background-color: linear-gradient(to bottom, #d9d9d9 0%, #f2f2f2 100%);;" />
+      <StackPane fx:id="pnStackPane" layoutX="230.0" layoutY="38.0" prefHeight="364.0" prefWidth="369.0" />
+   </children>
+</AnchorPane>

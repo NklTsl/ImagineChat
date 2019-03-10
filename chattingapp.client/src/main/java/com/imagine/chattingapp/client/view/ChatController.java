@@ -11,9 +11,10 @@ import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
 import com.imagine.chattingapp.client.control.EzzatChatBot;
 import com.imagine.chattingapp.client.control.MainController;
 import com.imagine.chattingapp.client.control.ReceiveFileServiceImpl;
-import com.imagine.chattingapp.client.control.ServiceLocator.ServiceLocator;
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.client.utilities.ChatSessionToXML;
 import com.imagine.chattingapp.common.clientservices.ReceiveFileService;
+import com.imagine.chattingapp.common.dto.AnnounceNotification;
 import com.imagine.chattingapp.common.dto.ChatSession;
 import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.ContactNotification;
@@ -26,6 +27,7 @@ import com.imagine.chattingapp.common.dto.Message;
 import com.imagine.chattingapp.common.dto.Notification;
 import com.imagine.chattingapp.common.dto.OneToOneMessage;
 import com.imagine.chattingapp.common.entity.LoginUser;
+import com.imagine.chattingapp.common.entity.User;
 import com.imagine.chattingapp.common.entity.User_Status;
 import com.imagine.chattingapp.common.serverservices.ChatService;
 import com.imagine.chattingapp.common.serverservices.ClientSendFileServiceP2P;
@@ -108,7 +110,7 @@ import org.controlsfx.control.Notifications;
  * @author Mahmoud Shereif
  */
 public class ChatController implements Initializable {
-    
+
     @FXML
     private Circle profileImageView;
     @FXML
@@ -190,8 +192,6 @@ public class ChatController implements Initializable {
             fin = new FileInputStream(imgfile);
             defaultGroupImage = new byte[(int) imgfile.length()];
             fin.read(defaultGroupImage);
-            
-            
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
@@ -225,11 +225,12 @@ public class ChatController implements Initializable {
             List<Contact> contacts = contactsService.getContacts(lightUser.getPhoneNumber());
 
             UserStatusService userStatusService = (UserStatusService) ServiceLocator.getService("UserStatusService");
+             chatService = (ChatService) ServiceLocator.getService("ChatService");
             
             List<User_Status> statuses = userStatusService.getUserStatus();
-            
+
             statusCombo.getItems().addAll(statuses);
-            
+
             statusCombo.setConverter(new StringConverter<User_Status>() {
                 @Override
                 public String toString(User_Status status) {
@@ -238,25 +239,24 @@ public class ChatController implements Initializable {
 
                 @Override
                 public User_Status fromString(String string) {
-                    return statusCombo.getItems().stream().filter(ap -> 
-                        ap.getDescription().equals(string)).findFirst().orElse(null);
+                    return statusCombo.getItems().stream().filter(ap
+                            -> ap.getDescription().equals(string)).findFirst().orElse(null);
                 }
             });
-            
+
             statusCombo.getSelectionModel().select(userStatusService.getStatusByPhone(lightUser.getPhoneNumber()).getId());
-            
 
             contacts.forEach((contact) -> {
                 lstContacts.getItems().add(contact);
             });
 
-            if(lightUser.getImage() != null)
+            if (lightUser.getImage() != null) {
                 profileImageView.setFill(new ImagePattern(new Image(new ByteArrayInputStream(lightUser.getImage()))));
-            else
+            } else {
                 profileImageView.setFill(new ImagePattern(new Image(new ByteArrayInputStream(defaultUserImage))));
+            }
             lblUserName.setText(lightUser.getName());
-            
-            
+
             lstContacts.setCellFactory(new Callback<ListView<Contact>, ListCell<Contact>>() {
                 @Override
                 public ListCell<Contact> call(ListView<Contact> param) {
@@ -312,7 +312,7 @@ public class ChatController implements Initializable {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @FXML
     private void statusComboOnAction(ActionEvent event) {
         try {
@@ -324,16 +324,14 @@ public class ChatController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+
     }
 
-    
     @FXML
     private void notificationsOnMouseClicked(MouseEvent event) {
-        
-        
+
     }
+
     @FXML
     private void chatBotCheckOnAction(ActionEvent event) {
         if (chatBotCheck.isSelected()) {
@@ -342,7 +340,7 @@ public class ChatController implements Initializable {
             chat = null;
         }
     }
-    
+
     private String getPTagOnly(String html) {
         int indexOfPTagBegin = html.indexOf("<p>");
         int indexOfPTagEnd = html.indexOf("</p>");
@@ -353,7 +351,8 @@ public class ChatController implements Initializable {
 
     private void sendMessage() {
         if (friendOrGroupContact == null) {
-            //should Select a contact to send
+            Alert receiveFileAlert = new Alert(Alert.AlertType.INFORMATION, "Please, select a friend");
+            receiveFileAlert.showAndWait();
         } else if (friendOrGroupContact && !htmlEditor.getHtmlText().isEmpty()) {
 
             List<Message> previousMessagesList = createOrAppendChatSession(currentSelectedFriendContact.getPhoneNumber());
@@ -394,17 +393,13 @@ public class ChatController implements Initializable {
             } else {
                 appendDivToWebView(messageTxt, lightUser.getImage(), true);
             }
-            
+
             groupMessage = new GroupMessage();
             groupMessage.setMessage(messageTxt);
             groupMessage.setReceiverGroup(currentSelectedGroupContact.getGroupId());
             groupMessage.setSenderUser(lightUser);
 
-            
-            
             previousMessagesList.add(groupMessage);
-            
-            
 
             try {
 
@@ -422,7 +417,7 @@ public class ChatController implements Initializable {
         webEngine.executeScript("window.scrollTo(0, document.body.scrollHeight);");
 
     }
-    
+
     @FXML
     private void btnBackAction(ActionEvent event) {
         try {
@@ -437,7 +432,6 @@ public class ChatController implements Initializable {
         }
     }
 
-    
     @FXML
     private void sendAttachementOnMouseClicked(MouseEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -454,10 +448,8 @@ public class ChatController implements Initializable {
                         String fileName = choosenFile.getName();
                         String extention = fileName.substring(fileName.lastIndexOf("."));
                         remoteInputStream = new SimpleRemoteInputStream(new FileInputStream(choosenFile));
-                        
-                        
-                        
-                        receiveFileService.sendFile(remoteInputStream.export(), extention, fileName);
+
+                        receiveFileService.sendFile(remoteInputStream.export(), extention, fileName, choosenFile.length());
                     } else {
                         Alert receiveFileAlert = new Alert(Alert.AlertType.INFORMATION, "Your friend rejected to Receive!");
                         receiveFileAlert.showAndWait();
@@ -767,7 +759,6 @@ public class ChatController implements Initializable {
 
     }
 
-
     public ReceiveFileService showReceiveFileRequest(String senderName, String fileName) {
         final CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
@@ -795,7 +786,8 @@ public class ChatController implements Initializable {
         return receiveFileService;
     }
 
-    public void receiveFile(RemoteInputStream remoteInputStream, String ext, String fileName) {
+    public void receiveFile(RemoteInputStream remoteInputStream, String ext, String fileName, double fileLength) {
+
         InputStream istream = null;
         try {
 
@@ -854,15 +846,22 @@ public class ChatController implements Initializable {
             }
         }
     }
-    
+
     @FXML
     private void editProfileOnMouseClicked(MouseEvent event) {
+        User updateUser = new User();
+        updateUser.setName(lightUser.getName());
+        updateUser.setPhoneNumber(lightUser.getPhoneNumber());
+        updateUser.setPicture(lightUser.getImage());
+        updateUser.setPassword(loginUser.getPassword());
+        
+        mainController.switchToUpdateProfileScene(updateUser);
     }
 
     @FXML
     private void logoutIconOnMouseClicked(MouseEvent event) {
     }
-    
+
     @FXML
     private void btnFriendRequestMouseClicked(MouseEvent event) {
         try {
@@ -906,8 +905,20 @@ public class ChatController implements Initializable {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @FXML
     private void btnHideOnAction(ActionEvent event) {
-        
+
     }
+    
+    public void receiveAnnouncement(Notification notification) {
+        AnnounceNotification announceNotification = (AnnounceNotification)notification;
+                Platform.runLater(() -> {
+                    Notifications.create()
+                        .title("Chat App")
+                        .text("Server Says:\n" + announceNotification.getMessage())
+                        .showInformation();
+                });
+                offlineSound.play();
+}
 }

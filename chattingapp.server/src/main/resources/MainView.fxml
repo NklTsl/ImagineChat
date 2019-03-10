@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #23748c 0%, #ffccff 100%);;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXButton fx:id="btnStart" buttonType="RAISED" layoutX="147.0" layoutY="175.0" prefHeight="25.0" prefWidth="76.0" style="-fx-background-color: #ffccff;" text="Start" textFill="#23748c">
+         <font>
+            <Font name="System Bold Italic" size="18.0" />
+         </font>
+         <effect>
+            <Glow />
+         </effect>
+      </JFXButton>
+      <JFXButton fx:id="btnStop" buttonType="RAISED" layoutX="384.0" layoutY="175.0" prefHeight="25.0" prefWidth="76.0" style="-fx-background-color: #ffccff;" text="Stop" textFill="#23748c">
+         <font>
+            <Font name="System Bold Italic" size="18.0" />
+         </font>
+      </JFXButton>
+   </children>
+</AnchorPane>

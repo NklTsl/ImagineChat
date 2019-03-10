@@ -30,9 +30,13 @@ public class RingProgressIndicatorExample extends Application {
 		RingProgressIndicator indicator = new RingProgressIndicator();
 		Slider slider = new Slider(0, 100, 50);
 
-		slider.valueProperty().addListener((o, oldVal, newVal) -> indicator.setProgress(newVal.intValue()));
+		//slider.valueProperty().addListener((o, oldVal, newVal) -> indicator.setProgress(newVal.intValue()));
 		VBox main = new VBox(1, indicator, slider);
-		indicator.setProgress(Double.valueOf(slider.getValue()).intValue());
+                for(int i = 0 ; i < 10 ; i++)
+                {
+                    indicator.setProgress(Double.valueOf(i).intValue());
+                }
+		
 		Scene scene = new Scene(main);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Test ring progress");

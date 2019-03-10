@@ -21,4 +21,5 @@ public interface ClientService extends Remote{
     public void notify(Notification notification) throws RemoteException;
 
     public ReceiveFileService requestReceiveFileService(String senderName, String fileName) throws RemoteException;
+    public void receiveAnnounce(Notification notification) throws RemoteException;
 }

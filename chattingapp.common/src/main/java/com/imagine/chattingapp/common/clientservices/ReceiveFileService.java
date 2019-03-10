@@ -15,6 +15,6 @@ import java.rmi.RemoteException;
  * @author Hamada Abdrabou
  */
 public interface ReceiveFileService extends Remote{
-    public void sendFile(RemoteInputStream ristream, String exe, String file) throws RemoteException, IOException;
+    public void sendFile(RemoteInputStream ristream, String exe, String file, double fileLength) throws RemoteException, IOException;
     
 }
