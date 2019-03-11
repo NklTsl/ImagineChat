@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import com.imagine.chattingapp.server.dal.config.DatabaseConnection;
+import com.imagine.chattingapp.server.dal.cfg.DatabaseConnection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;

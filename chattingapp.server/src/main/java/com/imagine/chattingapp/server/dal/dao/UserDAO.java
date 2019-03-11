@@ -7,6 +7,10 @@ package com.imagine.chattingapp.server.dal.dao;
 
 
 import com.imagine.chattingapp.common.entity.User;
+import com.imagine.chattingapp.server.control.MainController;
+import com.imagine.chattingapp.server.dal.entity.Country;
+import com.imagine.chattingapp.server.dal.entity.UserStatus;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,25 +27,29 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
         databaseDataRetreival = new DatabaseDataRetreival();
     }
 
+    com.imagine.chattingapp.server.dal.entity.User mapToAnnoUser(User user)
+    {
+        com.imagine.chattingapp.server.dal.entity.User userAnno = new com.imagine.chattingapp.server.dal.entity.User();
+        userAnno.setPhoneNumber(user.getPhoneNumber());
+        userAnno.setName(user.getPhoneNumber());
+        userAnno.setEmail(user.getPhoneNumber());
+        userAnno.setPicture(user.getPicture());
+        userAnno.setPassword(user.getPassword());
+        userAnno.setGender(user.getGender()? (byte)1 : (byte)0);
+        userAnno.setDateOfBirth(new Date(user.getDateOfBirth()));
+        userAnno.setBiography(user.getBiography());
+        userAnno.setCountry(MainController.session.get(Country.class, user.getCountryID()));
+        userAnno.setUserStatus(MainController.session.get(UserStatus.class, user.getStatusID()));
+        
+        return userAnno;
+    }
+    
+    
     @Override
     public void persist(User user) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`user` "
-                + "(`Phone_Number`, `Name`, `Email`, `Picture`,`Password`, `Gender`, `Date_Of_Birth`, `Biography`, `Country_ID`, `Status_ID`) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(user.getPhoneNumber());
-        parameterList.add(user.getName());
-        parameterList.add(user.getEmail());
-        parameterList.add(user.getPicture());
-        parameterList.add(user.getPassword());
-        parameterList.add(user.getGender());
-        parameterList.add(user.getDateOfBirth());
-        parameterList.add(user.getBiography());
-        parameterList.add(user.getCountryID());
-        parameterList.add(user.getStatusID());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
+        MainController.session.getTransaction().begin();
+        MainController.session.persist(mapToAnnoUser(user));
+        MainController.session.getTransaction().commit();
     }
 
     @Override

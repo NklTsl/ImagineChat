@@ -36,6 +36,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -59,6 +62,7 @@ public class MainController extends Application {
     private UpdateProfileServiceImpl updateProfileServiceImpl;
     private Stage primaryStage;
     private static Map<String, ClientService> onlineClients = new TreeMap<>();
+    public static Session session;
 
     public static void main(String[] args) {
         launch(args);
@@ -143,6 +147,12 @@ public class MainController extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setWidth(800);
         primaryStage.setHeight(700);
+        
+        SessionFactory sessionFactory = new Configuration().configure(getClass().getResource("/cfg/hibernate.cfg.xml")).buildSessionFactory();
+        session = sessionFactory.openSession();
+        
+        
+        
         try {
             loginServiceImpl = new LoginServiceImpl();
             contactsServiceImpl = new ContactsServiceImpl();
@@ -155,6 +165,7 @@ public class MainController extends Application {
             userStatusServiceImpl = new UserStatusServiceImpl();
             updateProfileServiceImpl = new UpdateProfileServiceImpl();
             
+            
             registry = LocateRegistry.createRegistry(2000);
             registry.rebind("LoginLogoutService", loginServiceImpl);
             registry.rebind("ContactsService", contactsServiceImpl);
@@ -166,6 +177,8 @@ public class MainController extends Application {
             registry.rebind("GetNameByPhoneService", getNameByPhoneServiceImpl);
             registry.rebind("UserStatusService", userStatusServiceImpl);
             registry.rebind("UpdateProfileService", updateProfileServiceImpl);
+            
+            
             
             System.out.println("Server Initially Started");
             switchToMainView();

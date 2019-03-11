@@ -8,7 +8,7 @@ package com.imagine.chattingapp.server.view;
 import com.imagine.chattingapp.common.entity.Country;
 import com.imagine.chattingapp.common.entity.User_Status;
 import com.imagine.chattingapp.server.control.MainController;
-import com.imagine.chattingapp.server.dal.config.DatabaseConnection;
+import com.imagine.chattingapp.server.dal.cfg.DatabaseConnection;
 import com.imagine.chattingapp.server.dal.dao.CountryDAO;
 import com.imagine.chattingapp.server.dal.dao.User_StatusDAO;
 import com.jfoenix.controls.JFXButton;
