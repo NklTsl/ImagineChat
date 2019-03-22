@@ -96,7 +96,7 @@ public class UpdateProfileController implements Initializable {
                 imgProfileImage.setImage(userProfileImage);
             } else {
                 FileInputStream fin;
-                File imgfile = new File("target/classes/DefaultPersonIcon.png");
+                File imgfile = new File(getClass().getResource("/DefaultPersonIcon.png").toString());//"target/classes/DefaultPersonIcon.png");
                 fin = new FileInputStream(imgfile);
                 byte[] defaultUserImage = new byte[(int) imgfile.length()];
                 fin.read(defaultUserImage);
@@ -132,7 +132,7 @@ public class UpdateProfileController implements Initializable {
                         if (selectedImage != null) {
                             imgfile = new File(selectedImage);
                         } else {
-                            imgfile = new File("target/classes/DefaultPerson.png");
+                            imgfile = new File(getClass().getResource("/DefaultPersonIcon.png").toString());//"target/classes/DefaultPerson.png");
                         }
 
                         FileInputStream fin = new FileInputStream(imgfile);

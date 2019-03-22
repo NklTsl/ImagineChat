@@ -6,15 +6,19 @@ package com.imagine.chattingapp.client.view;
 * and open the template in the editor.
 */
 
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.common.dto.Contact;
 import com.imagine.chattingapp.common.dto.GroupMember;
 import com.imagine.chattingapp.common.dto.NewGroupInfo;
 import com.imagine.chattingapp.common.serverservices.AddNewGroupService;
 import com.imagine.chattingapp.common.serverservices.ContactsService;
+import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -83,7 +87,6 @@ public class AddNewGroupController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        FileInputStream fin = null;
         try {
             // TODO
             lstGroupMembers.getItems().addAll(groupMembers);
@@ -94,14 +97,12 @@ public class AddNewGroupController implements Initializable {
                 }
             });
             
-            Image statusImage = new Image("/GroupDefaultImage.png");
+            Image statusImage = new Image(getClass().getResource("/GroupDefaultImage.png").toString());//"/GroupDefaultImage.png");
             cirGroupmage.setFill(new ImagePattern(statusImage));
             cirGroupmage.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
-            
-            File imgFile = new File("src/main/resources/GroupDefaultImage.png");
-            fin = new FileInputStream(imgFile);
-            groupImage = new byte[(int)imgFile.length()];
-            fin.read(groupImage);
+            InputStream DefaultGroupStream = getClass().getResourceAsStream("/GroupDefaultImage.png");
+            groupImage = new byte[(int)DefaultGroupStream.available()];
+            DefaultGroupStream.read(groupImage);
             
             
             
@@ -111,11 +112,6 @@ public class AddNewGroupController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(AddNewGroupController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                fin.close();
-            } catch (IOException ex) {
-                Logger.getLogger(AddNewGroupController.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
         
         
@@ -138,8 +134,8 @@ public class AddNewGroupController implements Initializable {
         
         if(!membersPhones.isEmpty() && !txtGroupName.getText().isEmpty()){
             try {
-                Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
-                AddNewGroupService addNewGroupService = (AddNewGroupService) registry.lookup("AddNewGroupService");
+                
+                AddNewGroupService addNewGroupService = (AddNewGroupService) ServiceLocator.getService("AddNewGroupService");
                 
                 NewGroupInfo groupInfo = new NewGroupInfo();
                 groupInfo.setGroupName(txtGroupName.getText());
@@ -157,8 +153,6 @@ public class AddNewGroupController implements Initializable {
             } catch (RemoteException ex) {
                 Logger.getLogger(AddNewGroupController.class.getName()).log(Level.SEVERE, null, ex);
                 //group did't created
-            } catch (NotBoundException ex) {
-                Logger.getLogger(AddNewGroupController.class.getName()).log(Level.SEVERE, null, ex);
             }
             
         }

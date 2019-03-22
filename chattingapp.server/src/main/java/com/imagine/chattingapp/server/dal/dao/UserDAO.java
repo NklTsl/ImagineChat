@@ -15,6 +15,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -31,7 +37,7 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
     {
         com.imagine.chattingapp.server.dal.entity.User userAnno = new com.imagine.chattingapp.server.dal.entity.User();
         userAnno.setPhoneNumber(user.getPhoneNumber());
-        userAnno.setName(user.getPhoneNumber());
+        userAnno.setName(user.getName());
         userAnno.setEmail(user.getPhoneNumber());
         userAnno.setPicture(user.getPicture());
         userAnno.setPassword(user.getPassword());
@@ -40,148 +46,90 @@ public class UserDAO extends DatabaseDataRetreival implements DAO<User>{
         userAnno.setBiography(user.getBiography());
         userAnno.setCountry(MainController.session.get(Country.class, user.getCountryID()));
         userAnno.setUserStatus(MainController.session.get(UserStatus.class, user.getStatusID()));
-        
+            
         return userAnno;
+    }
+    
+    
+    public User mapToUser(com.imagine.chattingapp.server.dal.entity.User userAnno){
+        User user = new User();
+        user.setPhoneNumber(userAnno.getPhoneNumber());
+        user.setName(userAnno.getName());
+        user.setEmail(userAnno.getEmail());
+        user.setPicture(userAnno.getPicture());
+        user.setPassword(userAnno.getPassword());
+        user.setGender((userAnno.getGender() != 0));
+        user.setDateOfBirth(userAnno.getDateOfBirth().getTime());
+        user.setBiography(userAnno.getBiography());
+        user.setCountryID(userAnno.getCountry().getId());
+        user.setStatusID(userAnno.getUserStatus().getId());
+        return user;
     }
     
     
     @Override
     public void persist(User user) throws SQLException {
-        MainController.session.getTransaction().begin();
+        MainController.session.beginTransaction();
         MainController.session.persist(mapToAnnoUser(user));
         MainController.session.getTransaction().commit();
     }
 
     @Override
     public void update(User user) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`user` "
-                + "SET `Name` = ?, `Email` = ?, `Picture` = ?,`Password` = ?, "
-                + "`Gender` = ?, `Date_Of_Birth` = ?, `Biography` = ?, "
-                + "`Country_ID` = ?, `Status_ID` = ? WHERE (`Phone_Number` = ?)";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(user.getName());
-        parameterList.add(user.getEmail());
-        parameterList.add(user.getPicture());
-        parameterList.add(user.getPassword());
-        parameterList.add(user.getGender());
-        parameterList.add(user.getDateOfBirth());
-        parameterList.add(user.getBiography());
-        parameterList.add(user.getCountryID());
-        parameterList.add(user.getStatusID());
-        parameterList.add(user.getPhoneNumber());
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);        
+        com.imagine.chattingapp.server.dal.entity.User userAnno = mapToAnnoUser(user);
+        MainController.session.beginTransaction();
+        MainController.session.merge(userAnno);
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`user` WHERE (`Phone_Number` = ?)";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        String key = (String)primaryKey.get(0);
+        com.imagine.chattingapp.server.dal.entity.User userAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.User.class, key);
+        MainController.session.beginTransaction();
+        MainController.session.delete(userAnno);
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public User getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String deleteQuery = "SELECT `user`.`Phone_Number`,`user`.`Name`,`user`.`Email`,"
-                + "`user`.`Picture`,`user`.`Password`,`user`.`Gender`,`user`.`Gender`,"
-                + "`user`.`Biography`,`user`.`Country_ID`,`user`.`Status_ID` FROM `chattingapp`.`user` "
-                + "where `user`.`Phone_Number` = ?";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
-        queryResult.beforeFirst();
-        User user =null;
-        if(queryResult.next())
-        {
-            user = new User();
-            user.setPhoneNumber(queryResult.getString(1));
-            user.setName(queryResult.getString(2));
-            user.setEmail(queryResult.getString(3));
-            user.setPicture(queryResult.getBytes(4));
-            user.setPassword(queryResult.getString(5));
-            user.setGender(queryResult.getInt(6) == 0 ? false : true);
-            user.setDateOfBirth(queryResult.getDate(7).getTime());
-            user.setBiography(queryResult.getString(8));
-            user.setCountryID(queryResult.getByte(9));
-            user.setStatusID(queryResult.getByte(10));
-        }
+        String key = (String)primaryKeys.get(0);
+        com.imagine.chattingapp.server.dal.entity.User userAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.User.class, key);
+        User user = mapToUser(userAnno);
         return user;
     }
 
     @Override
     public List<User> getAll() throws SQLException {
-        String getAllQuery = "SELECT `user`.`Phone_Number`,`user`.`Name`,`user`.`Email`,"
-                + "`user`.`Picture`,`user`.`Password`,`user`.`Gender`,`user`.`Gender`,"
-                + "`user`.`Biography`,`user`.`Country_ID`,`user`.`Status_ID` FROM `chattingapp`.`user` ";
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<User> userList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            User user = new User();
-            user.setPhoneNumber(queryResult.getString(1));
-            user.setName(queryResult.getString(2));
-            user.setEmail(queryResult.getString(3));
-            user.setPicture(queryResult.getBytes(4));
-            user.setPassword(queryResult.getString(5));
-            user.setDateOfBirth(queryResult.getDate(7).getTime());
-            user.setBiography(queryResult.getString(8));
-            user.setCountryID(queryResult.getByte(9));
-            user.setStatusID(queryResult.getByte(10));
-            userList.add(user);
-        }
-        
-        
-        return userList;
+        MainController.session.beginTransaction();
+        Query usersQuery = MainController.session.createQuery("from com.imagine.chattingapp.server.dal.entity.User");
+        List<com.imagine.chattingapp.server.dal.entity.User> allAnnoUsers = usersQuery.list();
+        List<User> returnedUsers = new ArrayList();
+        allAnnoUsers.forEach((userAnno)->{
+            returnedUsers.add(mapToUser(userAnno));
+        });
+        MainController.session.getTransaction().commit();
+        return returnedUsers;
     }
 
     @Override
     public List<User> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-                String getByColumnNamesQuery = "SELECT `user`.`Phone_Number`,`user`.`Name`,`user`.`Email`,"
-                + "`user`.`Picture`,`user`.`Password`,`user`.`Gender`,`user`.`Gender`,"
-                + "`user`.`Biography`,`user`.`Country_ID`,`user`.`Status_ID` FROM `chattingapp`.`user`  "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+                
+        MainController.session.beginTransaction();
+        Criteria userCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.User.class);
+        columnNames.set(0, "phoneNumber");
+        columnNames.set(1, "password");
+        for(int i=0;i<columnNames.size();i++){
+            userCriteria = userCriteria.add(Restrictions.eq(columnNames.get(i), columnValues.get(i)));
         }
         
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-         List<User> userList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            User user = new User();
-            user.setPhoneNumber(queryResult.getString(1));
-            user.setName(queryResult.getString(2));
-            user.setEmail(queryResult.getString(3));
-            user.setPicture(queryResult.getBytes(4));
-            user.setPassword(queryResult.getString(5));
-            user.setDateOfBirth(queryResult.getDate(7).getTime());
-            user.setBiography(queryResult.getString(8));
-            user.setCountryID(queryResult.getByte(9));
-            user.setStatusID(queryResult.getByte(10));
-            userList.add(user);
-        }
-        
-        
-        return userList;
+        List<com.imagine.chattingapp.server.dal.entity.User> allAnnoUsers = userCriteria.list();
+        List<User> returnedUsers = new ArrayList<>();
+        allAnnoUsers.forEach((usr)->{
+            returnedUsers.add(mapToUser(usr));
+        });
+        MainController.session.getTransaction().commit();
+        return returnedUsers;
     }
     
 }

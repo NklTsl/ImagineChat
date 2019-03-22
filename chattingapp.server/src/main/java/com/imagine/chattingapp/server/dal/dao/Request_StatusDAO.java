@@ -6,10 +6,14 @@
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Request_Status;
+import com.imagine.chattingapp.server.control.MainController;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -21,112 +25,72 @@ public class Request_StatusDAO implements DAO<Request_Status> {
     public Request_StatusDAO() throws SQLException{
         databaseDataRetreival = new DatabaseDataRetreival();
     }
+    com.imagine.chattingapp.server.dal.entity.RequestStatus mapToAnnoRequestStatus(Request_Status requestStatus){
+        com.imagine.chattingapp.server.dal.entity.RequestStatus requestStatusAnno = new com.imagine.chattingapp.server.dal.entity.RequestStatus();
+        requestStatusAnno.setId(requestStatus.getId());
+        requestStatusAnno.setDescription(requestStatus.getDescription());
+        return requestStatusAnno;
+    }
+    Request_Status mapToRequestStatus(com.imagine.chattingapp.server.dal.entity.RequestStatus requestStatusAnno){
+        Request_Status requestStatus = new Request_Status();
+        requestStatus.setId(requestStatusAnno.getId());
+        requestStatus.setDescription(requestStatusAnno.getDescription());
+        return requestStatus;
+    }
     
     @Override
     public void persist(Request_Status requestStatus) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`request_status` (`ID`, `Description`) VALUES (?, ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(requestStatus.getId());
-        parameterList.add(requestStatus.getDescription());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.persist(mapToAnnoRequestStatus(requestStatus));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public void update(Request_Status requestStatus) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`request_status` SET `Description` = ? WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(requestStatus.getDescription());
-        parameterList.add(requestStatus.getId());
-        
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);       
+        MainController.session.beginTransaction();
+        MainController.session.saveOrUpdate(mapToAnnoRequestStatus(requestStatus));
+        MainController.session.getTransaction().commit();
     }
-
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`request_status` WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        byte key = (byte) primaryKey.get(0);
+        com.imagine.chattingapp.server.dal.entity.RequestStatus requestStatusAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.RequestStatus.class,key);
+        MainController.session.beginTransaction();
+        MainController.session.delete(requestStatusAnno);
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public Request_Status getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String deleteQuery = "SELECT `request_status`.`ID`, `request_status`.`Description` "
-                + "FROM `chattingapp`.`request_status` "
-                + "WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
-        queryResult.beforeFirst();
-        Request_Status requestStatus = new Request_Status();
-        if(queryResult.next())
-        {
-            requestStatus.setId(queryResult.getByte(1));
-            requestStatus.setDescription(queryResult.getString(2));
-        }
+        byte key = (byte) primaryKeys.get(0);
+        com.imagine.chattingapp.server.dal.entity.RequestStatus requestStatusAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.RequestStatus.class, key);
+        Request_Status requestStatus = mapToRequestStatus(requestStatusAnno);
         return requestStatus;
     }
 
     @Override
     public List<Request_Status> getAll() throws SQLException {
-        String getAllQuery = "SELECT `request_status`.`ID`, `request_status`.`Description` "
-                + "FROM `chattingapp`.`request_status` ";
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<Request_Status> requestStatusList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Request_Status requestStatus = new Request_Status();
-            requestStatus.setId(queryResult.getByte(1));
-            requestStatus.setDescription(queryResult.getString(2));
-            requestStatusList.add(requestStatus);
-        }
-        
-        
-        return requestStatusList;
+        Query countryQuery = MainController.session.createQuery("from com.imagine.chattingapp.server.dal.entity.RequestStatus");
+        List<com.imagine.chattingapp.server.dal.entity.RequestStatus> allAnnoRequestStatuses = countryQuery.list();
+        List<Request_Status> returnedRequestStatuses = new ArrayList<>();
+        allAnnoRequestStatuses.forEach((annoRequestStatus)->{
+            returnedRequestStatuses.add(mapToRequestStatus(annoRequestStatus));
+        });
+        return returnedRequestStatuses;
     }
 
     @Override
     public List<Request_Status> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-        String getByColumnNamesQuery = "SELECT `request_status`.`ID`, `request_status`.`Description` "
-                + "FROM `chattingapp`.`request_status`  "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        Criteria requestStatusCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.RequestStatus.class);
+        for(int i = 0; i<columnNames.size(); i++){
+            requestStatusCriteria = requestStatusCriteria.add(Restrictions.eq(columnNames.get(i), columnValues.get(0)));
         }
-        
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-    List<Request_Status> requestStatusList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Request_Status requestStatus = new Request_Status();
-            requestStatus.setId(queryResult.getByte(1));
-            requestStatus.setDescription(queryResult.getString(2));
-            requestStatusList.add(requestStatus);
-        }
-        
-        
-        return requestStatusList;
+        List<com.imagine.chattingapp.server.dal.entity.RequestStatus> allAnnoRequestStatus = requestStatusCriteria.list();
+        List<Request_Status> returnedRequestStatuses = new ArrayList<>();
+        allAnnoRequestStatus.forEach((requestStatusAnno)->{
+            returnedRequestStatuses.add(mapToRequestStatus(requestStatusAnno));
+        });
+        return returnedRequestStatuses;   
     }
     
 }

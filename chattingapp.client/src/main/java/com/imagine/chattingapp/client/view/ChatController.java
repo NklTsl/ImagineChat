@@ -78,6 +78,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Optional;
@@ -174,35 +175,27 @@ public class ChatController implements Initializable {
     WebView view;
 
     public ChatController(MainController mainController, LightUser lightUser, LoginUser loginUser) {
-        FileInputStream fin = null;
         try {
             this.mainController = mainController;
             this.lightUser = lightUser;
             this.loginUser = loginUser;
             chatSessionsMap = new TreeMap<>();
-            onlineSound = new AudioClip(new File("target/classes/Online.mp3").toURI().toString());
-            offlineSound = new AudioClip(new File("target/classes/Offline.mp3").toURI().toString());
+            onlineSound = new AudioClip(getClass().getResource("/Online.mp3").toString());//new File("target/classes/Online.mp3").toURI().toString());
+            offlineSound = new AudioClip(getClass().getResource("/Offline.mp3").toString());//new File("target/classes/Offline.mp3").toURI().toString());
+            InputStream defaultPersonFileStream = getClass().getResourceAsStream("/DefaultPersonIcon.png");
+            InputStream defaultGroupFileStream = getClass().getResourceAsStream("/DefaultGroupIcon.png");
 
-            File imgfile = new File("target/classes/DefaultPersonIcon.png");
-            fin = new FileInputStream(imgfile);
-            defaultUserImage = new byte[(int) imgfile.length()];
-            fin.read(defaultUserImage);
+            defaultUserImage = new byte[(int) defaultPersonFileStream.available()];
+            defaultPersonFileStream.read(defaultUserImage);
 
-            imgfile = new File("target/classes/DefaultGroupIcon.png");
-            fin = new FileInputStream(imgfile);
-            defaultGroupImage = new byte[(int) imgfile.length()];
-            fin.read(defaultGroupImage);
+            defaultGroupImage = new byte[(int) defaultGroupFileStream.available()];
+            defaultGroupFileStream.read(defaultGroupImage);
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fin.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }  finally {
         }
 
     }
@@ -225,7 +218,7 @@ public class ChatController implements Initializable {
             List<Contact> contacts = contactsService.getContacts(lightUser.getPhoneNumber());
 
             UserStatusService userStatusService = (UserStatusService) ServiceLocator.getService("UserStatusService");
-             chatService = (ChatService) ServiceLocator.getService("ChatService");
+            chatService = (ChatService) ServiceLocator.getService("ChatService");
             
             List<User_Status> statuses = userStatusService.getUserStatus();
 

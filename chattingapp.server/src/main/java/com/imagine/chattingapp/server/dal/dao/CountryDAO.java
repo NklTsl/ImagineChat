@@ -6,10 +6,12 @@
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Country;
+import com.imagine.chattingapp.server.control.MainController;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
 
 /**
  *
@@ -35,69 +37,37 @@ public class CountryDAO implements DAO<Country> {
 
     @Override
     public void update(Country country) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`country` SET `Name` = ? WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(country.getName());
-        parameterList.add(country.getId());
-        
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);        
+        MainController.session.beginTransaction();
+        MainController.session.saveOrUpdate(mapToAnnoCountry(country));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`country` WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        byte key = (byte)primaryKey.get(0);
+        com.imagine.chattingapp.server.dal.entity.Country countryAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.Country.class, key);
+        MainController.session.beginTransaction();
+        MainController.session.delete(countryAnno);
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public Country getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String deleteQuery = "SELECT `country`.`ID`, `country`.`Name` "
-                + "FROM `chattingapp`.`country` "
-                + "WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
-        queryResult.beforeFirst();
-        Country country = new Country();
-        if(queryResult.next())
-        {
-            country.setId(queryResult.getByte(1));
-            country.setName(queryResult.getString(2));
-        }
+        byte key = (byte) primaryKeys.get(0);
+        com.imagine.chattingapp.server.dal.entity.Country countryAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.Country.class, key);
+        Country country = mapToCountry(countryAnno);
         return country;
     }
 
     @Override
     public List<Country> getAll() throws SQLException {
-        String getAllQuery = "SELECT `country`.`ID`, `country`.`Name` "
-                + "FROM `chattingapp`.`country` ";
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<Country> countryList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Country country = new Country();
-            country.setId(queryResult.getByte(1));
-            country.setName(queryResult.getString(2));
-            countryList.add(country);
-        }
-        
-        
-        return countryList;
+        Criteria criteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.Country.class);
+        List<com.imagine.chattingapp.server.dal.entity.Country> allAnnoCountry = criteria.list();
+        List<Country> returnedCountry = new ArrayList();
+        allAnnoCountry.forEach((countryAnno)->{
+            returnedCountry.add(mapToCountry(countryAnno));
+        });
+        return returnedCountry;
     }
 
     @Override
@@ -128,5 +98,17 @@ public class CountryDAO implements DAO<Country> {
         
         return countryList;
     }
+
+    private Country mapToCountry(com.imagine.chattingapp.server.dal.entity.Country countryAnno) {
+        Country country = new Country();
+        country.setId(countryAnno.getId());
+        country.setName(countryAnno.getName());
+        return country;
+    }
     
+    com.imagine.chattingapp.server.dal.entity.Country mapToAnnoCountry(Country country){
+        com.imagine.chattingapp.server.dal.entity.Country countryAnno = new com.imagine.chattingapp.server.dal.entity.Country();
+        countryAnno.setName(country.getName());
+        return countryAnno;
+    }
 }

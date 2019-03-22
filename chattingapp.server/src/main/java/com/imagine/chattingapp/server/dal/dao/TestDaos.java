@@ -6,6 +6,10 @@
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Friend;
+import com.imagine.chattingapp.server.control.MainController;
+import static com.imagine.chattingapp.server.control.MainController.session;
+import com.imagine.chattingapp.server.dal.entity.ChatGroup;
+import com.imagine.chattingapp.server.dal.entity.User;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -13,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -93,7 +100,7 @@ public class TestDaos {
 //            listuser.contains(list);
             
             
-            Friend friend = new Friend();
+            /*Friend friend = new Friend();
             friend.setPhoneNumber1("1");
             friend.setPhoneNumber2("2");
             friend.setRealtiveGroup("other");
@@ -142,9 +149,16 @@ public class TestDaos {
             
             List<Friend> listFriend = friendDAO.getAll();
             
-            listFriend.contains(list);
+            listFriend.contains(list);*/
+            /*SessionFactory sessionFactory = new Configuration().configure(new TestDaos().getClass().getResource("/cfg/hibernate.cfg.xml")).buildSessionFactory();
+            Session session = sessionFactory.openSession();
             
-        } catch (SQLException ex) {
+            
+            ChatGroup chatGroup = session.get(ChatGroup.class, 23);
+        User user = session.get(User.class, "01111111111");
+        System.out.println();*/
+            
+        } catch (Exception ex) {
             Logger.getLogger(TestDaos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

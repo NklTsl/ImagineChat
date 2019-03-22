@@ -6,10 +6,19 @@
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Chat_Group;
+import com.imagine.chattingapp.server.control.AddNewGroupServiceImpl;
+import com.imagine.chattingapp.server.control.MainController;
+import com.imagine.chattingapp.server.dal.entity.ChatGroup;
+import com.imagine.chattingapp.server.dal.entity.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -22,19 +31,30 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
         databaseDataRetreival = new DatabaseDataRetreival();
     }
     
+    com.imagine.chattingapp.server.dal.entity.ChatGroup mapToAnnoChatGroup(Chat_Group chatGroup)
+    {
+        com.imagine.chattingapp.server.dal.entity.ChatGroup chatGroupAnno = new com.imagine.chattingapp.server.dal.entity.ChatGroup();
+        chatGroupAnno.setName(chatGroup.getName());
+        chatGroupAnno.setPicture(chatGroup.getPicture());
+        chatGroupAnno.setUser(MainController.session.get(User.class, chatGroup.getOwnerPhoneNumber()));
+        return chatGroupAnno;
+    }
+    
+    public Chat_Group mapToGroup(com.imagine.chattingapp.server.dal.entity.ChatGroup chatGroupAnno){
+        Chat_Group chatGroup = new Chat_Group();
+        chatGroup.setName(chatGroupAnno.getName());
+        chatGroup.setPicture(chatGroupAnno.getPicture());
+        chatGroup.setLastMessageSentTime(new Timestamp(chatGroupAnno.getLastMessageSentTime().getTime()));
+        chatGroup.setOwnerPhoneNumber(chatGroupAnno.getUser().getPhoneNumber());
+        return chatGroup;
+    }
+    
+    
     @Override
     public void persist(Chat_Group chatGroup) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`chat_group` "
-                + "(`Owner_Phone_Number`, `Name`, `Picture`, `Last_Message_Sent_Time`) "
-                + "VALUES (?, ?, ?, ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(chatGroup.getOwnerPhoneNumber());
-        parameterList.add(chatGroup.getName());
-        parameterList.add(chatGroup.getPicture());
-        parameterList.add(chatGroup.getLastMessageSentTime());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
+        MainController.session.beginTransaction();
+        AddNewGroupServiceImpl.chatGroup = (ChatGroup)MainController.session.merge(mapToAnnoChatGroup(chatGroup));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
@@ -55,98 +75,44 @@ public class Chat_GroupDAO implements DAO<Chat_Group> {
 
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`chat_group` WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.delete(MainController.session.get(com.imagine.chattingapp.server.dal.entity.ChatGroup.class,(Integer)primaryKey.get(0)));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public Chat_Group getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String deleteQuery = "SELECT `chat_group`.`ID`, `chat_group`.`Owner_Phone_Number`, "
-                + "`chat_group`.`Name`, `chat_group`.`Picture`, `chat_group`.`Last_Message_Sent_Time` "
-                + "FROM `chattingapp`.`chat_group` "
-                + "WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
-        queryResult.beforeFirst();
-        Chat_Group chatGroup = new Chat_Group();
-        if(queryResult.next())
-        {
-            chatGroup.setId(queryResult.getInt(1));
-            chatGroup.setOwnerPhoneNumber(queryResult.getString(2));
-            chatGroup.setName(queryResult.getString(3));
-            chatGroup.setPicture(queryResult.getBytes(4));
-            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(5));
-        }
-        return chatGroup;
+        int key = (Integer)primaryKeys.get(0);
+        com.imagine.chattingapp.server.dal.entity.ChatGroup groupAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.ChatGroup.class, key);
+        Chat_Group group = mapToGroup(groupAnno);
+        return group;          
     }
 
     @Override
     public List<Chat_Group> getAll() throws SQLException {
-        String getAllQuery = "SELECT `chat_group`.`ID`, `chat_group`.`Owner_Phone_Number`, "
-                + "`chat_group`.`Name`, `chat_group`.`Picture`,`chat_group`.`Last_Message_Sent_Time` "
-                + "FROM `chattingapp`.`chat_group` ";
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<Chat_Group> chatGroupList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Chat_Group chatGroup = new Chat_Group();
-            chatGroup.setId(queryResult.getInt(1));
-            chatGroup.setName(queryResult.getString(2));
-            chatGroup.setName(queryResult.getString(3));
-            chatGroup.setPicture(queryResult.getBytes(4));
-            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(5));
-            
-            chatGroupList.add(chatGroup);
-        }
-        
-        
-        return chatGroupList;
+        Query groupsQuery = MainController.session.createQuery("from com.imagine.chattingapp.server.dal.entity.ChatGroup");
+        List<com.imagine.chattingapp.server.dal.entity.ChatGroup> allAnnoGroups = groupsQuery.list();
+        List<Chat_Group> returnedGroups = new ArrayList();
+        allAnnoGroups.forEach((groupAnno)->{
+            returnedGroups.add(mapToGroup(groupAnno));
+        });
+        return returnedGroups;
     }
 
     @Override
     public List<Chat_Group> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-        String getByColumnNamesQuery = "SELECT `chat_group`.`ID`, `chat_group`.`Owner_Phone_Number`, "
-                + "`chat_group`.`Name`,`chat_group`.`Picture`, `chat_group`.`Last_Message_Sent_Time` "
-                + "FROM `chattingapp`.`chat_group` "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        Conjunction restrictions = Restrictions.conjunction();
+        for(int i=0;i<columnNames.size();i++){
+            restrictions.add(Restrictions.eq(columnNames.get(i), columnValues.get(i)));
         }
-        
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-        List<Chat_Group> chatGroupList = new ArrayList<Chat_Group>();
-        if(queryResult.next())
-        {
-            Chat_Group chatGroup = new Chat_Group();
-            chatGroup.setId(queryResult.getInt(1));
-            chatGroup.setOwnerPhoneNumber(queryResult.getString(2));
-            chatGroup.setName(queryResult.getString(3));
-            chatGroup.setPicture(queryResult.getBytes(4));
-            chatGroup.setLastMessageSentTime(queryResult.getTimestamp(5));
-            chatGroupList.add(chatGroup);
-        }
-        
-        return chatGroupList;
+        Criteria groupCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.ChatGroup.class);
+        groupCriteria = groupCriteria.add(restrictions);
+        List<com.imagine.chattingapp.server.dal.entity.ChatGroup> allAnnoGroups = groupCriteria.list();
+        List<Chat_Group> returnedGroups = new ArrayList<>();
+        allAnnoGroups.forEach((grp)->{
+            returnedGroups.add(mapToGroup(grp));
+        });
+        return returnedGroups;
     }
     
     public int getLastInsertedGroupId() throws SQLException {

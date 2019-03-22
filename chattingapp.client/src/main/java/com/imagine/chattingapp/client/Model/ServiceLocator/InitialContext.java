@@ -20,16 +20,12 @@ import java.util.logging.Logger;
  */
 public class InitialContext {
     
-    public static final String localHost = "127.0.0.1";
-    
     public static Remote lookup(String remoteService){
     
         Remote requestedRemoteService = null;
-        FileInputStream fileInStream = null;
         try{
-            fileInStream = new FileInputStream("server.properties");
             Properties currentConnectionProperties = new Properties();
-            currentConnectionProperties.load(fileInStream);
+            currentConnectionProperties.load(currentConnectionProperties.getClass().getResourceAsStream("/server.properties"));
             
             Registry registry;
             registry = LocateRegistry.getRegistry(currentConnectionProperties.getProperty("IP"), Integer.parseInt(currentConnectionProperties.getProperty("PORT")));

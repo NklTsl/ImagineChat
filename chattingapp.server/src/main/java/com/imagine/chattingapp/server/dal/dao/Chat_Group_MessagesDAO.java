@@ -1,15 +1,17 @@
-/*
-* To change this license header, choose License Headers in Project Properties.
-* To change this template file, choose Tools | Templates
-* and open the template in the editor.
-*/
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Chat_Group_Messages;
+import com.imagine.chattingapp.server.control.MainController;
+import com.imagine.chattingapp.server.dal.entity.ChatGroupMessagesId;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -22,154 +24,87 @@ public class Chat_Group_MessagesDAO implements DAO<Chat_Group_Messages> {
     public Chat_Group_MessagesDAO() throws SQLException {
         databaseDataRetreival = new DatabaseDataRetreival();
     }
-    
+    com.imagine.chattingapp.server.dal.entity.ChatGroupMessages mapToGroupMessagesAnno(Chat_Group_Messages groupMessages){
+        com.imagine.chattingapp.server.dal.entity.ChatGroupMessages groupMessagesAnno = new com.imagine.chattingapp.server.dal.entity.ChatGroupMessages();
+        groupMessagesAnno.setFile(groupMessages.getFile());
+        int groupId = groupMessages.getGroupID();
+        String sender = groupMessages.getSenderPhoneNumber();
+        Date sendDate = new Date(groupMessages.getTimestamp().getTime());
+        ChatGroupMessagesId Id = new ChatGroupMessagesId(groupId, sender, sendDate);
+        groupMessagesAnno.setId(Id);
+        groupMessagesAnno.setStatus(groupMessages.getStatus());
+        groupMessagesAnno.setMessageContentOrFileName(groupMessages.getMessageContentOrFileName());
+        return groupMessagesAnno;
+    }
+    Chat_Group_Messages mapToGroupMessages(com.imagine.chattingapp.server.dal.entity.ChatGroupMessages groupMessagesAnno){
+        Chat_Group_Messages groupMessages = new Chat_Group_Messages();
+        groupMessages.setFile(groupMessagesAnno.getFile());
+        groupMessages.setGroupID(groupMessagesAnno.getId().getGroupId());
+        groupMessages.setSenderPhoneNumber(groupMessagesAnno.getId().getSenderPhoneNumber());
+        groupMessages.setTimestamp(new Timestamp(groupMessagesAnno.getId().getTimestamp().getTime()));
+        groupMessages.setStatus(groupMessagesAnno.getStatus());
+        groupMessages.setMessageContentOrFileName(groupMessagesAnno.getMessageContentOrFileName());
+        return groupMessages;
+    }
     @Override
     public void persist(Chat_Group_Messages chatGroupMessage) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`chat_group_messages` "
-                + "(`Group_ID`, `Sender_Phone_Number`, `Timestamp`, "
-                + "`Message_Content_Or_File_Name`,`File`, `Status`) "
-                + "VALUES (?, ?, ?, ?, ?, ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(chatGroupMessage.getGroupID());
-        parameterList.add(chatGroupMessage.getSenderPhoneNumber());
-        parameterList.add(chatGroupMessage.getTimestamp());
-        parameterList.add(chatGroupMessage.getMessageContentOrFileName());
-        parameterList.add(chatGroupMessage.getFile());
-        parameterList.add(chatGroupMessage.getStatus());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.persist(mapToGroupMessagesAnno(chatGroupMessage));
+        MainController.session.getTransaction().commit();
     }
     
     @Override
     public void update(Chat_Group_Messages chatGroupMessage) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`chat_group_messages` "
-                + "SET `Message_Content_Or_File_Name` = ?, "
-                + "`File` = ?, `Status` = ? "
-                + "WHERE (`Group_ID` = ?) and (`Sender_Phone_Number` = ?) "
-                + "and (`Timestamp` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(chatGroupMessage.getMessageContentOrFileName());
-        parameterList.add(chatGroupMessage.getFile());
-        parameterList.add(chatGroupMessage.getStatus());
-        parameterList.add(chatGroupMessage.getGroupID());
-        parameterList.add(chatGroupMessage.getSenderPhoneNumber());
-        parameterList.add(chatGroupMessage.getTimestamp());
-        
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.saveOrUpdate(mapToGroupMessagesAnno(chatGroupMessage));
+        MainController.session.getTransaction().commit();
     }
     
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`chat_group_messages` "
-                + "WHERE (`Group_ID` = ?) and (`Sender_Phone_Number` = ?) "
-                + "and (`Timestamp` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        int groupId = (Integer)primaryKey.get(0);
+        String sender = (String)primaryKey.get(1);
+        Date sendDate = (Date)primaryKey.get(2);
+        ChatGroupMessagesId Id = new ChatGroupMessagesId(groupId, sender, sendDate);
+        com.imagine.chattingapp.server.dal.entity.ChatGroupMessages groupMessagesAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.ChatGroupMessages.class, Id);
+        MainController.session.beginTransaction();
+        MainController.session.delete(Id);
+        MainController.session.getTransaction().commit();
     }
     
     @Override
     public Chat_Group_Messages getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String getByPrimaryKeyQuery = "SELECT `chat_group_messages`.`Group_ID`, "
-                + "`chat_group_messages`.`Sender_Phone_Number`, "
-                + "`chat_group_messages`.`Timestamp`, "
-                + "`chat_group_messages`.`Message_Content_Or_File_Name`, "
-                + "`chat_group_messages`.`File`, `chat_group_messages`.`Status` "
-                + "FROM `chattingapp`.`chat_group_messages` "
-                + "WHERE (`Group_ID` = ?) and (`Sender_Phone_Number` = ?) "
-                + "and (`Timestamp` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByPrimaryKeyQuery, parameterList);
-        queryResult.beforeFirst();
-        Chat_Group_Messages chatGroupMessage = new Chat_Group_Messages();
-        if(queryResult.next())
-        {
-            chatGroupMessage.setGroupID(queryResult.getInt(1));
-            chatGroupMessage.setSenderPhoneNumber(queryResult.getString(2));
-            chatGroupMessage.setTimestamp(queryResult.getTimestamp(3));
-            chatGroupMessage.setMessageContentOrFileName(queryResult.getString(4));
-            chatGroupMessage.setFile(queryResult.getBytes(5));
-            chatGroupMessage.setStatus(queryResult.getByte(6));
-        }
-        return chatGroupMessage;
+        int groupId = (Integer)primaryKeys.get(0);
+        String sender = (String)primaryKeys.get(1);
+        Date sendDate = (Date)primaryKeys.get(2);
+        ChatGroupMessagesId Id = new ChatGroupMessagesId(groupId, sender, sendDate);
+        com.imagine.chattingapp.server.dal.entity.ChatGroupMessages groupMessagesAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.ChatGroupMessages.class, Id);
+        return mapToGroupMessages(groupMessagesAnno);
     }
     
     @Override
     public List<Chat_Group_Messages> getAll() throws SQLException {
-        String getAllQuery = "SELECT `chat_group_messages`.`Group_ID`, "
-                + "`chat_group_messages`.`Sender_Phone_Number`, "
-                + "`chat_group_messages`.`Timestamp`, "
-                + "`chat_group_messages`.`Message_Content_Or_File_Name`, "
-                + "`chat_group_messages`.`File`, `chat_group_messages`.`Status` "
-                + "FROM `chattingapp`.`chat_group_messages`;";
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<Chat_Group_Messages> chatGroupMessagesList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Chat_Group_Messages chatGroupMessage = new Chat_Group_Messages();
-            chatGroupMessage.setGroupID(queryResult.getInt(1));
-            chatGroupMessage.setSenderPhoneNumber(queryResult.getString(2));
-            chatGroupMessage.setTimestamp(queryResult.getTimestamp(3));
-            chatGroupMessage.setMessageContentOrFileName(queryResult.getString(4));
-            chatGroupMessage.setFile(queryResult.getBytes(5));
-            chatGroupMessage.setStatus(queryResult.getByte(6));
-            
-            chatGroupMessagesList.add(chatGroupMessage);
-        }
-        
-        
-        return chatGroupMessagesList;
+        Query groupMessagesQuery = MainController.session.createQuery("from com.imagine.chattingapp.server.dal.entity.ChatGroupMessages");
+        List<com.imagine.chattingapp.server.dal.entity.ChatGroupMessages> allGroupMessagesAnno = groupMessagesQuery.list();
+        List<Chat_Group_Messages> groupMessages = new ArrayList<>();
+        allGroupMessagesAnno.forEach((groupMessageAnno)->{
+            groupMessages.add(mapToGroupMessages(groupMessageAnno));
+        });
+        return groupMessages;
     }
     
     @Override
     public List<Chat_Group_Messages> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-        String getByColumnNamesQuery = "SELECT `chat_group_messages`.`Group_ID`, "
-                + "`chat_group_messages`.`Sender_Phone_Number`, "
-                + "`chat_group_messages`.`Timestamp`, "
-                + "`chat_group_messages`.`Message_Content_Or_File_Name`, "
-                + "`chat_group_messages`.`File`, `chat_group_messages`.`Status` "
-                + "FROM `chattingapp`.`chat_group_messages` "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        Criteria groupMessagesCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.ChatGroupMessages.class);
+        for(int i = 0; i<columnNames.size();i++){
+            groupMessagesCriteria = groupMessagesCriteria.add(Restrictions.eq(columnNames.get(i), columnValues.get(i)));
         }
-        
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-        List<Chat_Group_Messages> chatGroupMessagesList = new ArrayList<Chat_Group_Messages>();
-        if(queryResult.next())
-        {
-            Chat_Group_Messages chatGroupMessage = new Chat_Group_Messages();
-            chatGroupMessage.setGroupID(queryResult.getInt(1));
-            chatGroupMessage.setSenderPhoneNumber(queryResult.getString(2));
-            chatGroupMessage.setTimestamp(queryResult.getTimestamp(3));
-            chatGroupMessage.setMessageContentOrFileName(queryResult.getString(4));
-            chatGroupMessage.setFile(queryResult.getBytes(5));
-            chatGroupMessage.setStatus(queryResult.getByte(6));
-            
-            chatGroupMessagesList.add(chatGroupMessage);
-        }
-        
-        return chatGroupMessagesList;
+        List<com.imagine.chattingapp.server.dal.entity.ChatGroupMessages> allGroupMessagesAnno = groupMessagesCriteria.list();
+        List<Chat_Group_Messages> groupMessages = new ArrayList<>();
+        allGroupMessagesAnno.forEach((groupMessageAnno)->{
+            groupMessages.add(mapToGroupMessages(groupMessageAnno));
+        });
+        return groupMessages;
     }
     
 }

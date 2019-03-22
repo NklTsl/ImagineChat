@@ -5,9 +5,11 @@
 */
 package com.imagine.chattingapp.client.view;
 
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.client.control.MainController;
 import com.imagine.chattingapp.common.entity.Country;
 import com.imagine.chattingapp.common.entity.User;
+import com.imagine.chattingapp.common.serverservices.ContactsService;
 import com.imagine.chattingapp.common.serverservices.RegisterService;
 import com.imagine.chattingapp.common.validation.Validation;
 import java.io.File;
@@ -114,8 +116,8 @@ public class RegisterController implements Initializable {
         // TODO
         
         try {
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
-            registerService = (RegisterService) registry.lookup("RegisterService");
+            
+            RegisterService registerService = (RegisterService) ServiceLocator.getService("RegisterService");
             
             Image image = new Image(getClass().getResource("/welcome.jpg").toString());
             Image imageBack = new Image(getClass().getResource("/bckk.jpeg").toString());
@@ -152,8 +154,6 @@ public class RegisterController implements Initializable {
             
         } catch (RemoteException ex) {
             Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NotBoundException ex) {
-            Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         // submit button to add to database
@@ -174,7 +174,7 @@ public class RegisterController implements Initializable {
                     }
                     else
                     {
-                        imgfile = new File("target/classes/DefaultPerson.png");
+                        imgfile = new File(getClass().getResource("/DefaultPerson.png").toString());//"target/classes/DefaultPerson.png");
                     }
                     
                     FileInputStream fin = new FileInputStream(imgfile);

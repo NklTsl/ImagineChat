@@ -1,15 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Friend_Request;
+import com.imagine.chattingapp.server.control.MainController;
+import com.imagine.chattingapp.server.dal.entity.FriendRequestId;
+import com.imagine.chattingapp.server.dal.entity.RequestStatus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -22,123 +23,84 @@ public class Friend_RequestDAO implements DAO<Friend_Request> {
     public Friend_RequestDAO() throws SQLException {
         databaseDataRetreival = new DatabaseDataRetreival();
     }
-    
-    
+    com.imagine.chattingapp.server.dal.entity.FriendRequest mapToFriendRequestAnno(Friend_Request friendRequest){
+        com.imagine.chattingapp.server.dal.entity.FriendRequest friendRequestAnno = new com.imagine.chattingapp.server.dal.entity.FriendRequest();
+        String senderPhone = friendRequest.getSenderPhoneNumber();
+        String receiverPhone = friendRequest.getReceiverPhoneNumber();
+        FriendRequestId Id = new FriendRequestId(senderPhone, receiverPhone);
+        friendRequestAnno.setId(Id);
+        friendRequestAnno.setSeen(friendRequest.getSeen()?(byte)1:(byte)0);
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setId(friendRequest.getStatusID());
+        friendRequestAnno.setRequestStatus(requestStatus);
+        return friendRequestAnno;
+    }   
+    Friend_Request mapToFriendRequest(com.imagine.chattingapp.server.dal.entity.FriendRequest friendRequestAnno){
+        Friend_Request friendRequest = new Friend_Request();
+        friendRequest.setSeen(friendRequestAnno.getSeen() != 0);
+        friendRequest.setStatusID(friendRequestAnno.getRequestStatus().getId());
+        FriendRequestId Id = friendRequestAnno.getId();
+        friendRequest.setSenderPhoneNumber(Id.getSenderPhoneNumber());
+        friendRequest.setReceiverPhoneNumber(Id.getReceiverPhoneNumber());
+        return friendRequest;
+    }
     @Override
     public void persist(Friend_Request friendRequest) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`friend_request` (`Sender_Phone_Number`, `Receiver_Phone_Number`, `Status_ID`) VALUES (?, ?, ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(friendRequest.getSenderPhoneNumber());
-        parameterList.add(friendRequest.getReceiverPhoneNumber());
-        parameterList.add(friendRequest.getStatusID());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
-    }
+        MainController.session.beginTransaction();
+        MainController.session.persist(mapToFriendRequestAnno(friendRequest));
+        MainController.session.getTransaction().commit();
+       }
 
     @Override
     public void update(Friend_Request friendRequest) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`friend_request` SET `Status_ID` = ? "
-                + "WHERE (`Sender_Phone_Number` = ?) and (`Receiver_Phone_Number` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(friendRequest.getStatusID());
-        parameterList.add(friendRequest.getSenderPhoneNumber());
-        parameterList.add(friendRequest.getReceiverPhoneNumber());
-        
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.saveOrUpdate(mapToFriendRequestAnno(friendRequest));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`friend_request` "
-                + "WHERE (`Sender_Phone_Number` = ?) and (`Receiver_Phone_Number` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        String senderPhone = (String) primaryKey.get(0);
+        String receiverPhone = (String) primaryKey.get(1);
+        FriendRequestId key = new FriendRequestId(senderPhone, receiverPhone);
+        com.imagine.chattingapp.server.dal.entity.FriendRequest friendRequestAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.FriendRequest.class, key);
+        MainController.session.beginTransaction();
+        MainController.session.delete(friendRequestAnno);
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public Friend_Request getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String deleteQuery = "SELECT `friend_request`.`Sender_Phone_Number`, "
-                + "`friend_request`.`Receiver_Phone_Number`, "
-                + "`friend_request`.`Status_ID` FROM `chattingapp`.`friend_request` "
-                + "WHERE (`Sender_Phone_Number` = ?) and (`Receiver_Phone_Number` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
-        queryResult.beforeFirst();
-        Friend_Request friendRequest = new Friend_Request();
-        if(queryResult.next())
-        {
-            friendRequest.setSenderPhoneNumber(queryResult.getString(1));
-            friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
-            friendRequest.setStatusID(queryResult.getByte(3));
-        }
-        return friendRequest;
+        String senderPhone = (String) primaryKeys.get(0);
+        String receiverPhone = (String) primaryKeys.get(1);
+        FriendRequestId key = new FriendRequestId(senderPhone, receiverPhone);
+        com.imagine.chattingapp.server.dal.entity.FriendRequest friendRequestAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.FriendRequest.class, key);
+        return mapToFriendRequest(friendRequestAnno);
     }
+        
 
     @Override
     public List<Friend_Request> getAll() throws SQLException {
-        String getAllQuery = "SELECT `friend_request`.`Sender_Phone_Number`, "
-                + "`friend_request`.`Receiver_Phone_Number`, "
-                + "`friend_request`.`Status_ID` FROM `chattingapp`.`friend_request`";
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<Friend_Request> friendRequestList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Friend_Request friendRequest = new Friend_Request();
-            friendRequest.setSenderPhoneNumber(queryResult.getString(1));
-            friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
-            friendRequest.setStatusID(queryResult.getByte(3));
-            friendRequestList.add(friendRequest);
-        }
-        
-        
-        return friendRequestList;
+        Query friendRequestQuery = MainController.session.createQuery("from com.imagine.chattingapp.server.dal.entity.FriendRequest");
+        List<com.imagine.chattingapp.server.dal.entity.FriendRequest> allFriendRequestsAnno = friendRequestQuery.list();
+        List<Friend_Request> friendRequests = new ArrayList<>();
+        allFriendRequestsAnno.forEach((friendRequestAnno)->{
+            friendRequests.add(mapToFriendRequest(friendRequestAnno));
+        });
+        return friendRequests;
     }
 
     @Override
     public List<Friend_Request> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-        String getByColumnNamesQuery = "SELECT `friend_request`.`Sender_Phone_Number`, "
-                + "`friend_request`.`Receiver_Phone_Number`, "
-                + "`friend_request`.`Status_ID` FROM `chattingapp`.`friend_request` "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
-        }
-        
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-        List<Friend_Request> friendRequestList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Friend_Request friendRequest = new Friend_Request();
-            friendRequest.setSenderPhoneNumber(queryResult.getString(1));
-            friendRequest.setReceiverPhoneNumber(queryResult.getString(2));
-            friendRequest.setStatusID(queryResult.getByte(3));
-            friendRequestList.add(friendRequest);
-        }
-        
-        
-        return friendRequestList;
+        Criteria friendRequestCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.FriendRequest.class);
+        for(int i = 0; i<columnNames.size();i++)
+           friendRequestCriteria = friendRequestCriteria.add(Restrictions.eq(columnNames.get(i), columnValues.get(i)));
+        List<com.imagine.chattingapp.server.dal.entity.FriendRequest> allFriendRequestsAnno = friendRequestCriteria.list();
+        List<Friend_Request> friendRequests = new ArrayList<>();
+        allFriendRequestsAnno.forEach((friendRequestAnno)->{
+            friendRequests.add(mapToFriendRequest(friendRequestAnno));
+        });
+        return friendRequests;
     }
     
 }

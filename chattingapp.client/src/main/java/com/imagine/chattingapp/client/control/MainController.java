@@ -1,5 +1,6 @@
 package com.imagine.chattingapp.client.control;
 
+import com.imagine.chattingapp.client.Model.ServiceLocator.ServiceLocator;
 import com.imagine.chattingapp.client.view.UpdateProfileController;
 import com.imagine.chattingapp.client.view.ChatController;
 import com.imagine.chattingapp.client.view.LoginController;
@@ -11,6 +12,7 @@ import com.imagine.chattingapp.common.dto.FriendContact;
 import com.imagine.chattingapp.common.dto.LightUser;
 import com.imagine.chattingapp.common.entity.LoginUser;
 import com.imagine.chattingapp.common.entity.User;
+import com.imagine.chattingapp.common.serverservices.ContactsService;
 import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import java.io.IOException;
 import java.rmi.AccessException;
@@ -64,15 +66,13 @@ public class MainController extends Application {
         primaryStage.setOnCloseRequest((event) -> {
             try {
                 if (chatController != null) {
-                    Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2000);
-                    LoginLogoutService loginService = (LoginLogoutService) registry.lookup("LoginLogoutService");
+                    
+                    LoginLogoutService loginService = (LoginLogoutService) ServiceLocator.getService("LoginLogoutService");
                     loginService.logout(loginUser);
                 }
 
                 System.exit(0);
             } catch (RemoteException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotBoundException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
@@ -146,7 +146,7 @@ public class MainController extends Application {
             Parent root = loader.load(getClass().getResource("/RegisterDesign.fxml").openStream());
 
             Scene scene = new Scene(root);
-            root.getStylesheets().add("/regCss.css");
+            root.getStylesheets().add(getClass().getResource("/regCss.css").toString());//"/regCss.css");
 
             primaryStage.setTitle("Register");
             primaryStage.setScene(scene);

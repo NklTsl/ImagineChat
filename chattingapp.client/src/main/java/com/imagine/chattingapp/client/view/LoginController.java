@@ -36,9 +36,11 @@ import com.imagine.chattingapp.common.serverservices.LoginLogoutService;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Properties;
 import javafx.scene.control.Hyperlink;
 
@@ -65,6 +67,9 @@ public class LoginController implements Initializable {
     private MainController mainController;
     private LoginUser loginUser;
 
+    
+    public LoginController() {
+    }
     public LoginController(MainController mainController) {
         this.mainController = mainController;
     }
@@ -74,12 +79,10 @@ public class LoginController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        FileInputStream fileInStream = null;
         try {
             // TODO
-            fileInStream = new FileInputStream("remember.properties");
             Properties currentConnectionProperties = new Properties();
-            currentConnectionProperties.load(fileInStream);
+            currentConnectionProperties.load(getClass().getResourceAsStream("/remember.properties"));
             if (!currentConnectionProperties.isEmpty()) {
                 txtPhone.setText(currentConnectionProperties.getProperty("phoneNumber"));
                 
@@ -94,11 +97,6 @@ public class LoginController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                fileInStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 

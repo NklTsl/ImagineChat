@@ -6,11 +6,16 @@
 package com.imagine.chattingapp.server.dal.dao;
 
 import com.imagine.chattingapp.common.entity.Admin;
+import com.imagine.chattingapp.common.entity.User;
+import com.imagine.chattingapp.server.control.MainController;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -21,153 +26,87 @@ public class AdminDAO implements DAO<Admin> {
     public AdminDAO() throws SQLException{
         databaseDataRetreival = new DatabaseDataRetreival();
     }
-    
+    com.imagine.chattingapp.server.dal.entity.Admin mapToAnnoAdmin(Admin admin){
+        com.imagine.chattingapp.server.dal.entity.Admin adminAnno = new com.imagine.chattingapp.server.dal.entity.Admin();
+        adminAnno.setPhoneNumber(admin.getPhoneNumber());
+        adminAnno.setPassword(admin.getPassword());
+        adminAnno.setName(admin.getName());
+        adminAnno.setDateOfBirth(new Date(admin.getDateOfBirth()));
+        adminAnno.setEmail(admin.getEmail());
+        adminAnno.setBiography(admin.getBiography());
+        adminAnno.setGender(admin.getGender() ? (byte)1 : (byte)0);
+        adminAnno.setPicture(admin.getPicture());
+        adminAnno.setCountry(MainController.session.get(com.imagine.chattingapp.server.dal.entity.Country.class, admin.getCountryID()));
+        return adminAnno;
+    }
+    Admin mapToAdmin(com.imagine.chattingapp.server.dal.entity.Admin adminAnno){
+        Admin admin = new Admin();
+        admin.setPhoneNumber(adminAnno.getPhoneNumber());
+        admin.setPassword(adminAnno.getPassword());
+        admin.setName(adminAnno.getName());
+        admin.setDateOfBirth(adminAnno.getDateOfBirth().getTime());
+        admin.setEmail(admin.getEmail());
+        admin.setBiography(admin.getBiography());
+        admin.setGender(adminAnno.getGender() != 0 );
+        admin.setPicture(admin.getPicture());
+        admin.setCountryID(adminAnno.getCountry().getId());
+        return admin;
+    }
     @Override
     public void persist(Admin admin) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`admin` "
-                + "(`Phone_Number`, `Name`, `Email`, `Password`, `Gender`, `Date_Of_Birth`, `Biography`, `Country_ID`) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(admin.getPhoneNumber());
-        parameterList.add(admin.getName());
-        parameterList.add(admin.getEmail());
-        parameterList.add(admin.getPassword());
-        parameterList.add(admin.getGender());
-        parameterList.add(admin.getDateOfBirth());
-        parameterList.add(admin.getBiography());
-        parameterList.add(admin.getCountryID());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.persist(mapToAnnoAdmin(admin));
+        MainController.session.getTransaction().commit();
     }
     
     @Override
     public void update(Admin admin) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`admin` "
-                + "SET `Name` = ?, `Email` = ?, `Password` = ?, "
-                + "`Gender` = ?, `Date_Of_Birth` = ?, `Biography` = ?, "
-                + "`Country_ID` = ? WHERE (`Phone_Number` = ?)";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(admin.getName());
-        parameterList.add(admin.getEmail());
-        parameterList.add(admin.getPassword());
-        parameterList.add(admin.getGender());
-        parameterList.add(admin.getDateOfBirth());
-        parameterList.add(admin.getBiography());
-        parameterList.add(admin.getCountryID());
-        parameterList.add(admin.getPhoneNumber());
-        
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.saveOrUpdate(mapToAnnoAdmin(admin));
+        MainController.session.getTransaction().commit();
     }
     
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`admin` WHERE (`Phone_Number` = ?)";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        String key = (String) primaryKey.get(0);
+        com.imagine.chattingapp.server.dal.entity.Admin adminAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.Admin.class,key);
+        MainController.session.beginTransaction();
+        MainController.session.delete(adminAnno);
+        MainController.session.getTransaction().commit();
     }
     
     @Override
     public Admin getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String getByPrimaryKeyQuery = "SELECT `admin`.`Phone_Number`,`admin`.`Name`,`admin`.`Email`,"
-                + "`admin`.`Picture`,`admin`.`Password`,`admin`.`Gender`,`admin`.`Gender`,"
-                + "`admin`.`Biography`,`admin`.`Country_ID` FROM `chattingapp`.`admin` "
-                + "where `admin`.`Phone_Number` = ?";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByPrimaryKeyQuery, parameterList);
-        queryResult.beforeFirst();
-        Admin admin = new Admin();
-        if(queryResult.next())
-        {
-            admin.setPhoneNumber(queryResult.getString(1));
-            admin.setName(queryResult.getString(2));
-            admin.setEmail(queryResult.getString(3));
-            admin.setPicture(queryResult.getBytes(4));
-            admin.setPassword(queryResult.getString(5));
-            admin.setGender(queryResult.getInt(6) == 0 ? false : true);
-            admin.setDateOfBirth(queryResult.getDate(7).getTime());
-            admin.setBiography(queryResult.getString(8));
-            admin.setCountryID(queryResult.getByte(9));
-        }
+        String key = (String)primaryKeys.get(0);
+        com.imagine.chattingapp.server.dal.entity.Admin adminAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.Admin.class, key);
+        Admin admin = mapToAdmin(adminAnno);
         return admin;
         
     }
     
     @Override
     public List<Admin> getAll() throws SQLException {
-        String getAllQuery = "SELECT `admin`.`Phone_Number`,`admin`.`Name`,`admin`.`Email`,"
-                + "`admin`.`Picture`,`admin`.`Password`,`admin`.`Gender`,`admin`.`Gender`,"
-                + "`admin`.`Biography`,`admin`.`Country_ID` FROM `chattingapp`.`admin` ";
+        Query adminsQuery = MainController.session.createQuery("from com.imagine.chattingapp.server.dal.entity.Admin");
+        List<com.imagine.chattingapp.server.dal.entity.Admin> allAnnoAdmins = adminsQuery.list();
+        List<Admin> returnedAdmins = new ArrayList();
+        allAnnoAdmins.forEach((annoAdmin)->{
+            returnedAdmins.add(mapToAdmin(annoAdmin));
+        });
+        return returnedAdmins;
         
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
-        
-        List<Admin> adminList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            Admin admin = new Admin();
-            admin.setPhoneNumber(queryResult.getString(1));
-            admin.setName(queryResult.getString(2));
-            admin.setEmail(queryResult.getString(3));
-            admin.setPicture(queryResult.getBytes(4));
-            admin.setPassword(queryResult.getString(5));
-            admin.setGender(queryResult.getInt(6) == 0 ? false : true);
-            admin.setDateOfBirth(queryResult.getDate(7).getTime());
-            admin.setBiography(queryResult.getString(8));
-            admin.setCountryID(queryResult.getByte(9));
-            adminList.add(admin);
-        }
-        
-        
-        return adminList;
     }
 
     @Override
     public List<Admin> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-                String getByColumnNamesQuery = "SELECT `admin`.`Phone_Number`,`admin`.`Name`,`admin`.`Email`,"
-                + "`admin`.`Picture`,`admin`.`Password`,`admin`.`Gender`,`admin`.`Gender`,"
-                + "`admin`.`Biography`,`admin`.`Country_ID` FROM `chattingapp`.`admin`  "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        Criteria adminCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.Admin.class);
+        for(int i = 0; i<columnNames.size(); i++){
+            adminCriteria = adminCriteria.add(Restrictions.eq(columnNames.get(i), columnValues.get(0)));
         }
-        
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-        List<Admin> adminList = new ArrayList<Admin>();
-        if(queryResult.next())
-        {
-            Admin admin = new Admin();
-            admin.setPhoneNumber(queryResult.getString(1));
-            admin.setName(queryResult.getString(2));
-            admin.setEmail(queryResult.getString(3));
-            admin.setPicture(queryResult.getBytes(4));
-            admin.setPassword(queryResult.getString(5));
-            admin.setGender(queryResult.getInt(6) == 0 ? false : true);
-            admin.setDateOfBirth(queryResult.getDate(7).getTime());
-            admin.setBiography(queryResult.getString(8));
-            admin.setCountryID(queryResult.getByte(9));
-            adminList.add(admin);
-        }
-        
-        return adminList;
+        List<com.imagine.chattingapp.server.dal.entity.Admin> allAnnoAdmins = adminCriteria.list();
+        List<Admin> returnedAdmin = new ArrayList<>();
+        allAnnoAdmins.forEach((adminAnno)->{
+            returnedAdmin.add(mapToAdmin(adminAnno));
+        });
+        return returnedAdmin;
     }
-    
-    
 }

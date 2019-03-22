@@ -7,10 +7,14 @@ package com.imagine.chattingapp.server.dal.dao;
 
 
 import com.imagine.chattingapp.common.entity.User_Status;
+import com.imagine.chattingapp.server.control.MainController;
+import com.imagine.chattingapp.server.dal.entity.UserStatus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -25,111 +29,80 @@ public class User_StatusDAO implements DAO<User_Status> {
 
     @Override
     public void persist(User_Status userStatus) throws SQLException {
-        String persistQuery = "INSERT INTO `chattingapp`.`user_status` (`ID`, `Description`) VALUES (?, ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(userStatus.getId());
-        parameterList.add(userStatus.getDescription());
-        
-        databaseDataRetreival.executeUpdateQuery(persistQuery, parameterList);
+        MainController.session.beginTransaction();
+        MainController.session.persist(mapToAnnoUserStatus(userStatus));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public void update(User_Status userStatus) throws SQLException {
-        String updateQuery = "UPDATE `chattingapp`.`user_status` SET `Description` = ? WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        parameterList.add(userStatus.getDescription());
-        parameterList.add(userStatus.getId());
-        
-        databaseDataRetreival.executeUpdateQuery(updateQuery, parameterList);        
+        MainController.session.beginTransaction();
+        MainController.session.saveOrUpdate(mapToAnnoUserStatus(userStatus));
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public void delete(List<Object> primaryKey) throws SQLException {
-        String deleteQuery = "DELETE FROM `chattingapp`.`user_status` WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKey.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        databaseDataRetreival.executeUpdateQuery(deleteQuery, parameterList);
+        byte key = (byte) primaryKey.get(0);
+        com.imagine.chattingapp.server.dal.entity.UserStatus userStatusAnno = MainController.session.get(com.imagine.chattingapp.server.dal.entity.UserStatus.class, key);
+        MainController.session.beginTransaction();
+        MainController.session.delete(userStatusAnno);
+        MainController.session.getTransaction().commit();
     }
 
     @Override
     public User_Status getByPrimaryKey(List<Object> primaryKeys) throws SQLException {
-        String deleteQuery = "SELECT `user_status`.`ID`, `user_status`.`Description` "
-                + "FROM `chattingapp`.`user_status` "
-                + "WHERE (`ID` = ?);";
-        
-        List<Object> parameterList = new ArrayList<>();
-        primaryKeys.forEach((key) -> {
-            parameterList.add(key);
-        });
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(deleteQuery, parameterList);
-        queryResult.beforeFirst();
-        User_Status userStatus = new User_Status();
-        if(queryResult.next())
-        {
-            userStatus.setId(queryResult.getByte(1));
-            userStatus.setDescription(queryResult.getString(2));
-        }
-        return userStatus;
+        byte key = (byte)primaryKeys.get(0);
+        com.imagine.chattingapp.server.dal.entity.UserStatus userStatus = MainController.session.get(com.imagine.chattingapp.server.dal.entity.UserStatus.class, key);
+        User_Status user_Status = mapToUser_Status(userStatus);
+        return user_Status;
     }
 
     @Override
     public List<User_Status> getAll() throws SQLException {
-        String getAllQuery = "SELECT `user_status`.`ID`, `user_status`.`Description` "
-                + "FROM `chattingapp`.`user_status` ";
         
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getAllQuery, new ArrayList<>());
-        queryResult.beforeFirst();
+        Criteria criteria = MainController.session.createCriteria(UserStatus.class);
+        List<com.imagine.chattingapp.server.dal.entity.UserStatus> allAnnoStatus = criteria.list();
+        List<User_Status> returnedStatus = new ArrayList();
+        allAnnoStatus.forEach((statusAnno)->{
+            returnedStatus.add(mapToUserStatus(statusAnno));
+        });
+        return returnedStatus;
         
-        List<User_Status> userStatusList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            User_Status userStatus = new User_Status();
-            userStatus.setId(queryResult.getByte(1));
-            userStatus.setDescription(queryResult.getString(2));
-            userStatusList.add(userStatus);
-        }
-        
-        
-        return userStatusList;
+    }
+
+    private User_Status mapToUserStatus(com.imagine.chattingapp.server.dal.entity.UserStatus statusAnno) {
+        User_Status status = new User_Status();
+        status.setId(statusAnno.getId());
+        status.setDescription(statusAnno.getDescription());
+        return status;
     }
 
     @Override
     public List<User_Status> getByColumnNames(List<String> columnNames, List<Object> columnValues) throws SQLException {
-                String getByColumnNamesQuery = "SELECT `user_status`.`ID`, `user_status`.`Description` "
-                + "FROM `chattingapp`.`user_status`  "
-                + "WHERE ";
-        
-        for(int i = 0 ; i < columnNames.size() ; i++){
-            getByColumnNamesQuery = getByColumnNamesQuery.concat("(" + columnNames.get(i) + " = ?) AND ");
+        Criteria userStatusCriteria = MainController.session.createCriteria(com.imagine.chattingapp.server.dal.entity.UserStatus.class);
+        for(int i=0;i<columnNames.size();i++){
+            userStatusCriteria.add(Restrictions.eq(columnNames.get(i), columnValues.get(i)));
         }
-        
-        int lastANDIndex = getByColumnNamesQuery.lastIndexOf("AND");
-        getByColumnNamesQuery = getByColumnNamesQuery.substring(0, lastANDIndex);
-        
-        ResultSet queryResult = databaseDataRetreival.executeSelectQuery(getByColumnNamesQuery, columnValues);
-        queryResult.beforeFirst();
-        List<User_Status> userStatusList = new ArrayList<>();
-        
-        while(queryResult.next())
-        {
-            User_Status userStatus = new User_Status();
-            userStatus.setId(queryResult.getByte(1));
-            userStatus.setDescription(queryResult.getString(2));
-            userStatusList.add(userStatus);
-        }
-        
-        
-        return userStatusList;
+        List<com.imagine.chattingapp.server.dal.entity.UserStatus> allUserStatusesAnno = userStatusCriteria.list();
+        List<User_Status> userStatuses = new ArrayList<>();
+        allUserStatusesAnno.forEach((userStatusAnno)->{
+            userStatuses.add(mapToUserStatus(userStatusAnno));
+        });
+        return userStatuses;
     }
 
+    private User_Status mapToUser_Status(UserStatus userStatus) {
+        User_Status status = new User_Status();
+        status.setId(userStatus.getId());
+        status.setDescription(userStatus.getDescription());
+        return status;
+    }
     
-    
+    com.imagine.chattingapp.server.dal.entity.UserStatus mapToAnnoUserStatus(User_Status userStatus){
+        com.imagine.chattingapp.server.dal.entity.UserStatus userStatusAnno = new com.imagine.chattingapp.server.dal.entity.UserStatus();
+        userStatusAnno.setId(userStatus.getId());
+        userStatusAnno.setDescription(userStatus.getDescription());
+        return userStatusAnno;
+    }
 }

@@ -60,15 +60,14 @@ public class ContactCell extends ListCell<Contact> {
                 if(friendContact.getImage() != null){
                     Image contactImage = new Image(new ByteArrayInputStream(friendContact.getImage()));
                     contactImagecircle.setFill(new ImagePattern(contactImage));
-                    contactImagecircle.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
                 }
                 statusCircle.setEffect(new DropShadow(25d, 0d, 2d, Color.DARKSEAGREEN));
                 if(friendContact.getStatus() != null)
                 {
                     Image statusImage;
-                    if(friendContact.getStatus() == 1)
+                    if(friendContact.getStatus() == 0)
                         statusImage = new Image("/online.png");
-                    else if(friendContact.getStatus() == 2)
+                    else if(friendContact.getStatus() == 1)
                         statusImage = new Image("/busy.png");
                     else
                         statusImage = new Image("/away.png");
